@@ -34,13 +34,13 @@ class Battleship_1v1:
             self.root.columnconfigure(i, minsize=50)
 
         alpha = "abcdefghijklmnopqrstuvwxyz"
-        for row in range(0, 11):
-            tk.Label(self.root, text=str(row)).grid(row=row, column=11)
-        for column in range(0, 11):
-            tk.Label(self.root, text=alpha[column]).grid(row=11, column=column)
+        for row in range(0, 10):
+            tk.Label(self.root, text=str(row)).grid(row=row, column=10)
+        for column in range(0, 10):
+            tk.Label(self.root, text=alpha[column]).grid(row=10, column=column)
 
-        for column in range(0, 11):
-            for row in range(0, 11):
+        for column in range(0, 10):
+            for row in range(0, 10):
                 a = tk.Button(self.root)
                 a["command"] = lambda a=a: self.clicked(a)
                 a.grid(row=row, column=column, sticky='nsew')
@@ -102,8 +102,10 @@ class Battleship_1v1:
                         info = child.grid_info()
                         if info['row'] == button.grid_info()["row"] - 1 and info['column'] == button.grid_info()["column"]:
                             child.config(bg="black")
+                            self.p1_board[button.grid_info()["row"] - 1][button.grid_info()['column']] = 1
                         if info['row'] == button.grid_info()["row"] + 1 and info['column'] == button.grid_info()["column"]:
                             child.config(bg="black")
+                            self.p1_board[button.grid_info()["row"] + 1][button.grid_info()['column']] = 1
                             break
             print(self.p1_board)
         else:
@@ -115,7 +117,7 @@ class Battleship_1v1:
         if self.p1_board[b["row"]][b["column"]] == 1:
             return False
         if self.boat_state == "horizontal":
-            for j in range(1, size):
+            for j in range(1, size-1):
                 try:
                     if b["column"] - j < 0 or b["column"] + j > len(self.p1_board[0]):
                         return False
@@ -128,7 +130,18 @@ class Battleship_1v1:
                     return False
             return True
         else:
-            pass
+            for j in range(1, size-1):
+                try:
+                    if b["row"] - j < 0 or b["row"] + j > len(self.p1_board[0]):
+                        return False
+                    elif self.p1_board[b["row"] - j][b["column"]] == 1:
+                        return False
+                    elif self.p1_board[b["row"] + j][b["column"]] == 1:
+                        return False
+                except IndexError:
+                    print("out of bounds")
+                    return False
+            return True
         pass
 
 
