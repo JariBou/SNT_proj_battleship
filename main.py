@@ -74,7 +74,7 @@ class Battleship_1v1:
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
 
-        self.boat = "3"
+        self.boat = "5"
         self.boat_state = "horizontal"
 
         self.root.mainloop()
@@ -114,10 +114,11 @@ class Battleship_1v1:
     def can_place(self, size, button):
         b = button.grid_info()
         size = int(size)
+        arm = (size - 1) // 2 if size % 2 == 1 else size // 2
         if self.p1_board[b["row"]][b["column"]] == 1:
             return False
         if self.boat_state == "horizontal":
-            for j in range(1, size-1):
+            for j in range(1, arm+1):
                 try:
                     if b["column"] - j < 0 or b["column"] + j > len(self.p1_board[0]):
                         return False
@@ -130,7 +131,7 @@ class Battleship_1v1:
                     return False
             return True
         else:
-            for j in range(1, size-1):
+            for j in range(1, round(arm+1)):
                 try:
                     if b["row"] - j < 0 or b["row"] + j > len(self.p1_board[0]):
                         return False
