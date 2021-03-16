@@ -145,7 +145,6 @@ class Battleship_1v1:
                     print("out of bounds")
                     return False
             return True
-        pass
 
 
 # Press the green button in the gutter to run the script.
