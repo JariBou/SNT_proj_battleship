@@ -83,31 +83,31 @@ class Battleship_1v1:
         self.boat_state = "horizontal" if self.boat_state == "vertical" else "vertical"
 
     def clicked(self, button):
+        b = button.grid_info()
         if self.can_place(self.boat, button):
             if self.boat == "3":
                 button.config(bg="black")
-                self.p1_board[button.grid_info()["row"]][button.grid_info()['column']] = 1
+                self.p1_board[b["row"]][b['column']] = 1
                 if self.boat_state == "horizontal":
                     for child in all_children(self.root, "Button"):
                         info = child.grid_info()
-                        if info['row'] == button.grid_info()["row"] and info['column'] == button.grid_info()["column"] - 1:
+                        if info['row'] == b["row"] and info['column'] == b["column"] - 1:
                             child.config(bg="black")
-                            self.p1_board[button.grid_info()["row"]][button.grid_info()['column'] - 1] = 1
-                        if info['row'] == button.grid_info()["row"] and info['column'] == button.grid_info()["column"] + 1:
+                            self.p1_board[b["row"]][b['column'] - 1] = 1
+                        if info['row'] == b["row"] and info['column'] == b["column"] + 1:
                             child.config(bg="black")
-                            self.p1_board[button.grid_info()["row"]][button.grid_info()['column'] + 1] = 1
+                            self.p1_board[b["row"]][b['column'] + 1] = 1
                             break
                 elif self.boat_state == "vertical":
                     for child in all_children(self.root, "Button"):
                         info = child.grid_info()
-                        if info['row'] == button.grid_info()["row"] - 1 and info['column'] == button.grid_info()["column"]:
+                        if info['row'] == b["row"] - 1 and info['column'] == b["column"]:
                             child.config(bg="black")
-                            self.p1_board[button.grid_info()["row"] - 1][button.grid_info()['column']] = 1
-                        if info['row'] == button.grid_info()["row"] + 1 and info['column'] == button.grid_info()["column"]:
+                            self.p1_board[b["row"] - 1][b['column']] = 1
+                        if info['row'] == b["row"] + 1 and info['column'] == b["column"]:
                             child.config(bg="black")
-                            self.p1_board[button.grid_info()["row"] + 1][button.grid_info()['column']] = 1
+                            self.p1_board[b["row"] + 1][b['column']] = 1
                             break
-            print(self.p1_board)
         else:
             print("Nope")
 
