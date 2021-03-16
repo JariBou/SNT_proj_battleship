@@ -112,6 +112,8 @@ class Battleship_1v1:
             print("Nope")
 
     def can_place(self, size, button):
+        ## Pour les bateaux pairs, laisser choisir les deux carres centraux au joueur puis fill le reste TMTC pd bosse un peu
+        ## ET si l'player peut pas beh tu restart donc pas besoin de bouton turn, en gros reset la rota a chaque bateau DUCON
         b = button.grid_info()
         size = int(size)
         arm = (size - 1) // 2 if size % 2 == 1 else size // 2
