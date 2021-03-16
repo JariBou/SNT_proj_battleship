@@ -33,8 +33,14 @@ class Battleship_1v1:
             self.root.rowconfigure(i, minsize=50)
             self.root.columnconfigure(i, minsize=50)
 
-        for column in range(0, 11):
-            for row in range(0, 11):
+        alpha = "abcdefghijklmnopqrstuvwxyz"
+        for row in range(1, 10):
+            tk.Label(self.root, text=str(row-1)).grid(row=row, column=0)
+        for column in range(1, 10):
+            tk.Label(self.root, text=alpha[column-1]).grid(row=0, column=column)
+
+        for column in range(1, 10):
+            for row in range(1, 10):
                 a = tk.Button(self.root)
                 a["command"] = lambda a=a: self.clicked(a)
                 a.grid(row=row, column=column, sticky='nsew')
@@ -80,13 +86,16 @@ class Battleship_1v1:
         if self.can_place(self.boat, button):
             if self.boat == "3":
                 button.config(bg="black")
+                self.p1_board[button.grid_info()["row"]][button.grid_info()['column']] = 1
                 if self.boat_state == "horizontal":
                     for child in all_children(self.root, "Button"):
                         info = child.grid_info()
                         if info['row'] == button.grid_info()["row"] and info['column'] == button.grid_info()["column"] - 1:
                             child.config(bg="black")
+                            self.p1_board[button.grid_info()["row"]][button.grid_info()['column'] - 1] = 1
                         if info['row'] == button.grid_info()["row"] and info['column'] == button.grid_info()["column"] + 1:
                             child.config(bg="black")
+                            self.p1_board[button.grid_info()["row"]][button.grid_info()['column'] + 1] = 1
                             break
                 elif self.boat_state == "vertical":
                     for child in all_children(self.root, "Button"):
@@ -96,19 +105,28 @@ class Battleship_1v1:
                         if info['row'] == button.grid_info()["row"] + 1 and info['column'] == button.grid_info()["column"]:
                             child.config(bg="black")
                             break
+            print(self.p1_board)
+        else:
+            print("Nope")
 
     def can_place(self, size, button):
-        if self.p1_board[button.grid_info()["row"]][button.grid_info()["column"]] == 1:
+        b = button.grid_info()
+        size = int(size)
+        if self.p1_board[b["row"]][b["column"]] == 1:
             return False
         if self.boat_state == "horizontal":
-            for child in all_children(self.root, "Button"):
-                info = child.grid_info()
-                if info['row'] == button.grid_info()["row"] and info['column'] == button.grid_info()["column"] - 1:
-                    child.config(bg="black")
-                if info['row'] == button.grid_info()["row"] and info['column'] == button.grid_info()["column"] + 1:
-                    child.config(bg="black")
-                    break
-            pass
+            for j in range(1, size-1):
+                try:
+                    if b["column"] - j == 0 or b["column"] + j > len(self.p1_board[0]):
+                        return False
+                    elif self.p1_board[b["row"]][b["column"] - j-1] == 1:
+                        return False
+                    elif self.p1_board[b["row"]][b["column"] + j] == 1:
+                        return False
+                except IndexError:
+                    print("out of bounds")
+                    return False
+            return True
         else:
             pass
         pass
