@@ -1,5 +1,8 @@
 import tkinter as tk
 
+##TODO: add adaptivity to support both boards
+##TODO: continue Boat class
+
 
 def all_children(wid, child_type):
     """ Used to return a list of all the elements on a parent
