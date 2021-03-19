@@ -15,6 +15,21 @@ def all_children(wid, child_type):
     return _list if child_type == "all" else [child for child in _list if str(child.winfo_class()) == child_type]
 
 
+def remove_duplicates(List):
+    """ Removes dupes from lista given List
+    :param List: List to remove dupes from
+    :return: Initial list without the duplicates
+    """
+    already_appeared = []
+    value = []
+    for e in List:
+        if e not in already_appeared:
+            already_appeared.append(e)
+            value.append(e)
+    return value
+
+
+
 class Battleship_1v1:
 
     def __init__(self):
@@ -48,11 +63,20 @@ class Battleship_1v1:
 
         self.rotate = tk.Button(self.root, bg="white", text="Rotate", command=self.rotate)
         self.rotate.grid(row=0, column=13, sticky='nsew')
+        self.curr_rotation = tk.Label(self.root, text='Horizontal')
+        self.curr_rotation.grid(row=0, column=14, sticky='nsew')
 
+        self.size_2 = tk.Button(self.root, bg="white", text="Size: 2", command=lambda: self.size(self.size_2, "2"))
+        self.size_2.grid(row=1, column=13, sticky='nsew')
         self.size_3 = tk.Button(self.root, bg="white", text="Size: 3", command=lambda: self.size(self.size_3, "3"))
-        self.size_3.grid(row=1, column=13, sticky='nsew')
+        self.size_3.grid(row=2, column=13, sticky='nsew')
+        self.size_4 = tk.Button(self.root, bg="white", text="Size: 4", command=lambda: self.size(self.size_4, "4"))
+        self.size_4.grid(row=3, column=13, sticky='nsew')
         self.size_5 = tk.Button(self.root, bg="white", text="Size: 5", command=lambda: self.size(self.size_5, "5"))
-        self.size_5.grid(row=2, column=13, sticky='nsew')
+        self.size_5.grid(row=4, column=13, sticky='nsew')
+
+        self.console_out = tk.Button(self.root, bg="white", text="print_board", command=self.print_console)
+        self.console_out.grid(row=6, column=13, sticky='nsew')
 
         self.p1_board = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -83,10 +107,14 @@ class Battleship_1v1:
         self.boat = "3"
         self.boat_state = "horizontal"
 
+        self.defaultbg = self.root.cget('bg')
+        self.last_clicked = None
+
         self.root.mainloop()
 
     def rotate(self):
         self.boat_state = "horizontal" if self.boat_state == "vertical" else "vertical"
+        self.curr_rotation.config(text='Vertical') if self.curr_rotation.cget('text') == 'Horizontal' else self.curr_rotation.config(text='Horizontal')
 
     def clicked(self, button):
         if self.can_place(self.boat, button):
@@ -97,7 +125,128 @@ class Battleship_1v1:
             elif self.boat == "2":
                 ## To detect and make different boats create a class boat that takes in the boards coordinates
                 ## and then check every turn if their coordinates are downed or not.
+
+                b = button.grid_info()
+                button.config(bg="black")
+                if self.last_clicked is not None:
+                    b_last = self.last_clicked.grid_info()
+                    if abs(b_last["row"] - b["row"]) == 0 and abs(b_last["column"] - b["column"]) == 1:
+                        print("Horizontal")
+                        self.p1_board[b_last["row"]][b_last['column']] = 1
+                        self.p1_board[b["row"]][b['column']] = 1
+                        self.last_clicked = None
+                        return
+                        # HORIZONTAL
+
+                    elif abs(b_last["row"] - b["row"]) == 1 and abs(b_last["column"] - b["column"]) == 0:
+                        print("Vertical")
+                        self.p1_board[b_last["row"]][b_last['column']] = 1
+                        self.p1_board[b["row"]][b['column']] = 1
+                        self.last_clicked = None
+                        return
+                        # VERTICAL
+
+                    else:
+                        self.last_clicked.config(bg=self.defaultbg)
+                        button.config(bg=self.defaultbg)
+                        self.last_clicked = None
+                        return
+                self.last_clicked = button if self.last_clicked is None else self.last_clicked
+
+            elif self.boat == "4":
+                ## To detect and make different boats create a class boat that takes in the boards coordinates
+                ## and then check every turn if their coordinates are downed or not.
+
+                b = button.grid_info()
+                button.config(bg="black")
+                if self.last_clicked is not None:
+                    b_last = self.last_clicked.grid_info()
+                    if abs(b_last["row"] - b["row"]) == 0 and abs(b_last["column"] - b["column"]) == 1:
+                        # HORIZONTAL
+                        if b_last['column'] == 0 or b['column'] == 0 or b_last['column'] == 9 or b['column'] == 9:
+                            self.last_clicked.config(bg=self.defaultbg)
+                            button.config(bg=self.defaultbg)
+                            self.last_clicked = None
+                            return
+
+                        if (self.p1_board[b_last["row"]][b_last['column'] + 1] == 0 and
+                            self.p1_board[b_last["row"]][b_last['column'] - 1] == 0) and \
+                                (self.p1_board[b["row"]][b['column'] - 1] == 0 and
+                                 self.p1_board[b["row"]][b['column'] + 1] == 0):
+
+                            self.p1_board[b_last["row"]][b_last['column'] - 1] = 1
+                            self.p1_board[b_last["row"]][b_last['column'] + 1] = 1
+                            self.p1_board[b["row"]][b['column'] - 1] = 1
+                            self.p1_board[b["row"]][b['column'] + 1] = 1
+                            self.last_clicked = None
+
+                            for child in all_children(self.root, "Button"):
+                                b2 = child.grid_info()
+                                if (b2["column"] == b_last["column"] - 1 or b2["column"] == b_last["column"] + 1 or
+                                    b2["column"] == b["column"] - 1 or b2["column"] == b["column"] + 1) and \
+                                        b2['row'] == b['row']:
+                                    child.config(bg='black')
+
+                            return
+                        else:
+                            self.last_clicked.config(bg=self.defaultbg)
+                            button.config(bg=self.defaultbg)
+                            self.last_clicked = None
+                            return
+
+                    elif abs(b_last["row"] - b["row"]) == 1 and abs(b_last["column"] - b["column"]) == 0:
+                        print("Vertical")
+                        # VERTICAL
+                        if b_last['row'] == 0 or b['row'] == 0 or b_last['row'] == 9 or b['row'] == 9:
+                            self.last_clicked.config(bg=self.defaultbg)
+                            button.config(bg=self.defaultbg)
+                            self.last_clicked = None
+                            return
+
+                        elif (self.p1_board[b_last["row"] + 1][b_last['column']] == 0 and
+                              self.p1_board[b_last["row"] - 1][b_last['column']] == 0) and \
+                                (self.p1_board[b["row"] - 1][b['column']] == 0 and
+                                 self.p1_board[b["row"] + 1][b['column']] == 0):
+
+                            new_boat_coord = []
+
+                            self.p1_board[b_last["row"] - 1][b_last['column']] = 1
+                            self.p1_board[b_last["row"] + 1][b_last['column']] = 1
+                            self.p1_board[b["row"] - 1][b['column']] = 1
+                            self.p1_board[b["row"] + 1][b['column']] = 1
+                            self.last_clicked = None
+
+                            new_boat_coord.append([b_last["row"] - 1][b_last['column']])
+                            new_boat_coord.append([b_last["row"] + 1][b_last['column']])
+                            new_boat_coord.append([b_last["row"]][b_last['column'] - 1])
+                            new_boat_coord.append([b_last["row"]][b_last['column'] + 1])
+
+                            for child in all_children(self.root, "Button"):
+                                b2 = child.grid_info()
+                                if (b2["row"] == b_last["row"] - 1 or b2["row"] == b_last["row"] + 1 or
+                                    b2["row"] == b["row"] - 1 or b2["row"] == b["row"] + 1) and b2['column'] == b[
+                                    'column']:
+                                    child.config(bg='black')
+
+                            ##TODO: Create a new Boat class
+
+                            return
+                        else:
+                            self.last_clicked.config(bg=self.defaultbg)
+                            button.config(bg=self.defaultbg)
+                            self.last_clicked = None
+                            return
+
+                    else:
+                        # Not 2 adjacent squares
+                        self.last_clicked.config(bg=self.defaultbg)
+                        button.config(bg=self.defaultbg)
+                        self.last_clicked = None
+                        return
+
+                self.last_clicked = button if self.last_clicked is None else self.last_clicked
                 pass
+
 
         else:
             print("Nope")
@@ -107,7 +256,12 @@ class Battleship_1v1:
         ## ET si l'player peut pas beh tu restart donc pas besoin de bouton turn, en gros reset la rota a chaque bateau DUCON
         b = button.grid_info()
         size = int(size)
-        arm = (size - 1) // 2 if size % 2 == 1 else size // 2
+        if size == 2:
+            arm = 0
+        elif size == 4:
+            return self.p1_board[b["row"]][b["column"]] == 0
+        else:
+            arm = (size - 1) // 2 if size % 2 == 1 else size // 2
         if self.p1_board[b["row"]][b["column"]] == 1:
             return False
         if self.boat_state == "horizontal":
@@ -174,6 +328,18 @@ class Battleship_1v1:
             if info["column"] == 13:
                 child.config(bg="white")
         button.config(bg="green")
+
+    def print_console(self):
+        for k in self.p1_board:
+            print(str(k))
+
+
+class Boat:
+
+    def __init__(self, coordinates, size):
+        self.is_alive = True
+        self.coordinates = coordinates
+        self.size = size
 
 
 # Press the green button in the gutter to run the script.
