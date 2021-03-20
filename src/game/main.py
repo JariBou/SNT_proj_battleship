@@ -1,8 +1,9 @@
 import tkinter as tk
+from pathlib import Path
+from PIL import ImageTk, Image
 
 ##TODO: add adaptivity to support both boards
 ##TODO: continue Boat class
-
 
 
 def all_children(wid, child_type):
@@ -32,9 +33,14 @@ def remove_duplicates(List):
             value.append(e)
     return value
 
+
 def get_img(path):
-    photo = PhotoImage(file="path")
+    """ resources\\images\\XXX """
+    img = Image.open(path)
+    new_img = img.resize((44, 44))
+    photo = ImageTk.PhotoImage(new_img)
     return photo
+
 
 class Battleship_1v1:
 
@@ -49,6 +55,8 @@ class Battleship_1v1:
         self.root.geometry('%dx%d+%d+%d' % (self.width, self.height, x, y))
         self.root.title(f"mainFrame - ALPHA - width: {round(self.width)}, height: {round(self.height)} "
                         f"- pos: ({round(x)},{round(y)})")
+        self.path = Path(__file__).parent.parent
+        self.images = []
 
         for i in range(0, 30):
             self.root.rowconfigure(i, minsize=50)
@@ -77,7 +85,7 @@ class Battleship_1v1:
 
         for column in range(self.atk_offset, self.atk_offset+10):
             for row in range(0, 10):
-                a = tk.Button(self.root, bg="cyan")
+                a = tk.Button(self.root)  ##, bg="cyan"
                 a["command"] = lambda a=a: self.attack(a)
                 a.grid(row=row, column=column, sticky='nsew')
 
@@ -378,18 +386,17 @@ class Battleship_1v1:
         arm_size = 2 if arm_size == 1 else arm_size
         b = button.grid_info()
         boat_coordinates = [[b['row'], b['column']]]
-        button.config(bg="black")
         self.p1_board[b["row"]][b['column']] = 1
         if self.boat_state == "horizontal":
             for child in all_children(self.root, "Button"):
                 info = child.grid_info()
                 for j in range(1, arm_size):
                     if info['row'] == b["row"] and info['column'] == b["column"] - j:
-                        child.config(bg="black")
+                        #child.config(bg="black")
                         self.p1_board[b["row"]][b['column'] - j] = 1
                         boat_coordinates.append([b["row"], b['column'] - j])
                     if info['row'] == b["row"] and info['column'] == b["column"] + j:
-                        child.config(bg="black")
+                        #child.config(bg="black")
                         self.p1_board[b["row"]][b['column'] + j] = 1
                         boat_coordinates.append([b["row"], b['column'] + j])
         elif self.boat_state == "vertical":
@@ -397,16 +404,41 @@ class Battleship_1v1:
                 info = child.grid_info()
                 for j in range(1, arm_size):
                     if info['row'] == b["row"] - j and info['column'] == b["column"]:
-                        child.config(bg="black")
+                        #child.config(bg="black")
                         self.p1_board[b["row"] - j][b['column']] = 1
                         boat_coordinates.append([b["row"] - j, b['column']])
                     if info['row'] == b["row"] + j and info['column'] == b["column"]:
-                        child.config(bg="black")
+                        #child.config(bg="black")
                         self.p1_board[b["row"] + j][b['column']] = 1
                         boat_coordinates.append([b["row"] + j, b['column']])
+        #img = get_img(self.path.joinpath(f'resources\\images\\{self.boat_state}\\center.png'))
+        #elf.images.append(img)
+        #button.config(image=img)
         boat_coordinates.sort()
+        self.draw_boat_img(boat_coordinates)
         self.p1_boats.append(Boat(boat_coordinates, len(boat_coordinates)))
         print(boat_coordinates)
+
+    def draw_boat_img(self, coordinates):
+        boat_size = len(coordinates)
+        orientation = "vertical" if coordinates[0][1] == coordinates[1][1] else 'horizontal'
+        part = 0
+        for child in all_children(self.root, 'Button'):
+            c = child.grid_info()
+            if [c['row'], c['column']] == coordinates[part]:
+                if part == 0:
+                    img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\first.png'))
+                    self.images.append(img)
+                    child.config(image=img)
+                elif part == boat_size - 1:
+                    img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\last.png'))
+                    self.images.append(img)
+                    child.config(image=img)
+                else:
+                    img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\center.png'))
+                    self.images.append(img)
+                    child.config(image=img)
+                part += 1
 
     def size(self, button, size):
         self.boat = size
@@ -433,8 +465,9 @@ class Battleship_1v1:
                 for xy in coords:
                     if xy == [b['row'], b['column'] - self.atk_offset]:
                         boat.set_state(coords.index(xy), 0)
-                        touched = get_img('touched.png')
-            button.config(image = 'touched')
+                        img = get_img(self.path.joinpath('resources\\images\\touched.png'))
+                        self.images.append(img)
+                        button.config(image=img)
         else:
             button.config(bg='green')
         self.end_turn()
