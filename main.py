@@ -108,7 +108,6 @@ class Battleship_1v1:
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
-
         self.p2_board = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -121,11 +120,11 @@ class Battleship_1v1:
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
-
         self.boards = [self.p1_board, self.p2_board]
 
         self.p1_boats = []
         self.p2_boats = []
+        self.boats = [self.p1_boats, self.p2_boats]
 
         self.player = 0
         self.boat = "3"
@@ -142,6 +141,7 @@ class Battleship_1v1:
 
     def clicked(self, button):
         board = self.boards[self.player]
+        boats = self.boats[self.player]
         if self.can_place(self.boat, button):
             if self.boat == "3":
                 self.draw_boat(1, button)
@@ -220,7 +220,7 @@ class Battleship_1v1:
                                     child.config(bg='black')
 
                             new_boat_coord.sort()
-                            self.p1_boats.append(Boat(new_boat_coord, len(new_boat_coord)))
+                            boats.append(Boat(new_boat_coord, len(new_boat_coord)))
                             print(new_boat_coord)
 
                             return
