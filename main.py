@@ -127,8 +127,9 @@ class Battleship_1v1:
         self.boats = [self.p1_boats, self.p2_boats]
 
         self.player = 0
-        self.boat = "3"
+        self.boat = ""
         self.boat_state = "horizontal"
+        self.count_3 = 0
 
         self.defaultbg = self.root.cget('bg')
         self.last_clicked = None
@@ -145,8 +146,16 @@ class Battleship_1v1:
         if self.can_place(self.boat, button):
             if self.boat == "3":
                 self.draw_boat(1, button)
+                self.count_3 += 1
+                if self.count_3 == 2:
+                    self.size_3.config(state=tk.DISABLED)
+                    self.size_3.config(state=tk.DISABLED, bg=self.defaultbg)
+                    self.boat = ""
             elif self.boat == "5":
                 self.draw_boat(3, button)
+                self.size_5.config(state=tk.DISABLED)
+                self.size_5.config(state=tk.DISABLED, bg=self.defaultbg)
+                self.boat = ""
             elif self.boat == "2":
                 ## To detect and make different boats create a class boat that takes in the boards coordinates
                 ## and then check every turn if their coordinates are downed or not.
@@ -160,6 +169,9 @@ class Battleship_1v1:
                         board[b_last["row"]][b_last['column']] = 1
                         board[b["row"]][b['column']] = 1
                         self.last_clicked = None
+                        self.size_2.config(state=tk.DISABLED)
+                        self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
+                        self.boat = ""
                         return
                         # HORIZONTAL
 
@@ -168,6 +180,8 @@ class Battleship_1v1:
                         board[b_last["row"]][b_last['column']] = 1
                         board[b["row"]][b['column']] = 1
                         self.last_clicked = None
+                        self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
+                        self.boat = ""
                         return
                         # VERTICAL
 
@@ -222,6 +236,9 @@ class Battleship_1v1:
                             new_boat_coord.sort()
                             boats.append(Boat(new_boat_coord, len(new_boat_coord)))
                             print(new_boat_coord)
+                            self.size_4.config(state=tk.DISABLED)
+                            self.size_4.config(state=tk.DISABLED, bg=self.defaultbg)
+                            self.boat = ""
 
                             return
                         else:
@@ -267,8 +284,11 @@ class Battleship_1v1:
                             # We do not have any dupes since I do not add the coordinates of the buttons clicked
                             # new_boat_coord = remove_duplicates(new_boat_coord)
                             new_boat_coord.sort()
-                            self.p1_boats.append(Boat(new_boat_coord, len(new_boat_coord)))
+                            boats.append(Boat(new_boat_coord, len(new_boat_coord)))
                             print(new_boat_coord)
+                            self.size_4.config(state=tk.DISABLED)
+                            self.size_4.config(state=tk.DISABLED, bg=self.defaultbg)
+                            self.boat = ""
 
                             return
                         else:
@@ -287,6 +307,9 @@ class Battleship_1v1:
                 self.last_clicked = button if self.last_clicked is None else self.last_clicked
                 pass
 
+            else:
+                print('Please select a Ship size, sanque you Dankeusheun')
+
         else:
             print("Nope")
         self.p2_board = board
@@ -295,6 +318,8 @@ class Battleship_1v1:
         ## Pour les bateaux pairs, laisser choisir les deux carres centraux au joueur puis fill le reste TMTC pd bosse un peu
         ## ET si l'player peut pas beh tu restart donc pas besoin de bouton turn, en gros reset la rota a chaque bateau DUCON
         b = button.grid_info()
+        if size == "":
+            return True
         size = int(size)
         if size == 2:
             arm = 0
