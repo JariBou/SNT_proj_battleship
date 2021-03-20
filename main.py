@@ -4,6 +4,7 @@ import tkinter as tk
 ##TODO: continue Boat class
 
 
+
 def all_children(wid, child_type):
     """ Used to return a list of all the elements on a parent
 
@@ -31,6 +32,9 @@ def remove_duplicates(List):
             value.append(e)
     return value
 
+def get_img(path):
+    photo = PhotoImage(file="path")
+    return photo
 
 class Battleship_1v1:
 
@@ -429,7 +433,8 @@ class Battleship_1v1:
                 for xy in coords:
                     if xy == [b['row'], b['column'] - self.atk_offset]:
                         boat.set_state(coords.index(xy), 0)
-            button.config(bg='red')
+                        touched = get_img('touched.png')
+            button.config(image = 'touched')
         else:
             button.config(bg='green')
         self.end_turn()
