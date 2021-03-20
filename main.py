@@ -141,6 +141,7 @@ class Battleship_1v1:
         self.curr_rotation.config(text='Vertical') if self.curr_rotation.cget('text') == 'Horizontal' else self.curr_rotation.config(text='Horizontal')
 
     def clicked(self, button):
+        board = self.boards[self.player]
         if self.can_place(self.boat, button):
             if self.boat == "3":
                 self.draw_boat(1, button)
@@ -156,16 +157,16 @@ class Battleship_1v1:
                     b_last = self.last_clicked.grid_info()
                     if abs(b_last["row"] - b["row"]) == 0 and abs(b_last["column"] - b["column"]) == 1:
                         print("Horizontal")
-                        self.boards[self.player][b_last["row"]][b_last['column']] = 1
-                        self.boards[self.player][b["row"]][b['column']] = 1
+                        board[b_last["row"]][b_last['column']] = 1
+                        board[b["row"]][b['column']] = 1
                         self.last_clicked = None
                         return
                         # HORIZONTAL
 
                     elif abs(b_last["row"] - b["row"]) == 1 and abs(b_last["column"] - b["column"]) == 0:
                         print("Vertical")
-                        self.boards[self.player][b_last["row"]][b_last['column']] = 1
-                        self.boards[self.player][b["row"]][b['column']] = 1
+                        board[b_last["row"]][b_last['column']] = 1
+                        board[b["row"]][b['column']] = 1
                         self.last_clicked = None
                         return
                         # VERTICAL
@@ -193,17 +194,17 @@ class Battleship_1v1:
                             self.last_clicked = None
                             return
 
-                        if (self.boards[self.player][b_last["row"]][b_last['column'] + 1] == 0 and
-                            self.boards[self.player][b_last["row"]][b_last['column'] - 1] == 0) and \
-                                (self.boards[self.player][b["row"]][b['column'] - 1] == 0 and
-                                 self.boards[self.player][b["row"]][b['column'] + 1] == 0):
+                        if (board[b_last["row"]][b_last['column'] + 1] == 0 and
+                            board[b_last["row"]][b_last['column'] - 1] == 0) and \
+                                (board[b["row"]][b['column'] - 1] == 0 and
+                                 board[b["row"]][b['column'] + 1] == 0):
 
                             new_boat_coord = []
 
-                            self.boards[self.player][b_last["row"]][b_last['column'] - 1] = 1
-                            self.boards[self.player][b_last["row"]][b_last['column'] + 1] = 1
-                            self.boards[self.player][b["row"]][b['column'] - 1] = 1
-                            self.boards[self.player][b["row"]][b['column'] + 1] = 1
+                            board[b_last["row"]][b_last['column'] - 1] = 1
+                            board[b_last["row"]][b_last['column'] + 1] = 1
+                            board[b["row"]][b['column'] - 1] = 1
+                            board[b["row"]][b['column'] + 1] = 1
                             self.last_clicked = None
 
                             new_boat_coord.append([b_last["row"], b_last['column'] - 1])
@@ -238,17 +239,17 @@ class Battleship_1v1:
                             self.last_clicked = None
                             return
 
-                        elif (self.boards[self.player][b_last["row"] + 1][b_last['column']] == 0 and
-                              self.boards[self.player][b_last["row"] - 1][b_last['column']] == 0) and \
-                                (self.boards[self.player][b["row"] - 1][b['column']] == 0 and
-                                 self.boards[self.player][b["row"] + 1][b['column']] == 0):
+                        elif (board[b_last["row"] + 1][b_last['column']] == 0 and
+                              board[b_last["row"] - 1][b_last['column']] == 0) and \
+                                (board[b["row"] - 1][b['column']] == 0 and
+                                 board[b["row"] + 1][b['column']] == 0):
 
                             new_boat_coord = []
 
-                            self.boards[self.player][b_last["row"] - 1][b_last['column']] = 1
-                            self.boards[self.player][b_last["row"] + 1][b_last['column']] = 1
-                            self.boards[self.player][b["row"] - 1][b['column']] = 1
-                            self.boards[self.player][b["row"] + 1][b['column']] = 1
+                            board[b_last["row"] - 1][b_last['column']] = 1
+                            board[b_last["row"] + 1][b_last['column']] = 1
+                            board[b["row"] - 1][b['column']] = 1
+                            board[b["row"] + 1][b['column']] = 1
                             self.last_clicked = None
 
                             new_boat_coord.append([b_last["row"] - 1, b_last['column']])
@@ -288,7 +289,7 @@ class Battleship_1v1:
 
         else:
             print("Nope")
-        self.p2_board = self.boards[self.player]
+        self.p2_board = board
 
     def can_place(self, size, button):
         ## Pour les bateaux pairs, laisser choisir les deux carres centraux au joueur puis fill le reste TMTC pd bosse un peu
