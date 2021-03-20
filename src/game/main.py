@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from pathlib import Path
 from PIL import ImageTk, Image
 
@@ -63,11 +64,11 @@ class Battleship_1v1:
             self.root.columnconfigure(i, minsize=50)
 
         alpha = "abcdefghijklmnopqrstuvwxyz"
-        tk.Label(self.root, bg="black", fg="white").grid(row=10, column=10, sticky='nsew')
+        tk.Label(self.root, bg="sandy brown", fg="white").grid(row=10, column=10, sticky='nsew')
         for row in range(0, 10):
-            tk.Label(self.root, text=str(row), bg="blue", fg="white").grid(row=row, column=10, sticky='nsew')
+            tk.Label(self.root, text=str(row), bg="peach puff", fg="black").grid(row=row, column=10, sticky='nsew')
         for column in range(0, 10):
-            tk.Label(self.root, text=alpha[column], bg="blue", fg="white").grid(row=10, column=column, sticky='nsew')
+            tk.Label(self.root, text=alpha[column], bg="peach puff", fg="black").grid(row=10, column=column, sticky='nsew')
 
         for column in range(0, 10):
             for row in range(0, 10):
@@ -77,11 +78,11 @@ class Battleship_1v1:
 
         self.atk_offset = 17
 
-        tk.Label(self.root, bg="black", fg="white").grid(row=10, column=self.atk_offset - 1, sticky='nsew')
+        tk.Label(self.root, bg="sandy brown", fg="white").grid(row=10, column=self.atk_offset - 1, sticky='nsew')
         for row in range(0, 10):
-            tk.Label(self.root, text=str(row), bg="blue", fg="white").grid(row=row, column=self.atk_offset - 1, sticky='nsew')
+            tk.Label(self.root, text=str(row), bg="peach puff", fg="black").grid(row=row, column=self.atk_offset - 1, sticky='nsew')
         for column in range(self.atk_offset, self.atk_offset+10):
-            tk.Label(self.root, text=alpha[column - self.atk_offset], bg="blue", fg="white").grid(row=10, column=column, sticky='nsew')
+            tk.Label(self.root, text=alpha[column - self.atk_offset], bg="peach puff", fg="black").grid(row=10, column=column, sticky='nsew')
 
         for column in range(self.atk_offset, self.atk_offset+10):
             for row in range(0, 10):
@@ -511,13 +512,28 @@ class Battleship_1v1:
                         self.images.append(img)
                         button.config(image=img)
         else:
-            button.config(bg='green')
+            img = get_img(self.path.joinpath('resources\\images\\missed.png'))
+            self.images.append(img)
+            button.config(image=img)
         self.end_turn()
 
     def end_turn(self):
         for boat in self.p1_boats:
             if boat.is_dead():
+                if boat.size == "2":                # 2 tiles boat is a Destroyer // 3 tiles boats are Submarine and Cruiser#
+                    boat_type = 'Destroyer'                                       # 4 tiles boat is a Battleship // 5 tiles boat is a Carrier #
+                    tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat_type} boat')
+                elif boat.size == "3":
+                    boat_type = 'Cruiser/Submarine'
+                    tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat_type} boat')
+                elif boat.size == "4":
+                    boat_type = 'Battleship'
+                    tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat_type} boat')
+                elif boat.size == "5":
+                    boat_type = 'Carrier'
+                    tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat_type} boat')
                 print(f'You sank a {boat.get_type()} boat!')
+                print(boat.get_type())
                 self.p1_boats.remove(boat)
 
 
