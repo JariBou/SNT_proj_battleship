@@ -168,6 +168,10 @@ class Battleship_1v1:
                         print("Horizontal")
                         board[b_last["row"]][b_last['column']] = 1
                         board[b["row"]][b['column']] = 1
+                        new_boat_coord = [[b_last["row"], b_last['column']], [b["row"], b['column']]]
+                        new_boat_coord.sort()
+                        boats.append(Boat(new_boat_coord, len(new_boat_coord)))
+                        print(new_boat_coord)
                         self.last_clicked = None
                         self.size_2.config(state=tk.DISABLED)
                         self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
@@ -179,6 +183,10 @@ class Battleship_1v1:
                         print("Vertical")
                         board[b_last["row"]][b_last['column']] = 1
                         board[b["row"]][b['column']] = 1
+                        new_boat_coord = [[b_last["row"], b_last['column']], [b["row"], b['column']]]
+                        new_boat_coord.sort()
+                        boats.append(Boat(new_boat_coord, len(new_boat_coord)))
+                        print(new_boat_coord)
                         self.last_clicked = None
                         self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
                         self.boat = ""
@@ -313,6 +321,8 @@ class Battleship_1v1:
         else:
             print("Nope")
         self.p2_board = board
+        if len(self.boats[self.player]) == 5:
+            print("Suka")
 
     def can_place(self, size, button):
         ## Pour les bateaux pairs, laisser choisir les deux carres centraux au joueur puis fill le reste TMTC pd bosse un peu
