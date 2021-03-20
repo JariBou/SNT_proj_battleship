@@ -32,7 +32,6 @@ def remove_duplicates(List):
     return value
 
 
-
 class Battleship_1v1:
 
     def __init__(self):
@@ -47,7 +46,7 @@ class Battleship_1v1:
         self.root.title(f"mainFrame - ALPHA - width: {round(self.width)}, height: {round(self.height)} "
                         f"- pos: ({round(x)},{round(y)})")
 
-        for i in range(0, 15):
+        for i in range(0, 30):
             self.root.rowconfigure(i, minsize=50)
             self.root.columnconfigure(i, minsize=50)
 
@@ -62,6 +61,20 @@ class Battleship_1v1:
             for row in range(0, 10):
                 a = tk.Button(self.root)
                 a["command"] = lambda a=a: self.clicked(a)
+                a.grid(row=row, column=column, sticky='nsew')
+
+        self.atk_offset = 17
+
+        tk.Label(self.root, bg="black", fg="white").grid(row=10, column=self.atk_offset - 1, sticky='nsew')
+        for row in range(0, 10):
+            tk.Label(self.root, text=str(row), bg="blue", fg="white").grid(row=row, column=self.atk_offset - 1, sticky='nsew')
+        for column in range(self.atk_offset, self.atk_offset+10):
+            tk.Label(self.root, text=alpha[column - self.atk_offset], bg="blue", fg="white").grid(row=10, column=column, sticky='nsew')
+
+        for column in range(self.atk_offset, self.atk_offset+10):
+            for row in range(0, 10):
+                a = tk.Button(self.root, bg="cyan")
+                a["command"] = lambda a=a: self.attack(a)
                 a.grid(row=row, column=column, sticky='nsew')
 
         self.rotate = tk.Button(self.root, bg="white", text="Rotate", command=self.rotate)
@@ -80,6 +93,8 @@ class Battleship_1v1:
 
         self.console_out = tk.Button(self.root, bg="white", text="print_board", command=self.print_console)
         self.console_out.grid(row=6, column=13, sticky='nsew')
+        self.boat_list = tk.Button(self.root, bg="white", text="boat_interactions", command=self.boat_interactions)
+        self.boat_list.grid(row=7, column=13, sticky='nsew')
 
         self.p1_board = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -106,6 +121,9 @@ class Battleship_1v1:
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
+
+        self.p1_boats = []
+        self.p2_boats = []
 
         self.boat = "3"
         self.boat_state = "horizontal"
@@ -250,9 +268,9 @@ class Battleship_1v1:
                 self.last_clicked = button if self.last_clicked is None else self.last_clicked
                 pass
 
-
         else:
             print("Nope")
+        self.p2_board = self.p1_board
 
     def can_place(self, size, button):
         ## Pour les bateaux pairs, laisser choisir les deux carres centraux au joueur puis fill le reste TMTC pd bosse un peu
@@ -301,6 +319,7 @@ class Battleship_1v1:
         """
         arm_size = 2 if arm_size == 1 else arm_size
         b = button.grid_info()
+        boat_coordinates = [[b['row'], b['column']]]
         button.config(bg="black")
         self.p1_board[b["row"]][b['column']] = 1
         if self.boat_state == "horizontal":
@@ -310,9 +329,11 @@ class Battleship_1v1:
                     if info['row'] == b["row"] and info['column'] == b["column"] - j:
                         child.config(bg="black")
                         self.p1_board[b["row"]][b['column'] - j] = 1
+                        boat_coordinates.append([b["row"], b['column'] - j])
                     if info['row'] == b["row"] and info['column'] == b["column"] + j:
                         child.config(bg="black")
                         self.p1_board[b["row"]][b['column'] + j] = 1
+                        boat_coordinates.append([b["row"], b['column'] + j])
         elif self.boat_state == "vertical":
             for child in all_children(self.root, "Button"):
                 info = child.grid_info()
@@ -320,9 +341,14 @@ class Battleship_1v1:
                     if info['row'] == b["row"] - j and info['column'] == b["column"]:
                         child.config(bg="black")
                         self.p1_board[b["row"] - j][b['column']] = 1
+                        boat_coordinates.append([b["row"] - j, b['column']])
                     if info['row'] == b["row"] + j and info['column'] == b["column"]:
                         child.config(bg="black")
                         self.p1_board[b["row"] + j][b['column']] = 1
+                        boat_coordinates.append([b["row"] + j, b['column']])
+        boat_coordinates.sort()
+        self.p1_boats.append(Boat(boat_coordinates, len(boat_coordinates)))
+        print(boat_coordinates)
 
     def size(self, button, size):
         self.boat = size
@@ -336,13 +362,51 @@ class Battleship_1v1:
         for k in self.p1_board:
             print(str(k))
 
+    def boat_interactions(self):
+        print(self.p1_boats)
+        for boat in self.p1_boats:
+            print(boat.state)
+
+    def attack(self, button):
+        b = button.grid_info()
+        if self.p2_board[b['row']][b['column'] - self.atk_offset] == 1:
+            for boat in self.p1_boats:
+                coords = boat.get_coordinates()
+                for xy in coords:
+                    if xy == [b['row'], b['column'] - self.atk_offset]:
+                        boat.set_state(coords.index(xy), 0)
+            button.config(bg='red')
+        else:
+            button.config(bg='green')
+        self.end_turn()
+
+    def end_turn(self):
+        for boat in self.p1_boats:
+            if boat.is_dead():
+                print(f'You sank a {boat.get_type()} boat!')
+                self.p1_boats.remove(boat)
 
 class Boat:
 
     def __init__(self, coordinates, size):
+        ## Coordinates like this: [ [x, y][1/0], [x, y][1/0], [x, y][1/0] ]
+
         self.is_alive = True
         self.coordinates = coordinates
-        self.size = size
+        self.state = [1 for i in self.coordinates]
+        self.size = str(size)
+
+    def is_dead(self):
+        return not self.state.__contains__(1)
+
+    def get_type(self):
+        return f"Type {self.size}"
+    
+    def get_coordinates(self):
+        return self.coordinates
+    
+    def set_state(self, i, val):
+        self.state[i] = val
 
 
 # Press the green button in the gutter to run the script.
