@@ -434,6 +434,7 @@ class Battleship_1v1:
                     img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\last.png'))
                     self.images.append(img)
                     child.config(image=img)
+                    break
                 else:
                     img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\center.png'))
                     self.images.append(img)
