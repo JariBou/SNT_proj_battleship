@@ -195,11 +195,18 @@ class Battleship_1v1:
                                 (self.p1_board[b["row"]][b['column'] - 1] == 0 and
                                  self.p1_board[b["row"]][b['column'] + 1] == 0):
 
+                            new_boat_coord = []
+
                             self.p1_board[b_last["row"]][b_last['column'] - 1] = 1
                             self.p1_board[b_last["row"]][b_last['column'] + 1] = 1
                             self.p1_board[b["row"]][b['column'] - 1] = 1
                             self.p1_board[b["row"]][b['column'] + 1] = 1
                             self.last_clicked = None
+
+                            new_boat_coord.append([b_last["row"], b_last['column'] - 1])
+                            new_boat_coord.append([b_last["row"], b_last['column'] + 1])
+                            new_boat_coord.append([b["row"], b['column'] - 1])
+                            new_boat_coord.append([b["row"], b['column'] + 1])
 
                             for child in all_children(self.root, "Button"):
                                 b2 = child.grid_info()
@@ -207,6 +214,10 @@ class Battleship_1v1:
                                     b2["column"] == b["column"] - 1 or b2["column"] == b["column"] + 1) and \
                                         b2['row'] == b['row']:
                                     child.config(bg='black')
+
+                            new_boat_coord.sort()
+                            self.p1_boats.append(Boat(new_boat_coord, len(new_boat_coord)))
+                            print(new_boat_coord)
 
                             return
                         else:
@@ -237,19 +248,23 @@ class Battleship_1v1:
                             self.p1_board[b["row"] + 1][b['column']] = 1
                             self.last_clicked = None
 
-                            new_boat_coord.append([b_last["row"] - 1][b_last['column']])
-                            new_boat_coord.append([b_last["row"] + 1][b_last['column']])
-                            new_boat_coord.append([b_last["row"]][b_last['column'] - 1])
-                            new_boat_coord.append([b_last["row"]][b_last['column'] + 1])
+                            new_boat_coord.append([b_last["row"] - 1, b_last['column']])
+                            new_boat_coord.append([b_last["row"] + 1, b_last['column']])
+                            new_boat_coord.append([b["row"] - 1, b['column']])
+                            new_boat_coord.append([b["row"] + 1, b['column']])
 
                             for child in all_children(self.root, "Button"):
                                 b2 = child.grid_info()
                                 if (b2["row"] == b_last["row"] - 1 or b2["row"] == b_last["row"] + 1 or
-                                    b2["row"] == b["row"] - 1 or b2["row"] == b["row"] + 1) and b2['column'] == b[
-                                    'column']:
+                                    b2["row"] == b["row"] - 1 or b2["row"] == b["row"] + 1) and b2['column'] == b['column']:
                                     child.config(bg='black')
 
                             ##TODO: Create a new Boat class
+                            # We do not have any dupes since I do not add the coordinates of the buttons clicked
+                            # new_boat_coord = remove_duplicates(new_boat_coord)
+                            new_boat_coord.sort()
+                            self.p1_boats.append(Boat(new_boat_coord, len(new_boat_coord)))
+                            print(new_boat_coord)
 
                             return
                         else:
@@ -385,6 +400,7 @@ class Battleship_1v1:
             if boat.is_dead():
                 print(f'You sank a {boat.get_type()} boat!')
                 self.p1_boats.remove(boat)
+
 
 class Boat:
 
