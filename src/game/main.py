@@ -70,7 +70,6 @@ class Battleship_1v1:
                                  self.path.joinpath('resources\\sounds\\touch\\sr-pelo-boom-sound-effect.mp3'),
                                  self.path.joinpath('resources\\sounds\\touch\\wazaaaa.mp3')]}
 
-        self.scale = {'width': screen_width/1920, 'height': screen_height/1920}
         for i in range(0, 30):
             self.root.rowconfigure(i, minsize=50)
             self.root.columnconfigure(i, minsize=50)
