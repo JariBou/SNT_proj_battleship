@@ -75,7 +75,8 @@ class Battleship_1v1:
                                 self.path.joinpath('resources\\sounds\\fail\\hotel-mario-non.mp3')],
                        'touch': [self.path.joinpath('resources\\sounds\\touch\\ha-got-emm-sound-effect.mp3'),
                                  self.path.joinpath('resources\\sounds\\touch\\sharingan-sound-effect.mp3'),
-                                 self.path.joinpath('resources\\sounds\\touch\\sr-pelo-boom-sound-effect.mp3')]}
+                                 self.path.joinpath('resources\\sounds\\touch\\sr-pelo-boom-sound-effect.mp3'),
+                                 self.path.joinpath('resources\\sounds\\touch\\wazaaaa.mp3')]}
 
         for i in range(0, 30):
             self.root.rowconfigure(i, minsize=50)
