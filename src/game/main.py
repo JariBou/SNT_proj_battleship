@@ -1,7 +1,9 @@
+import random
 import tkinter as tk
 from tkinter import messagebox
 from pathlib import Path
 from PIL import ImageTk, Image
+import pygame as pygame
 
 ##TODO: add adaptivity to support both boards
 ##TODO: continue Boat class
@@ -43,6 +45,12 @@ def get_img(path):
     return photo
 
 
+def play(path):
+    pygame.init()
+    pygame.mixer.music.load(path)  #Loading File Into Mixer
+    pygame.mixer.music.play()
+
+
 class Battleship_1v1:
 
     def __init__(self):
@@ -57,6 +65,15 @@ class Battleship_1v1:
         self.root.title(f"mainFrame - ALPHA - width: {round(self.width)}, height: {round(self.height)} "
                         f"- pos: ({round(x)},{round(y)})")
         self.path = Path(__file__).parent.parent
+
+        self.sounds = {'destroy': [self.path.joinpath('resources\\sounds\\destroy\\amaterasu-sound-effect.mp3'),
+                                   self.path.joinpath('resources\\sounds\\destroy\\yes-yes-yes-yes.mp3')],
+                       'fail': [self.path.joinpath('resources\\sounds\\fail\\bruh-sound-effect.mp3'),
+                                self.path.joinpath('resources\\sounds\\fail\\oof-sound-effect.mp3'),
+                                self.path.joinpath('resources\\sounds\\fail\\plouf.mp3')],
+                       'touch': [self.path.joinpath('resources\\sounds\\touch\\ha-got-emm-sound-effect.mp3'),
+                                 self.path.joinpath('resources\\sounds\\touch\\sharingan-sound-effect.mp3'),
+                                 self.path.joinpath('resources\\sounds\\touch\\sr-pelo-boom-sound-effect.mp3')]}
 
         for i in range(0, 30):
             self.root.rowconfigure(i, minsize=50)
@@ -77,6 +94,7 @@ class Battleship_1v1:
 
         self.atk_offset = 17
 
+        ##Attack Board--------------------------------------------------------
         tk.Label(self.root, bg="sandy brown", fg="white").grid(row=10, column=self.atk_offset - 1, sticky='nsew')
         for row in range(0, 10):
             tk.Label(self.root, text=str(row), bg="peach puff", fg="black").grid(row=row, column=self.atk_offset - 1, sticky='nsew')
@@ -85,9 +103,10 @@ class Battleship_1v1:
 
         for column in range(self.atk_offset, self.atk_offset+10):
             for row in range(0, 10):
-                a = tk.Button(self.root)  ##, bg="cyan"
+                a = tk.Button(self.root, state=tk.DISABLED)  ##, bg="cyan"
                 a["command"] = lambda a=a: self.attack(a)
                 a.grid(row=row, column=column, sticky='nsew')
+        ## --------------------------------------------------------------------
 
         self.rotate = tk.Button(self.root, bg="white", text="Rotate", command=self.rotate)
         self.rotate.grid(row=0, column=13, sticky='nsew')
@@ -107,8 +126,23 @@ class Battleship_1v1:
         self.console_out.grid(row=6, column=13, sticky='nsew')
         self.boat_list = tk.Button(self.root, bg="white", text="boat_interactions", command=self.boat_interactions)
         self.boat_list.grid(row=7, column=13, sticky='nsew')
+        self.change_player = tk.Button(self.root, bg="white", text="change_player", command=self.switch_player)
+        self.change_player.grid(row=8, column=13, sticky='nsew')
+        self.change_player.config(state=tk.DISABLED)
 
         self.p1_board = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            ]
+        self.p1_atk_board = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -132,7 +166,20 @@ class Battleship_1v1:
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
+        self.p2_atk_board = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            ]
         self.boards = [self.p1_board, self.p2_board]
+        self.atk_boards = [self.p1_atk_board, self.p2_atk_board]
 
         self.p1_boats = []
         self.p2_boats = []
@@ -142,6 +189,7 @@ class Battleship_1v1:
         self.boat = ""
         self.boat_state = "horizontal"
         self.count_3 = 0
+        self.turns = 0
 
         self.defaultbg = self.root.cget('bg')
         self.last_clicked = None
@@ -184,24 +232,17 @@ class Battleship_1v1:
                 ## and then check every turn if their coordinates are downed or not.
 
                 b = button.grid_info()
-                button.config(bg="black")
+                button.config(bg="orange")
                 if self.last_clicked is not None:
                     b_last = self.last_clicked.grid_info()
                     if abs(b_last["row"] - b["row"]) == 0 and abs(b_last["column"] - b["column"]) == 1:
-                        orientation = 'horizontal'
                         board[b_last["row"]][b_last['column']] = 1
                         board[b["row"]][b['column']] = 1
                         new_boat_coord = [[b_last["row"], b_last['column']], [b["row"], b['column']]]
                         new_boat_coord.sort()
                         boats.append(Boat(new_boat_coord, len(new_boat_coord)))
                         print(new_boat_coord)
-                        for child in all_children(self.root, 'Button'):
-                            c = child.grid_info()
-                            if [c['row'], c['column']] == new_boat_coord[0]:
-                                child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
-                            elif [c['row'], c['column']] == new_boat_coord[1]:
-                                child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
-                                break
+                        self.draw_boat_img(new_boat_coord)
                         self.last_clicked = None
                         self.size_2.config(state=tk.DISABLED)
                         self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
@@ -210,20 +251,13 @@ class Battleship_1v1:
                         # HORIZONTAL
 
                     elif abs(b_last["row"] - b["row"]) == 1 and abs(b_last["column"] - b["column"]) == 0:
-                        orientation = 'vertical'
                         board[b_last["row"]][b_last['column']] = 1
                         board[b["row"]][b['column']] = 1
                         new_boat_coord = [[b_last["row"], b_last['column']], [b["row"], b['column']]]
                         new_boat_coord.sort()
                         boats.append(Boat(new_boat_coord, len(new_boat_coord)))
                         print(new_boat_coord)
-                        for child in all_children(self.root, 'Button'):
-                            c = child.grid_info()
-                            if [c['row'], c['column']] == new_boat_coord[0]:
-                                child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
-                            elif [c['row'], c['column']] == new_boat_coord[1]:
-                                child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
-                                break
+                        self.draw_boat_img(new_boat_coord)
                         self.last_clicked = None
                         self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
                         self.boat = ""
@@ -242,7 +276,7 @@ class Battleship_1v1:
                 ## and then check every turn if their coordinates are downed or not.
 
                 b = button.grid_info()
-                button.config(bg="black")
+                button.config(bg="orange")
                 if self.last_clicked is not None:
                     b_last = self.last_clicked.grid_info()
                     if abs(b_last["row"] - b["row"]) == 0 and abs(b_last["column"] - b["column"]) == 1:
@@ -259,7 +293,6 @@ class Battleship_1v1:
                                  board[b["row"]][b['column'] + 1] == 0):
 
                             new_boat_coord = []
-                            orientation = 'horizontal'
 
                             board[b_last["row"]][b_last['column'] - 1] = 1
                             board[b_last["row"]][b_last['column'] + 1] = 1
@@ -272,18 +305,9 @@ class Battleship_1v1:
                             new_boat_coord.append([b["row"], b['column'] + 1])
                             new_boat_coord.sort()
 
-                            for child in all_children(self.root, "Button"):
-                                b2 = child.grid_info()
-                                if [b2['row'], b2['column']] == new_boat_coord[0]:
-                                    child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
-                                elif [b2['row'], b2['column']] == new_boat_coord[3]:
-                                    child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
-                                    break
-
                             boats.append(Boat(new_boat_coord, len(new_boat_coord)))
                             print(new_boat_coord)
-                            button.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
-                            self.last_clicked.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
+                            self.draw_boat_img(new_boat_coord)
                             self.last_clicked = None
                             self.size_4.config(state=tk.DISABLED)
                             self.size_4.config(state=tk.DISABLED, bg=self.defaultbg)
@@ -310,7 +334,6 @@ class Battleship_1v1:
                                  board[b["row"] + 1][b['column']] == 0):
 
                             new_boat_coord = []
-                            orientation = 'vertical'
 
                             board[b_last["row"] - 1][b_last['column']] = 1
                             board[b_last["row"] + 1][b_last['column']] = 1
@@ -323,20 +346,12 @@ class Battleship_1v1:
                             new_boat_coord.append([b["row"] + 1, b['column']])
                             new_boat_coord.sort()
 
-                            for child in all_children(self.root, "Button"):
-                                b2 = child.grid_info()
-                                if [b2['row'], b2['column']] == new_boat_coord[0]:
-                                    child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
-                                elif [b2['row'], b2['column']] == new_boat_coord[3]:
-                                    child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
-
                             ##TODO: Create a new Boat class
                             # We do not have any dupes since I do not add the coordinates of the buttons clicked
                             # new_boat_coord = remove_duplicates(new_boat_coord)
                             boats.append(Boat(new_boat_coord, len(new_boat_coord)))
                             print(new_boat_coord)
-                            button.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
-                            self.last_clicked.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
+                            self.draw_boat_img(new_boat_coord)
                             self.last_clicked = None
                             self.size_4.config(state=tk.DISABLED)
                             self.size_4.config(state=tk.DISABLED, bg=self.defaultbg)
@@ -364,11 +379,45 @@ class Battleship_1v1:
 
         else:
             print("Nope")
-        self.p2_board = board
+
+        self.boards[self.player] = board
+        self.boats[self.player] = boats
+
+        #self.p2_board = board
         if len(self.boats[self.player]) == 5:
             print("Suka")
+            #winsound.Playsound(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'), winsound.SND_FILENAME)
+            #f = mp3play.load(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'))
+            play(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'))
+            ans = messagebox.askquestion(title='Are you sure about that?', message="Play again?")
+
+            self.player = 1 if self.player == 0 else 0
+            self.turns += 1
+            if self.turns == 2:
+
+                for child in all_children(self.root, 'Button'):
+                    c = child.grid_info()
+                    if c['row'] < 10 and c['column'] < 10:
+                        child["image"] = ''
+                        child.config(command=None)
+                    if c['row'] < 10 and c['column'] > 15:
+                        child.config(command=lambda child=child: self.attack(child), state=tk.NORMAL)
+
+                for boat in self.boats[self.player]:
+                    self.draw_boat_img(boat.get_coordinates())
+            else:
+                self.count_3 = 0
+                for child in all_children(self.root, 'Button'):
+                    c = child.grid_info()
+                    if c['row'] < 10 and c['column'] < 10:
+                        child["image"] = ''
+                self.size_2.config(state=tk.NORMAL)
+                self.size_3.config(state=tk.NORMAL)
+                self.size_4.config(state=tk.NORMAL)
+                self.size_5.config(state=tk.NORMAL)
 
     def can_place(self, size, button):
+        board = self.boards[self.player]
         ## Pour les bateaux pairs, laisser choisir les deux carres centraux au joueur puis fill le reste TMTC pd bosse un peu
         ## ET si l'player peut pas beh tu restart donc pas besoin de bouton turn, en gros reset la rota a chaque bateau DUCON
         b = button.grid_info()
@@ -378,19 +427,19 @@ class Battleship_1v1:
         if size == 2:
             arm = 0
         elif size == 4:
-            return self.p1_board[b["row"]][b["column"]] == 0
+            return board[b["row"]][b["column"]] == 0
         else:
             arm = (size - 1) // 2 if size % 2 == 1 else size // 2
-        if self.p1_board[b["row"]][b["column"]] == 1:
+        if board[b["row"]][b["column"]] == 1:
             return False
         if self.boat_state == "horizontal":
             for j in range(1, arm + 1):
                 try:
-                    if b["column"] - j < 0 or b["column"] + j > len(self.p1_board[0]):
+                    if b["column"] - j < 0 or b["column"] + j > len(board[0]):
                         return False
-                    elif self.p1_board[b["row"]][b["column"] - j] == 1:
+                    elif board[b["row"]][b["column"] - j] == 1:
                         return False
-                    elif self.p1_board[b["row"]][b["column"] + j] == 1:
+                    elif board[b["row"]][b["column"] + j] == 1:
                         return False
                 except IndexError:
                     print("out of bounds")
@@ -399,11 +448,11 @@ class Battleship_1v1:
         else:
             for j in range(1, round(arm + 1)):
                 try:
-                    if b["row"] - j < 0 or b["row"] + j > len(self.p1_board[0]):
+                    if b["row"] - j < 0 or b["row"] + j > len(board[0]):
                         return False
-                    elif self.p1_board[b["row"] - j][b["column"]] == 1:
+                    elif board[b["row"] - j][b["column"]] == 1:
                         return False
-                    elif self.p1_board[b["row"] + j][b["column"]] == 1:
+                    elif board[b["row"] + j][b["column"]] == 1:
                         return False
                 except IndexError:
                     print("out of bounds")
@@ -411,6 +460,8 @@ class Battleship_1v1:
             return True
 
     def draw_boat(self, arm_size, button):
+        board = self.boards[self.player]
+        boats = self.boats[self.player]
         """ !USE ONLY WITH NON EVEN NUMBERS!
         :param arm_size: Size of the boat -1 and divided by 2
         :param button: button clicked
@@ -418,38 +469,34 @@ class Battleship_1v1:
         arm_size = 2 if arm_size == 1 else arm_size
         b = button.grid_info()
         boat_coordinates = [[b['row'], b['column']]]
-        self.p1_board[b["row"]][b['column']] = 1
+        board[b["row"]][b['column']] = 1
         if self.boat_state == "horizontal":
             for child in all_children(self.root, "Button"):
                 info = child.grid_info()
                 for j in range(1, arm_size):
                     if info['row'] == b["row"] and info['column'] == b["column"] - j:
-                        #child.config(bg="black")
-                        self.p1_board[b["row"]][b['column'] - j] = 1
+                        board[b["row"]][b['column'] - j] = 1
                         boat_coordinates.append([b["row"], b['column'] - j])
                     if info['row'] == b["row"] and info['column'] == b["column"] + j:
-                        #child.config(bg="black")
-                        self.p1_board[b["row"]][b['column'] + j] = 1
+                        board[b["row"]][b['column'] + j] = 1
                         boat_coordinates.append([b["row"], b['column'] + j])
         elif self.boat_state == "vertical":
             for child in all_children(self.root, "Button"):
                 info = child.grid_info()
                 for j in range(1, arm_size):
                     if info['row'] == b["row"] - j and info['column'] == b["column"]:
-                        #child.config(bg="black")
-                        self.p1_board[b["row"] - j][b['column']] = 1
+                        board[b["row"] - j][b['column']] = 1
                         boat_coordinates.append([b["row"] - j, b['column']])
                     if info['row'] == b["row"] + j and info['column'] == b["column"]:
-                        #child.config(bg="black")
-                        self.p1_board[b["row"] + j][b['column']] = 1
+                        board[b["row"] + j][b['column']] = 1
                         boat_coordinates.append([b["row"] + j, b['column']])
-        #img = get_img(self.path.joinpath(f'resources\\images\\{self.boat_state}\\center.png'))
-        #elf.images.append(img)
-        #button.config(image=img)
         boat_coordinates.sort()
+        boat_coordinates = remove_duplicates(boat_coordinates)
         self.draw_boat_img(boat_coordinates)
-        self.p1_boats.append(Boat(boat_coordinates, len(boat_coordinates)))
+        boats.append(Boat(boat_coordinates, len(boat_coordinates)))
         print(boat_coordinates)
+        self.boards[self.player] = board
+        self.boats[self.player] = boats
 
     def draw_boat_img(self, coordinates):
         boat_size = len(coordinates)
@@ -459,13 +506,23 @@ class Battleship_1v1:
             c = child.grid_info()
             if [c['row'], c['column']] == coordinates[part]:
                 if part == 0:
-                    child.config(image=self.images_root.get(orientation).get('first'))
+                    child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
                 elif part == boat_size - 1:
-                    child.config(image=self.images_root.get(orientation).get('last'))
+                    child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
                     break
                 else:
-                    child.config(image=self.images_root.get(orientation).get('center'))
+                    child.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
                 part += 1
+
+    def draw_attacks(self):
+        board = self.atk_boards[self.player]
+        for child in all_children(self.root, 'Button'):
+            c = child.grid_info()
+            if c['column'] >= self.atk_offset:
+                if board[c['row']][c['column'] - self.atk_offset] == 1:
+                    child.config(image=self.images_root.get('touched'))
+                elif board[c['row']][c['column'] - self.atk_offset] == -1:
+                    child.config(image=self.images_root.get('fail'))
 
     def size(self, button, size):
         self.boat = size
@@ -476,32 +533,71 @@ class Battleship_1v1:
         button.config(bg="green")
 
     def print_console(self):
-        for k in self.p1_board:
+        for k in self.boards[self.player]:
             print(str(k))
 
     def boat_interactions(self):
-        print(self.p1_boats)
-        for boat in self.p1_boats:
+        print(self.boats[self.player])
+        for boat in self.boats[self.player]:
             print(boat.state)
 
     def attack(self, button):
+        other_player_board = self.boards[abs(self.player - 1)]
+        other_player_boats = self.boats[abs(self.player - 1)]
+        curr_player_atk_board = self.atk_boards[self.player]
+
         b = button.grid_info()
-        if self.p2_board[b['row']][b['column'] - self.atk_offset] == 1:
-            for boat in self.p1_boats:
+        if other_player_board[b['row']][b['column'] - self.atk_offset] == 1:
+            for boat in other_player_boats:
                 coords = boat.get_coordinates()
                 for xy in coords:
                     if xy == [b['row'], b['column'] - self.atk_offset]:
                         boat.set_state(coords.index(xy), 0)
                         button.config(image=self.images_root.get('touched'))
+                        curr_player_atk_board[b['row']][b['column'] - self.atk_offset] = 1
+                        if boat.is_dead():
+                            play(self.sounds.get('destroy')[random.randint(0, len(self.sounds.get('destroy')) - 1)])
+                            tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat.get_type()} boat')
+                        else:
+                            play(self.sounds.get('touch')[random.randint(0, len(self.sounds.get('touch')) - 1)])
         else:
+            play(self.sounds.get('fail')[random.randint(0, len(self.sounds.get('fail')) - 1)])
             button.config(image=self.images_root.get('missed'))
+            curr_player_atk_board[b['row']][b['column'] - self.atk_offset] = -1
         self.end_turn()
 
     def end_turn(self):
-        for boat in self.p1_boats:
+        for child in all_children(self.root, 'Button'):
+            c = child.grid_info()
+            if c['row'] < 10 and c['column'] > 15:
+                child.config(command='')
+        boats = self.boats[self.player]
+        for boat in boats:
             if boat.is_dead():
-                tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat.get_type()} boat')
-                self.p1_boats.remove(boat)
+                boats.remove(boat)
+        self.boats[self.player] = boats
+        self.change_player.config(state=tk.NORMAL)
+
+    def remove_all_images(self):
+        for child in all_children(self.root, 'Button'):
+            child["image"] = ''
+
+    def switch_player(self):
+        self.change_player.config(text="Confirm Change", command=self.confirm_change)
+        self.remove_all_images()
+        self.player = 1 if self.player == 0 else 0
+        self.turns += 1
+
+    def confirm_change(self):
+        self.change_player.config(text="Change Player", command=self.switch_player)
+        self.change_player.config(state=tk.DISABLED)
+        self.draw_attacks()
+        for boat in self.boats[self.player]:
+            self.draw_boat_img(boat.get_coordinates())
+        for child in all_children(self.root, 'Button'):
+            c = child.grid_info()
+            if c['row'] < 10 and c['column'] > 15:
+                child.config(command=lambda child=child: self.attack(child))
 
 
 class Boat:
