@@ -244,9 +244,10 @@ class Battleship_1v1:
                         board[b["row"]][b['column']] = 1
                         new_boat_coord = [[b_last["row"], b_last['column']], [b["row"], b['column']]]
                         new_boat_coord.sort()
-                        boats.append(Boat(new_boat_coord, len(new_boat_coord)))
+                        new_boat = Boat(new_boat_coord, len(new_boat_coord))
+                        boats.append(new_boat)
                         print(new_boat_coord)
-                        self.draw_boat_img(new_boat_coord)
+                        self.draw_boat_img(new_boat)
                         self.last_clicked = None
                         self.size_2.config(state=tk.DISABLED)
                         self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
@@ -259,9 +260,10 @@ class Battleship_1v1:
                         board[b["row"]][b['column']] = 1
                         new_boat_coord = [[b_last["row"], b_last['column']], [b["row"], b['column']]]
                         new_boat_coord.sort()
-                        boats.append(Boat(new_boat_coord, len(new_boat_coord)))
+                        new_boat = Boat(new_boat_coord, len(new_boat_coord))
+                        boats.append(new_boat)
                         print(new_boat_coord)
-                        self.draw_boat_img(new_boat_coord)
+                        self.draw_boat_img(new_boat)
                         self.last_clicked = None
                         self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
                         self.boat = ""
@@ -309,9 +311,10 @@ class Battleship_1v1:
                             new_boat_coord.append([b["row"], b['column'] + 1])
                             new_boat_coord.sort()
 
-                            boats.append(Boat(new_boat_coord, len(new_boat_coord)))
+                            new_boat = Boat(new_boat_coord, len(new_boat_coord))
+                            boats.append(new_boat)
                             print(new_boat_coord)
-                            self.draw_boat_img(new_boat_coord)
+                            self.draw_boat_img(new_boat)
                             self.last_clicked = None
                             self.size_4.config(state=tk.DISABLED)
                             self.size_4.config(state=tk.DISABLED, bg=self.defaultbg)
@@ -353,9 +356,10 @@ class Battleship_1v1:
                             ##TODO: Create a new Boat class
                             # We do not have any dupes since I do not add the coordinates of the buttons clicked
                             # new_boat_coord = remove_duplicates(new_boat_coord)
-                            boats.append(Boat(new_boat_coord, len(new_boat_coord)))
+                            new_boat = Boat(new_boat_coord, len(new_boat_coord))
+                            boats.append(new_boat)
                             print(new_boat_coord)
-                            self.draw_boat_img(new_boat_coord)
+                            self.draw_boat_img(new_boat)
                             self.last_clicked = None
                             self.size_4.config(state=tk.DISABLED)
                             self.size_4.config(state=tk.DISABLED, bg=self.defaultbg)
@@ -399,7 +403,7 @@ class Battleship_1v1:
                             child["image"] = ''
                             child.config(command='')
                     for boat in self.boats[self.player]:
-                        self.draw_boat_img(boat.get_coordinates())
+                        self.draw_boat_img(boat)
             else:
                 self.remove_all_images()
                 self.count_3 = 0
@@ -496,26 +500,38 @@ class Battleship_1v1:
                         boat_coordinates.append([b["row"] + j, b['column']])
         boat_coordinates.sort()
         boat_coordinates = remove_duplicates(boat_coordinates)
-        self.draw_boat_img(boat_coordinates)
-        boats.append(Boat(boat_coordinates, len(boat_coordinates)))
+        new_boat = Boat(boat_coordinates, len(boat_coordinates))
+        boats.append(new_boat)
         print(boat_coordinates)
+        self.draw_boat_img(new_boat)
         self.boards[self.player] = board
         self.boats[self.player] = boats
 
-    def draw_boat_img(self, coordinates):
-        boat_size = len(coordinates)
+    def draw_boat_img(self, boat):
+        coordinates = boat.get_coordinates()
+        boat_size = len(boat.get_coordinates())
         orientation = "vertical" if coordinates[0][1] == coordinates[1][1] else 'horizontal'
         part = 0
+        boat_state = boat.state
         for child in all_children(self.root, 'Button'):
             c = child.grid_info()
             if [c['row'], c['column']] == coordinates[part]:
                 if part == 0:
-                    child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
+                    if boat_state[part] == 1:
+                        child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
+                    else:
+                        pass  # Draw touched texture
                 elif part == boat_size - 1:
-                    child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
+                    if boat_state[part] == 1:
+                        child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
+                    else:
+                        pass  # Draw touched texture
                     break
                 else:
-                    child.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
+                    if boat_state[part] == 1:
+                        child.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
+                    else:
+                        pass  # Draw touched texture
                 part += 1
 
     def draw_attacks(self):
@@ -599,21 +615,11 @@ class Battleship_1v1:
         self.change_player.config(text="Change Player", command=self.switch_player, state=tk.DISABLED, bg=self.defaultbg)
         self.draw_attacks()
         for boat in self.boats[self.player]:
-            self.draw_boat_img(boat.get_coordinates())
+            self.draw_boat_img(boat)
         for child in all_children(self.root, 'Button'):
             c = child.grid_info()
             if c['row'] < 10 and c['column'] > 15:
                 child.config(command=lambda child=child: self.attack(child), state=tk.NORMAL)
-
-        board = self.atk_boards[abs(self.player - 1)]
-        for child in all_children(self.root, 'Button'):
-            c = child.grid_info()
-            if c['column'] < 10:
-                if board[c['row']][c['column']] == 1:
-                    child.config(image=self.images_root.get('touched'))
-                elif board[c['row']][c['column']] == -1:
-                    child.config(image=self.images_root.get('missed'))
-
         if self.turns < 2:
             self.count_3 = 0
             self.size_2.config(state=tk.NORMAL)
