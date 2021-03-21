@@ -43,6 +43,14 @@ def play(path):
     pygame.mixer.music.play()
 
 
+def get_img(path):
+    """ resources\\images\\XXX """
+    img = Image.open(path)
+    new_img = img.resize((44, 44))
+    photo = ImageTk.PhotoImage(new_img)
+    return photo
+
+
 class Battleship_1v1:
 
     def __init__(self):
@@ -190,14 +198,14 @@ class Battleship_1v1:
         self.defaultbg = self.root.cget('bg')
         self.last_clicked = None
 
-        self.images_root = {'touched': self.get_img(self.path.joinpath('resources\\images\\touched.png')),
-                            'missed': self.get_img(self.path.joinpath('resources\\images\\missed.png'))}
-        self.images_horizontal = {'center': self.get_img(self.path.joinpath('resources\\images\\horizontal\\center.png')),
-                                  'first': self.get_img(self.path.joinpath('resources\\images\\horizontal\\first.png')),
-                                  'last': self.get_img(self.path.joinpath('resources\\images\\horizontal\\last.png'))}
-        self.images_vertical = {'center': self.get_img(self.path.joinpath('resources\\images\\vertical\\center.png')),
-                                'first': self.get_img(self.path.joinpath('resources\\images\\vertical\\first.png')),
-                                'last': self.get_img(self.path.joinpath('resources\\images\\vertical\\last.png'))}
+        self.images_root = {'touched': get_img(self.path.joinpath('resources\\images\\touched.png')),
+                            'missed': get_img(self.path.joinpath('resources\\images\\missed.png'))}
+        self.images_horizontal = {'center': get_img(self.path.joinpath('resources\\images\\horizontal\\center.png')),
+                                  'first': get_img(self.path.joinpath('resources\\images\\horizontal\\first.png')),
+                                  'last': get_img(self.path.joinpath('resources\\images\\horizontal\\last.png'))}
+        self.images_vertical = {'center': get_img(self.path.joinpath('resources\\images\\vertical\\center.png')),
+                                'first': get_img(self.path.joinpath('resources\\images\\vertical\\first.png')),
+                                'last': get_img(self.path.joinpath('resources\\images\\vertical\\last.png'))}
         self.images_root['horizontal'] = self.images_horizontal
         self.images_root['vertical'] = self.images_vertical
 
@@ -602,13 +610,6 @@ class Battleship_1v1:
             self.size_3.config(state=tk.NORMAL)
             self.size_4.config(state=tk.NORMAL)
             self.size_5.config(state=tk.NORMAL)
-
-    def get_img(self, path):
-        """ resources\\images\\XXX """
-        img = Image.open(path)
-        new_img = img.resize((44, 44))
-        photo = ImageTk.PhotoImage(new_img)
-        return photo
 
 
 class Boat:
