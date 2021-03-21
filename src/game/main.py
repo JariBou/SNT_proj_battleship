@@ -604,6 +604,16 @@ class Battleship_1v1:
             c = child.grid_info()
             if c['row'] < 10 and c['column'] > 15:
                 child.config(command=lambda child=child: self.attack(child), state=tk.NORMAL)
+
+        board = self.atk_boards[abs(self.player - 1)]
+        for child in all_children(self.root, 'Button'):
+            c = child.grid_info()
+            if c['column'] < 10:
+                if board[c['row']][c['column']] == 1:
+                    child.config(image=self.images_root.get('touched'))
+                elif board[c['row']][c['column']] == -1:
+                    child.config(image=self.images_root.get('missed'))
+
         if self.turns < 2:
             self.count_3 = 0
             self.size_2.config(state=tk.NORMAL)
