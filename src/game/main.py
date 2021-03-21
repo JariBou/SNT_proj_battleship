@@ -380,7 +380,6 @@ class Battleship_1v1:
                         return
 
                 self.last_clicked = button if self.last_clicked is None else self.last_clicked
-                pass
 
             else:
                 print('Please select a Ship size, sanque you Dankeusheun')
@@ -586,6 +585,7 @@ class Battleship_1v1:
             button.config(image=self.images_root.get('missed'))
             curr_player_atk_board[b['row']][b['column'] - self.atk_offset] = -1
         self.atk_boards[self.player] = curr_player_atk_board
+        self.boats[abs(self.player - 1)] = other_player_boats
         self.end_turn()
 
     def end_turn(self):
