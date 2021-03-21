@@ -52,6 +52,12 @@ def get_img(path):
     return photo
 
 
+def about():
+    """ Used to display an about messageBox """
+    messagebox.showinfo(title="About", message="Made by: LeTiramissu & Jari\n "
+                                               "Version: Alpha V1.2")
+
+
 class Battleship_1v1:
 
     def __init__(self):
@@ -68,6 +74,12 @@ class Battleship_1v1:
         myappid = 'mjcorp.battleship.alphav1.2'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.root.iconbitmap(default=self.path.joinpath('resources\\images\\taskbar.ico'))
+
+        menubar = tk.Menu(self.root)
+        self.root.config(menu=menubar)
+        diffmenu = tk.Menu(menubar, tearoff=0)
+        menubar.add_command(label="Help")  ##TODO: create help window with rules
+        menubar.add_command(label="About", command=about)
 
         self.sounds = {'destroy': [self.path.joinpath('resources\\sounds\\destroy\\amaterasu-sound-effect.mp3'),
                                    self.path.joinpath('resources\\sounds\\destroy\\yes-yes-yes-yes.mp3')],
