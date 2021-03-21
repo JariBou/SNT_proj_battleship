@@ -70,7 +70,8 @@ class Battleship_1v1:
                                    self.path.joinpath('resources\\sounds\\destroy\\yes-yes-yes-yes.mp3')],
                        'fail': [self.path.joinpath('resources\\sounds\\fail\\bruh-sound-effect.mp3'),
                                 self.path.joinpath('resources\\sounds\\fail\\oof-sound-effect.mp3'),
-                                self.path.joinpath('resources\\sounds\\fail\\plouf.mp3')],
+                                self.path.joinpath('resources\\sounds\\fail\\plouf.mp3'),
+                                self.path.joinpath('resources\\sounds\\fail\\ah.mp3')],
                        'touch': [self.path.joinpath('resources\\sounds\\touch\\ha-got-emm-sound-effect.mp3'),
                                  self.path.joinpath('resources\\sounds\\touch\\sharingan-sound-effect.mp3'),
                                  self.path.joinpath('resources\\sounds\\touch\\sr-pelo-boom-sound-effect.mp3')]}
@@ -522,7 +523,7 @@ class Battleship_1v1:
                 if board[c['row']][c['column'] - self.atk_offset] == 1:
                     child.config(image=self.images_root.get('touched'))
                 elif board[c['row']][c['column'] - self.atk_offset] == -1:
-                    child.config(image=self.images_root.get('fail'))
+                    child.config(image=self.images_root.get('missed'))
 
     def size(self, button, size):
         self.boat = size
@@ -547,6 +548,8 @@ class Battleship_1v1:
         curr_player_atk_board = self.atk_boards[self.player]
 
         b = button.grid_info()
+        if self.atk_boards[self.player][b['row']][b['column'] - self.atk_offset] != 0:
+            return
         if other_player_board[b['row']][b['column'] - self.atk_offset] == 1:
             for boat in other_player_boats:
                 coords = boat.get_coordinates()
@@ -564,6 +567,7 @@ class Battleship_1v1:
             play(self.sounds.get('fail')[random.randint(0, len(self.sounds.get('fail')) - 1)])
             button.config(image=self.images_root.get('missed'))
             curr_player_atk_board[b['row']][b['column'] - self.atk_offset] = -1
+        self.atk_boards[self.player] = curr_player_atk_board
         self.end_turn()
 
     def end_turn(self):
