@@ -395,8 +395,7 @@ class Battleship_1v1:
             ans = messagebox.askquestion(title='Are you sure about that?', message="Dou you wish to keep this boat placement?")
             if ans == 'yes':
                 self.change_player.config(state=tk.NORMAL, bg='green')
-                if self.turns == 1\
-                        :
+                if self.turns == 1:
                     for child in all_children(self.root, 'Button'):
                         c = child.grid_info()
                         if c['row'] < 10 and c['column'] < 10:
