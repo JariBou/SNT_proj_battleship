@@ -1,3 +1,4 @@
+import ctypes
 import random
 import tkinter as tk
 from tkinter import messagebox
@@ -54,7 +55,8 @@ def get_img(path):
 class Battleship_1v1:
 
     def __init__(self):
-        self.root = tk.Tk("mainFrame - ALPHA - ")
+        self.root = tk.Tk()
+        self.root.title("Battleship - Alpha V1.2")
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
         self.width, self.height = screen_width / 1.25, screen_height / 1.25
@@ -62,9 +64,10 @@ class Battleship_1v1:
         x = (screen_width / 2) - (self.width / 2)
         y = (screen_height / 2) - (self.height / 2)
         self.root.geometry('%dx%d+%d+%d' % (self.width, self.height, x, y))
-        self.root.title(f"mainFrame - ALPHA - width: {round(self.width)}, height: {round(self.height)} "
-                        f"- pos: ({round(x)},{round(y)})")
         self.path = Path(__file__).parent.parent
+        myappid = 'mjcorp.battleship.alphav1.2'  # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        self.root.iconbitmap(default=self.path.joinpath('resources\\images\\taskbar.ico'))
 
         self.sounds = {'destroy': [self.path.joinpath('resources\\sounds\\destroy\\amaterasu-sound-effect.mp3'),
                                    self.path.joinpath('resources\\sounds\\destroy\\yes-yes-yes-yes.mp3')],
