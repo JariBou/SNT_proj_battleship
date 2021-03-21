@@ -181,6 +181,7 @@ class Battleship_1v1:
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
+
         self.boards = [self.p1_board, self.p2_board]
         self.atk_boards = [self.p1_atk_board, self.p2_atk_board]
 
@@ -392,28 +393,32 @@ class Battleship_1v1:
             #winsound.Playsound(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'), winsound.SND_FILENAME)
             #f = mp3play.load(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'))
             play(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'))
-            ans = messagebox.askquestion(title='Are you sure about that?', message="Play again?")
-
-            self.player = 1 if self.player == 0 else 0
-            self.turns += 1
-            if self.turns == 2:
-
-                for child in all_children(self.root, 'Button'):
-                    c = child.grid_info()
-                    if c['row'] < 10 and c['column'] < 10:
-                        child["image"] = ''
-                        child.config(command=None)
-                    if c['row'] < 10 and c['column'] > 15:
-                        child.config(command=lambda child=child: self.attack(child), state=tk.NORMAL)
-
-                for boat in self.boats[self.player]:
-                    self.draw_boat_img(boat.get_coordinates())
+            ans = messagebox.askquestion(title='Are you sure about that?', message="Dou you wish to keep this boat placement?")
+            if ans == 'yes':
+                self.change_player.config(state=tk.NORMAL, bg='green')
+                if self.turns == 2:
+                    for child in all_children(self.root, 'Button'):
+                        c = child.grid_info()
+                        if c['row'] < 10 and c['column'] < 10:
+                            child["image"] = ''
+                            child.config(command='')
+                    for boat in self.boats[self.player]:
+                        self.draw_boat_img(boat.get_coordinates())
             else:
+                self.remove_all_images()
                 self.count_3 = 0
-                for child in all_children(self.root, 'Button'):
-                    c = child.grid_info()
-                    if c['row'] < 10 and c['column'] < 10:
-                        child["image"] = ''
+                self.boards[self.player] = [
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                                            ]
                 self.size_2.config(state=tk.NORMAL)
                 self.size_3.config(state=tk.NORMAL)
                 self.size_4.config(state=tk.NORMAL)
@@ -582,7 +587,7 @@ class Battleship_1v1:
             if boat.is_dead():
                 boats.remove(boat)
         self.boats[self.player] = boats
-        self.change_player.config(state=tk.NORMAL)
+        self.change_player.config(state=tk.NORMAL, bg='green')
 
     def remove_all_images(self):
         for child in all_children(self.root, 'Button'):
@@ -595,15 +600,20 @@ class Battleship_1v1:
         self.turns += 1
 
     def confirm_change(self):
-        self.change_player.config(text="Change Player", command=self.switch_player)
-        self.change_player.config(state=tk.DISABLED)
+        self.change_player.config(text="Change Player", command=self.switch_player, state=tk.DISABLED, bg=self.defaultbg)
         self.draw_attacks()
         for boat in self.boats[self.player]:
             self.draw_boat_img(boat.get_coordinates())
         for child in all_children(self.root, 'Button'):
             c = child.grid_info()
             if c['row'] < 10 and c['column'] > 15:
-                child.config(command=lambda child=child: self.attack(child))
+                child.config(command=lambda child=child: self.attack(child), state=tk.NORMAL)
+        if self.turns < 2:
+            self.count_3 = 0
+            self.size_2.config(state=tk.NORMAL)
+            self.size_3.config(state=tk.NORMAL)
+            self.size_4.config(state=tk.NORMAL)
+            self.size_5.config(state=tk.NORMAL)
 
 
 class Boat:
