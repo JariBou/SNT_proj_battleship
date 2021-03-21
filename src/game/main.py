@@ -37,14 +37,6 @@ def remove_duplicates(List):
     return value
 
 
-def get_img(path):
-    """ resources\\images\\XXX """
-    img = Image.open(path)
-    new_img = img.resize((44, 44))
-    photo = ImageTk.PhotoImage(new_img)
-    return photo
-
-
 def play(path):
     pygame.init()
     pygame.mixer.music.load(path)  #Loading File Into Mixer
@@ -78,6 +70,7 @@ class Battleship_1v1:
                                  self.path.joinpath('resources\\sounds\\touch\\sr-pelo-boom-sound-effect.mp3'),
                                  self.path.joinpath('resources\\sounds\\touch\\wazaaaa.mp3')]}
 
+        self.scale = {'width': screen_width/1920, 'height': screen_height/1920}
         for i in range(0, 30):
             self.root.rowconfigure(i, minsize=50)
             self.root.columnconfigure(i, minsize=50)
@@ -198,14 +191,14 @@ class Battleship_1v1:
         self.defaultbg = self.root.cget('bg')
         self.last_clicked = None
 
-        self.images_root = {'touched': get_img(self.path.joinpath('resources\\images\\touched.png')),
-                            'missed': get_img(self.path.joinpath('resources\\images\\missed.png'))}
-        self.images_horizontal = {'center': get_img(self.path.joinpath('resources\\images\\horizontal\\center.png')),
-                                  'first': get_img(self.path.joinpath('resources\\images\\horizontal\\first.png')),
-                                  'last': get_img(self.path.joinpath('resources\\images\\horizontal\\last.png'))}
-        self.images_vertical = {'center': get_img(self.path.joinpath('resources\\images\\vertical\\center.png')),
-                                'first': get_img(self.path.joinpath('resources\\images\\vertical\\first.png')),
-                                'last': get_img(self.path.joinpath('resources\\images\\vertical\\last.png'))}
+        self.images_root = {'touched': self.get_img(self.path.joinpath('resources\\images\\touched.png')),
+                            'missed': self.get_img(self.path.joinpath('resources\\images\\missed.png'))}
+        self.images_horizontal = {'center': self.get_img(self.path.joinpath('resources\\images\\horizontal\\center.png')),
+                                  'first': self.get_img(self.path.joinpath('resources\\images\\horizontal\\first.png')),
+                                  'last': self.get_img(self.path.joinpath('resources\\images\\horizontal\\last.png'))}
+        self.images_vertical = {'center': self.get_img(self.path.joinpath('resources\\images\\vertical\\center.png')),
+                                'first': self.get_img(self.path.joinpath('resources\\images\\vertical\\first.png')),
+                                'last': self.get_img(self.path.joinpath('resources\\images\\vertical\\last.png'))}
         self.images_root['horizontal'] = self.images_horizontal
         self.images_root['vertical'] = self.images_vertical
 
@@ -383,15 +376,10 @@ class Battleship_1v1:
 
         else:
             print("Nope")
-
         self.boards[self.player] = board
         self.boats[self.player] = boats
-
-        #self.p2_board = board
         if len(self.boats[self.player]) == 5:
             print("Suka")
-            #winsound.Playsound(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'), winsound.SND_FILENAME)
-            #f = mp3play.load(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'))
             play(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'))
             ans = messagebox.askquestion(title='Are you sure about that?', message="Dou you wish to keep this boat placement?")
             if ans == 'yes':
@@ -614,6 +602,13 @@ class Battleship_1v1:
             self.size_3.config(state=tk.NORMAL)
             self.size_4.config(state=tk.NORMAL)
             self.size_5.config(state=tk.NORMAL)
+
+    def get_img(self, path):
+        """ resources\\images\\XXX """
+        img = Image.open(path)
+        new_img = img.resize((44, 44))
+        photo = ImageTk.PhotoImage(new_img)
+        return photo
 
 
 class Boat:
