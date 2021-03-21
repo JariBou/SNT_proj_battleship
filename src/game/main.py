@@ -57,7 +57,6 @@ class Battleship_1v1:
         self.root.title(f"mainFrame - ALPHA - width: {round(self.width)}, height: {round(self.height)} "
                         f"- pos: ({round(x)},{round(y)})")
         self.path = Path(__file__).parent.parent
-        self.images = []
 
         for i in range(0, 30):
             self.root.rowconfigure(i, minsize=50)
@@ -147,6 +146,17 @@ class Battleship_1v1:
         self.defaultbg = self.root.cget('bg')
         self.last_clicked = None
 
+        self.images_root = {'touched': get_img(self.path.joinpath('resources\\images\\touched.png')),
+                            'missed': get_img(self.path.joinpath('resources\\images\\missed.png'))}
+        self.images_horizontal = {'center': get_img(self.path.joinpath('resources\\images\\horizontal\\center.png')),
+                                  'first': get_img(self.path.joinpath('resources\\images\\horizontal\\first.png')),
+                                  'last': get_img(self.path.joinpath('resources\\images\\horizontal\\last.png'))}
+        self.images_vertical = {'center': get_img(self.path.joinpath('resources\\images\\vertical\\center.png')),
+                                'first': get_img(self.path.joinpath('resources\\images\\vertical\\first.png')),
+                                'last': get_img(self.path.joinpath('resources\\images\\vertical\\last.png'))}
+        self.images_root['horizontal'] = self.images_horizontal
+        self.images_root['vertical'] = self.images_vertical
+
         self.root.mainloop()
 
     def rotate(self):
@@ -188,13 +198,9 @@ class Battleship_1v1:
                         for child in all_children(self.root, 'Button'):
                             c = child.grid_info()
                             if [c['row'], c['column']] == new_boat_coord[0]:
-                                img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\first.png'))
-                                self.images.append(img)
-                                child.config(image=img, bg=self.defaultbg)
+                                child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
                             elif [c['row'], c['column']] == new_boat_coord[1]:
-                                img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\last.png'))
-                                self.images.append(img)
-                                child.config(image=img, bg=self.defaultbg)
+                                child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
                                 break
                         self.last_clicked = None
                         self.size_2.config(state=tk.DISABLED)
@@ -214,13 +220,9 @@ class Battleship_1v1:
                         for child in all_children(self.root, 'Button'):
                             c = child.grid_info()
                             if [c['row'], c['column']] == new_boat_coord[0]:
-                                img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\first.png'))
-                                self.images.append(img)
-                                child.config(image=img, bg=self.defaultbg)
+                                child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
                             elif [c['row'], c['column']] == new_boat_coord[1]:
-                                img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\last.png'))
-                                self.images.append(img)
-                                child.config(image=img, bg=self.defaultbg)
+                                child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
                                 break
                         self.last_clicked = None
                         self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
@@ -273,21 +275,15 @@ class Battleship_1v1:
                             for child in all_children(self.root, "Button"):
                                 b2 = child.grid_info()
                                 if [b2['row'], b2['column']] == new_boat_coord[0]:
-                                    img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\first.png'))
-                                    self.images.append(img)
-                                    child.config(image=img)
+                                    child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
                                 elif [b2['row'], b2['column']] == new_boat_coord[3]:
-                                    img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\last.png'))
-                                    self.images.append(img)
-                                    child.config(image=img)
+                                    child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
                                     break
 
                             boats.append(Boat(new_boat_coord, len(new_boat_coord)))
                             print(new_boat_coord)
-                            img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\center.png'))
-                            self.images.append(img)
-                            button.config(image=img, bg=self.defaultbg)
-                            self.last_clicked.config(image=img, bg=self.defaultbg)
+                            button.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
+                            self.last_clicked.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
                             self.last_clicked = None
                             self.size_4.config(state=tk.DISABLED)
                             self.size_4.config(state=tk.DISABLED, bg=self.defaultbg)
@@ -330,23 +326,17 @@ class Battleship_1v1:
                             for child in all_children(self.root, "Button"):
                                 b2 = child.grid_info()
                                 if [b2['row'], b2['column']] == new_boat_coord[0]:
-                                    img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\first.png'))
-                                    self.images.append(img)
-                                    child.config(image=img)
+                                    child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
                                 elif [b2['row'], b2['column']] == new_boat_coord[3]:
-                                    img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\last.png'))
-                                    self.images.append(img)
-                                    child.config(image=img)
+                                    child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
 
                             ##TODO: Create a new Boat class
                             # We do not have any dupes since I do not add the coordinates of the buttons clicked
                             # new_boat_coord = remove_duplicates(new_boat_coord)
                             boats.append(Boat(new_boat_coord, len(new_boat_coord)))
                             print(new_boat_coord)
-                            img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\center.png'))
-                            self.images.append(img)
-                            button.config(image=img, bg=self.defaultbg)
-                            self.last_clicked.config(image=img, bg=self.defaultbg)
+                            button.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
+                            self.last_clicked.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
                             self.last_clicked = None
                             self.size_4.config(state=tk.DISABLED)
                             self.size_4.config(state=tk.DISABLED, bg=self.defaultbg)
@@ -469,18 +459,12 @@ class Battleship_1v1:
             c = child.grid_info()
             if [c['row'], c['column']] == coordinates[part]:
                 if part == 0:
-                    img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\first.png'))
-                    self.images.append(img)
-                    child.config(image=img)
+                    child.config(image=self.images_root.get(orientation).get('first'))
                 elif part == boat_size - 1:
-                    img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\last.png'))
-                    self.images.append(img)
-                    child.config(image=img)
+                    child.config(image=self.images_root.get(orientation).get('last'))
                     break
                 else:
-                    img = get_img(self.path.joinpath(f'resources\\images\\{orientation}\\center.png'))
-                    self.images.append(img)
-                    child.config(image=img)
+                    child.config(image=self.images_root.get(orientation).get('center'))
                 part += 1
 
     def size(self, button, size):
@@ -508,32 +492,15 @@ class Battleship_1v1:
                 for xy in coords:
                     if xy == [b['row'], b['column'] - self.atk_offset]:
                         boat.set_state(coords.index(xy), 0)
-                        img = get_img(self.path.joinpath('resources\\images\\touched.png'))
-                        self.images.append(img)
-                        button.config(image=img)
+                        button.config(image=self.images_root.get('touched'))
         else:
-            img = get_img(self.path.joinpath('resources\\images\\missed.png'))
-            self.images.append(img)
-            button.config(image=img)
+            button.config(image=self.images_root.get('missed'))
         self.end_turn()
 
     def end_turn(self):
         for boat in self.p1_boats:
             if boat.is_dead():
-                if boat.size == "2":                # 2 tiles boat is a Destroyer // 3 tiles boats are Submarine and Cruiser#
-                    boat_type = 'Destroyer'                                       # 4 tiles boat is a Battleship // 5 tiles boat is a Carrier #
-                    tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat_type} boat')
-                elif boat.size == "3":
-                    boat_type = 'Cruiser/Submarine'
-                    tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat_type} boat')
-                elif boat.size == "4":
-                    boat_type = 'Battleship'
-                    tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat_type} boat')
-                elif boat.size == "5":
-                    boat_type = 'Carrier'
-                    tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat_type} boat')
-                print(f'You sank a {boat.get_type()} boat!')
-                print(boat.get_type())
+                tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat.get_type()} boat')
                 self.p1_boats.remove(boat)
 
 
@@ -551,7 +518,17 @@ class Boat:
         return not self.state.__contains__(1)
 
     def get_type(self):
-        return f"Type {self.size}"
+        if self.size == "2":  # 2 tiles boat is a Destroyer // 3 tiles boats are Submarine and Cruiser#
+            boat_type = 'Destroyer'  # 4 tiles boat is a Battleship // 5 tiles boat is a Carrier #
+        elif self.size == "3":
+            boat_type = 'Cruiser/Submarine'
+        elif self.size == "4":
+            boat_type = 'Battleship'
+        elif self.size == "5":
+            boat_type = 'Carrier'
+        else:
+            boat_type = "Error"
+        return boat_type
     
     def get_coordinates(self):
         return self.coordinates
