@@ -1,3 +1,5 @@
+## Code Cleaned Up##
+
 import sys as system
 import tkinter.font as font
 from random import Random

@@ -1,9 +1,9 @@
-from tkinter import messagebox
+## Code Cleaned Up##
 
 import sys as system
-
-from tkinter import *
 import tkinter.font as font
+from tkinter import *
+from tkinter import messagebox
 
 
 #####          STATIC METHODS          ####
