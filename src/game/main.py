@@ -6,6 +6,9 @@ from pathlib import Path
 from PIL import ImageTk, Image
 import pygame as pygame
 
+## TODO: code cleanup
+## TODO: add touched boats texture
+
 
 #####          STATIC METHODS          ####
 def all_children(wid, child_type):
@@ -519,7 +522,7 @@ class Battleship_1v1:
                     if info['row'] == b["row"] and info['column'] == b["column"] - j:
                         board[b["row"]][b['column'] - j] = 1
                         boat_coordinates.append([b["row"], b['column'] - j])
-                    if info['row'] == b["row"] and info['column'] == b["column"] + j:
+                    elif info['row'] == b["row"] and info['column'] == b["column"] + j:
                         board[b["row"]][b['column'] + j] = 1
                         boat_coordinates.append([b["row"], b['column'] + j])
         elif self.boat_state == "vertical":
@@ -529,7 +532,7 @@ class Battleship_1v1:
                     if info['row'] == b["row"] - j and info['column'] == b["column"]:
                         board[b["row"] - j][b['column']] = 1
                         boat_coordinates.append([b["row"] - j, b['column']])
-                    if info['row'] == b["row"] + j and info['column'] == b["column"]:
+                    elif info['row'] == b["row"] + j and info['column'] == b["column"]:
                         board[b["row"] + j][b['column']] = 1
                         boat_coordinates.append([b["row"] + j, b['column']])
         boat_coordinates.sort()
