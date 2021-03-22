@@ -49,7 +49,7 @@ class MorpionMulti:
         self.cursorList = self.baseCursorList
         self.Pcursor, self.Pcursor2 = "", ""
         self.cursor_window()
-        self.P1points, self.P2points, self.ties, self.pTurn, self.playerPlay = P1points, P2points, ties , pTurn, playerPlay
+        self.P1points, self.P2points, self.ties, self.pTurn, self.playerPlay = P1points, P2points, ties, pTurn, playerPlay
 
         ##TODO: Twice same window but check if not same cursor
         self.whooseTurn = 1  ##TODO: Make possible the switch of cursors
