@@ -1,6 +1,7 @@
 from pathlib import Path
 from tkinter import *
 import random as r
+from src.resources.utils.Constants import Constants as ct
 
 
 class Game:
