@@ -1,4 +1,5 @@
 from enum import Enum
+from PIL import Image, ImageTk
 
 
 class Constants(Enum):
@@ -31,3 +32,26 @@ class Constants(Enum):
             if item.winfo_children():
                 _list.extend(item.winfo_children())
         return _list if child_type == "all" else [child for child in _list if str(child.winfo_class()) == child_type]
+
+    @classmethod
+    def remove_duplicates(cls, List):
+        """ Removes dupes from a given List
+        :param List: List to remove dupes from
+        :return: Initial list without the duplicates
+        """
+        already_appeared = []
+        value = []
+        for e in List:
+            if e not in already_appeared:
+                already_appeared.append(e)
+                value.append(e)
+        return value
+
+    @classmethod
+    def get_img(cls, path, size=0):
+        """ resources\\images\\XXX """
+        img = Image.open(path)
+        if size != 0:
+            img = img.resize((size, size))
+        photo = ImageTk.PhotoImage(img)
+        return photo
