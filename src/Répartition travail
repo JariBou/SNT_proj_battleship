@@ -10,3 +10,4 @@ Tomé:
 - Code Cleanup
 - Ajouter le pendu et faire l'interface tkinter
 - Ajouter le jeu des lettres et faire l'interface tkinter
+- Ajouter Key_Listeners pour les racourcis in-game

@@ -5,22 +5,10 @@ import tkinter.font as font
 from tkinter import *
 from tkinter import messagebox
 
+from src.resources.utils.Constants import Constants as Ct
+
 
 #####          STATIC METHODS          ####
-def all_children(wid, child_type):
-    """ Used to return a list of all the elements on a parent
-
-    :param child_type: Type of the child to return, 'all' returns all types
-    :param wid: Window to be executed on
-    :return: List of elements on wid
-    """
-    _list = wid.winfo_children()
-    for item in _list:
-        if item.winfo_children():
-            _list.extend(item.winfo_children())
-    return _list if child_type == "all" else [child for child in _list if str(child.winfo_class()) == child_type]
-
-
 def turnHelp():
     """ Used to display a HelpMessageBox """
     messagebox.showinfo(title="Help", message="A different player starts at \n"
@@ -31,8 +19,6 @@ def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: Jari \n "
                                                "Version: Beta 2.3-2P")
-
-
 ####                                  ####
 
 
@@ -51,7 +37,6 @@ class MorpionMulti:
         self.cursor_window()
         self.P1points, self.P2points, self.ties, self.pTurn, self.playerPlay = P1points, P2points, ties, pTurn, playerPlay
 
-        ##TODO: Twice same window but check if not same cursor
         self.whooseTurn = 1  ##TODO: Make possible the switch of cursors
 
         self.playerPlay = "P1"
@@ -111,7 +96,7 @@ class MorpionMulti:
         else:
             self.currPlayerLabel.config(text="Current Player:  Player 2")
 
-        for labels in all_children(self.w, "Label"):
+        for labels in Ct.all_children(self.w, "Label"):
             labels.config(bg="lightgray")
             labels.config(bd=8, relief=RIDGE)
 
@@ -177,7 +162,7 @@ class MorpionMulti:
 
     def _paint(self):
         """ Paints all Buttons in Gray with a Blue Foreground """
-        for child in all_children(self.w, "Button"):
+        for child in Ct.all_children(self.w, "Button"):
             if str(child.winfo_class()) == "Button":
                 child.config(bg="gray", fg="blue")
 
@@ -220,7 +205,7 @@ class MorpionMulti:
                             good += 0.5
                         if good == 1:
                             o = 2
-                            for child in all_children(self.w, "Button"):
+                            for child in Ct.all_children(self.w, "Button"):
                                 info = child.grid_info()
                                 if info['row'] == k - o and info['column'] == column:
                                     child.config(bg=bg, fg=fg)
@@ -238,7 +223,7 @@ class MorpionMulti:
                             good += 0.5
                         if good == 1:
                             o = 2
-                            for child in all_children(self.w, "Button"):
+                            for child in Ct.all_children(self.w, "Button"):
                                 info = child.grid_info()
                                 if info['row'] == row and info['column'] == k - o:
                                     child.config(bg=bg, fg=fg)
