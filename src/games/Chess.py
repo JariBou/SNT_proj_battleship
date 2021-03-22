@@ -4,8 +4,18 @@ from abc import ABC, abstractmethod
 class Board:
 
     def __init__(self):
-        self.board = []
+        self.board = [
+                      [None, Knight('White', [1, 0]), None, None, None, None, Knight('White', [6, 0]), None],
+                      [Pawn('White', [i, 1]) for i in range(8)],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [Pawn('Black', [i, 6]) for i in range(8)],
+                      [None, Knight('Black', [1, 7]), None, None, None, None, Knight('Black', [6, 7]), None]
+                      ]
         ## Do a dynamic board where instead of using a binary system to know if a piece is there just move the pieces in that list?
+        ## Might be too hard tho....dk
 
 
 class Chess_piece(ABC):
@@ -24,7 +34,7 @@ class Chess_piece(ABC):
     def get_type(self):
         return self.type
 
-    @abstractmethod
+    @abstractmethod   ## Every subclass of this class will have to implement it
     def can_move_to(self, board, new_position):
         pass
 
