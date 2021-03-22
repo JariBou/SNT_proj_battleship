@@ -1,5 +1,4 @@
 from enum import Enum
-from PIL.ImagePath import Path
 
 
 class Constants(Enum):

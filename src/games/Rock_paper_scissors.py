@@ -7,20 +7,20 @@ import sys as system
 class Game:
 
     def __init__(self):
-        self.w = Tk()
-        self.w.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
-        w = 700
+        w = Tk()
+        w.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
+        ww = 700
         h = 500
         ## get screen width and height
-        ws = self.w.winfo_screenwidth()
-        hs = self.w.winfo_screenheight()
+        ws = w.winfo_screenwidth()
+        hs = w.winfo_screenheight()
         ## calculate x and y coordinates for the window to be opened at
-        x = (ws / 2) - (w / 2)
+        x = (ws / 2) - (ww / 2)
         y = (hs / 2) - (h / 2)
-        self.w.geometry('%dx%d+%d+%d' % (w, h, x, y))
-        self.w.title("Rock Paper Scissors Lizard Spock  -  Solo")
+        w.geometry('%dx%d+%d+%d' % (ww, h, x, y))
+        w.title("Rock Paper Scissors Lizard Spock  -  Solo")
 
-        self.result = Label(self.w, text='')
+        self.result = Label(w, text='')
         self.result.grid(row=1, column=1)
         path = Path(__file__).parent.parent
 
@@ -46,7 +46,7 @@ class Game:
 
         self.cpuWin = 0
         self.pWin = 0
-        self.w.grid_columnconfigure(4, minsize=100)
+        w.grid_columnconfigure(4, minsize=100)
         pierre = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\pierre.png"))
         papier = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\feuille.png"))
         ciseaux = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\ciseaux.png"))
@@ -61,7 +61,7 @@ class Game:
                     break
                 img = self.image_list[img_nb]
                 print(img_nb)
-                Button(self.w, image=img, command=lambda value=img_nb, image=img: self.choice(image, value)).grid(row=row, column=column)
+                Button(w, image=img, command=lambda value=img_nb, image=img: self.choice(image, value)).grid(row=row, column=column)
                 img_nb += 1
 
         text = Label(text="Pour jouer appuyez sur un bouton:")
@@ -73,7 +73,7 @@ class Game:
 
         resetButton = Button(text="Reset Game", command=self.resetG)
         resetButton.grid(row=3, column=6)
-        self.w.mainloop()
+        w.mainloop()
 
     def CPU(self, player):
         cpu = r.randint(0, 4)
