@@ -8,6 +8,7 @@ import pygame as pygame
 
 ## TODO: code cleanup
 ## TODO: add touched boats texture
+## TODO: add key listeners for keybindings to rotate and select ship size
 
 
 #####          STATIC METHODS          ####
@@ -415,9 +416,6 @@ class Battleship_1v1:
 
                 self.last_clicked = button if self.last_clicked is None else self.last_clicked
 
-            else:
-                print('Please select a Ship size, sanque you Dankeusheun')
-
         else:
             print("Nope")
         self.boards[self.player] = board
@@ -437,6 +435,7 @@ class Battleship_1v1:
                     for boat in self.boats[self.player]:
                         self.draw_boat_img(boat)
             else:
+                self.boats[self.player].clear()
                 self.remove_all_images()
                 self.count_3 = 0
                 self.boards[self.player] = [
@@ -467,6 +466,7 @@ class Battleship_1v1:
         ## ET si l'player peut pas beh tu restart donc pas besoin de bouton turn, en gros reset la rota a chaque bateau DUCON
         b = button.grid_info()
         if size == "":
+            print('Please select a Boat size')
             return True
         size = int(size)
         if size == 2:
