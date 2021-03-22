@@ -6,6 +6,8 @@ from pathlib import Path
 from PIL import ImageTk, Image
 import pygame as pygame
 
+from src.resources.utils.Constants import Constants as ct
+
 ## TODO: code cleanup
 ## TODO: add touched boats texture
 ## TODO: add key listeners for keybindings to rotate and select ship size
@@ -171,54 +173,10 @@ class Battleship_1v1:
         self.change_player.config(state=tk.DISABLED)
 
         ## Boards creation
-        self.p1_board = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            ]
-        self.p1_atk_board = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            ]
-        self.p2_board = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            ]
-        self.p2_atk_board = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            ]
+        self.p1_board = ct.new_board()
+        self.p1_atk_board = ct.new_board()
+        self.p2_board = ct.new_board()
+        self.p2_atk_board = ct.new_board()
 
         ## Lists to be able to switch between boards according to current player
         self.boards = [self.p1_board, self.p2_board]
@@ -438,18 +396,7 @@ class Battleship_1v1:
                 self.boats[self.player].clear()
                 self.remove_all_images()
                 self.count_3 = 0
-                self.boards[self.player] = [
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                                            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                                            ]
+                self.boards[self.player] = ct.new_board()
                 self.size_2.config(state=tk.NORMAL)
                 self.size_3.config(state=tk.NORMAL)
                 self.size_4.config(state=tk.NORMAL)
@@ -645,7 +592,7 @@ class Battleship_1v1:
         """ Called at every end of turn from the moment self.turns >= 2"""
         for child in all_children(self.root, 'Button'):
             c = child.grid_info()
-            if c['row'] < 10 and c['column'] > 15:
+            if c['row'] < 10 and c['column'] >= self.atk_offset:
                 child.config(command='')
         boats = self.boats[self.player]
         for boat in boats:
@@ -674,7 +621,7 @@ class Battleship_1v1:
             self.draw_boat_img(boat)
         for child in all_children(self.root, 'Button'):
             c = child.grid_info()
-            if c['row'] < 10 and c['column'] > 15:
+            if c['row'] < 10 and c['column'] >= self.atk_offset:
                 child.config(command=lambda child2=child: self.attack(child2), state=tk.NORMAL)
         if self.turns < 2:
             self.count_3 = 0
