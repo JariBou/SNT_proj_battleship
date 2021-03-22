@@ -1,10 +1,8 @@
-from random import Random
-from tkinter import messagebox
-
 import sys as system
-
-from tkinter import *
 import tkinter.font as font
+from random import Random
+from tkinter import *
+from tkinter import messagebox
 
 
 #####          STATIC METHODS          ####
@@ -41,7 +39,7 @@ class MorpionSolo:
     def __init__(self, Ppoints=0, CPUpoints=0, ties=0, whooseTurn=1, level="Noob", previous=None):
         """ class Initialization """
         try:
-            previous.destroy()
+            previous.destroy()   ## Destroy previous Game just to prevent overloading of memory because of callbacks
         except AttributeError:
             pass
         self.wChoose = Tk().destroy()  # Just so that PyCharms gives me a break
