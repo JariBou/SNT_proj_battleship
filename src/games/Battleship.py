@@ -424,7 +424,7 @@ class Battleship_1v1:
         elif size == 4:
             return board[b["row"]][b["column"]] == 0
         else:
-            arm = (size - 1) // 2 if size % 2 == 1 else size // 2
+            arm = (size - 1) // 2
         if board[b["row"]][b["column"]] == 1:
             return False
         if self.boat_state == "horizontal":
