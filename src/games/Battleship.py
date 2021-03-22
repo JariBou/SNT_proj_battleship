@@ -15,20 +15,6 @@ from src.resources.utils.Constants import Constants as Ct
 
 
 #####          STATIC METHODS          ####
-def remove_duplicates(List):
-    """ Removes dupes from a given List
-    :param List: List to remove dupes from
-    :return: Initial list without the duplicates
-    """
-    already_appeared = []
-    value = []
-    for e in List:
-        if e not in already_appeared:
-            already_appeared.append(e)
-            value.append(e)
-    return value
-
-
 def get_img(path):
     """ resources\\images\\XXX """
     img = Image.open(path)
@@ -472,7 +458,7 @@ class Battleship_1v1:
                         board[b["row"] + j][b['column']] = 1
                         boat_coordinates.append([b["row"] + j, b['column']])
         boat_coordinates.sort()
-        boat_coordinates = remove_duplicates(boat_coordinates)
+        boat_coordinates = Ct.remove_duplicates(boat_coordinates)
         new_boat = Boat(boat_coordinates, len(boat_coordinates))
         boats.append(new_boat)
         print(boat_coordinates)
