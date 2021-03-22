@@ -1,25 +1,35 @@
 from pathlib import Path
 from tkinter import *
 import random as r
-from src.resources.utils.Constants import Constants as ct
+import sys as system
 
 
 class Game:
 
     def __init__(self):
         self.w = Tk()
-        self.w.geometry("700x500")
-        self.w.title("Window")
+        self.w.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
+        w = 700
+        h = 500
+        ## get screen width and height
+        ws = self.w.winfo_screenwidth()
+        hs = self.w.winfo_screenheight()
+        ## calculate x and y coordinates for the window to be opened at
+        x = (ws / 2) - (w / 2)
+        y = (hs / 2) - (h / 2)
+        self.w.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        self.w.title("Rock Paper Scissors Lizard Spock  -  Solo")
+
         self.result = Label(self.w, text='')
         self.result.grid(row=1, column=1)
-        self.path = Path(__file__).parent.parent
+        path = Path(__file__).parent.parent
 
         humain = Label(text="Humain:")
         humain.grid(row=0, column=0)
         humain = Label(text="Machine:")
         humain.grid(row=0, column=2)
 
-        img4 = PhotoImage(file=self.path.joinpath("resources\\images\\rock_paper_scissors\\rien.png"))
+        img4 = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\rien.png"))
         self.rien = img4
         self.voidH = Label(image=img4)
         self.voidH.grid(row=2, column=0)
@@ -37,12 +47,12 @@ class Game:
         self.cpuWin = 0
         self.pWin = 0
         self.w.grid_columnconfigure(4, minsize=100)
-        self.pierre = PhotoImage(file=self.path.joinpath("resources\\images\\rock_paper_scissors\\pierre.png"))
-        self.papier = PhotoImage(file=self.path.joinpath("resources\\images\\rock_paper_scissors\\feuille.png"))
-        self.ciseaux = PhotoImage(file=self.path.joinpath("resources\\images\\rock_paper_scissors\\ciseaux.png"))
-        self.lezard = PhotoImage(file=self.path.joinpath("resources\\images\\rock_paper_scissors\\lezard.png"))
-        self.spockImg = PhotoImage(file=self.path.joinpath("resources\\images\\rock_paper_scissors\\spock.png"))
-        self.image_list = [self.pierre, self.papier, self.ciseaux, self.lezard, self.spockImg]
+        pierre = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\pierre.png"))
+        papier = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\feuille.png"))
+        ciseaux = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\ciseaux.png"))
+        lezard = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\lezard.png"))
+        spockImg = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\spock.png"))
+        self.image_list = [pierre, papier, ciseaux, lezard, spockImg]
 
         img_nb = 0
         for row in range(4, 6):
@@ -57,11 +67,11 @@ class Game:
         text = Label(text="Pour jouer appuyez sur un bouton:")
         text.grid(row=3, columnspan=3)
 
-        img3 = PhotoImage(file=self.path.joinpath("resources\\images\\rock_paper_scissors\\versus.gif"))
+        img3 = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\versus.gif"))
         versus = Label(image=img3)
         versus.grid(row=2, column=1)
 
-        resetButton = Button(text="Reset Game", command=self.resetC)
+        resetButton = Button(text="Reset Game", command=self.resetG)
         resetButton.grid(row=3, column=6)
         self.w.mainloop()
 
@@ -90,7 +100,7 @@ class Game:
         self.machineP.config(text=str(self.cpuWin))
         self.humainP.config(text=str(self.pWin))
 
-    def resetC(self):
+    def resetG(self):
         self.pWin = 0
         self.cpuWin = 0
         self.result.config(text="")

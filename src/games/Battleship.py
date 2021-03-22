@@ -5,8 +5,9 @@ from tkinter import messagebox
 from pathlib import Path
 from PIL import ImageTk, Image
 import pygame as pygame
+import sys as system
 
-from src.resources.utils.Constants import Constants as ct
+from src.resources.utils.Constants import Constants as Ct
 
 ## TODO: code cleanup
 ## TODO: add touched boats texture
@@ -65,6 +66,7 @@ class Battleship_1v1:
         ## Window creation
         self.root = tk.Tk()
         self.root.title("Battleship - Alpha V1.3")
+        self.root.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
         self.width, self.height = screen_width / 1.25, screen_height / 1.25
@@ -174,10 +176,10 @@ class Battleship_1v1:
         self.change_player.config(state=tk.DISABLED)
 
         ## Boards creation
-        self.p1_board = ct.new_board()
-        self.p1_atk_board = ct.new_board()
-        self.p2_board = ct.new_board()
-        self.p2_atk_board = ct.new_board()
+        self.p1_board = Ct.new_board()
+        self.p1_atk_board = Ct.new_board()
+        self.p2_board = Ct.new_board()
+        self.p2_atk_board = Ct.new_board()
 
         ## Lists to be able to switch between boards according to current player
         self.boards = [self.p1_board, self.p2_board]
@@ -397,7 +399,7 @@ class Battleship_1v1:
                 self.boats[self.player].clear()
                 self.remove_all_images()
                 self.count_3 = 0
-                self.boards[self.player] = ct.new_board()
+                self.boards[self.player] = Ct.new_board()
                 self.size_2.config(state=tk.NORMAL)
                 self.size_3.config(state=tk.NORMAL)
                 self.size_4.config(state=tk.NORMAL)
