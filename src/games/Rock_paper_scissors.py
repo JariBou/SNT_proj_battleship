@@ -1,3 +1,5 @@
+## Code Cleaned Up##
+
 from pathlib import Path
 from tkinter import *
 import random as r
