@@ -23,7 +23,7 @@ def all_children(wid, child_type):
 
 
 def remove_duplicates(List):
-    """ Removes dupes from lista given List
+    """ Removes dupes from a given List
     :param List: List to remove dupes from
     :return: Initial list without the duplicates
     """
@@ -44,6 +44,7 @@ def get_img(path):
     return photo
 
 
+# noinspection SpellCheckingInspection
 def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: LeTiramissu & Jari\n "
@@ -51,6 +52,7 @@ def about():
 ####                                  ####
 
 
+# noinspection SpellCheckingInspection
 class Battleship_1v1:
 
     def __init__(self):
@@ -72,7 +74,7 @@ class Battleship_1v1:
 
         ## Scale and test volume button creation
         w = tk.Scale(self.root, from_=0, to=100, orient=tk.HORIZONTAL, label="Change Volume")
-        w['command'] = lambda w=w: self.change_volume(w)
+        w['command'] = lambda w2=w: self.change_volume(w2)
         w.set(80)
         w.grid(row=9, column=13)
         self.volume = 0.8
@@ -82,7 +84,7 @@ class Battleship_1v1:
         ## Create a Menubar
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
-        diffmenu = tk.Menu(menubar, tearoff=0)
+        # diffmenu = tk.Menu(menubar, tearoff=0)
         menubar.add_command(label="Help")  ##TODO: create help window with rules
         menubar.add_command(label="About", command=about)
 
@@ -117,7 +119,7 @@ class Battleship_1v1:
         for column in range(0, 10):
             for row in range(0, 10):
                 a = tk.Button(self.root)
-                a["command"] = lambda a=a: self.clicked(a)
+                a["command"] = lambda a2=a: self.clicked(a2)
                 a.grid(row=row, column=column, sticky='nsew')
         ## --------------------------------------------------------------------
 
@@ -133,7 +135,7 @@ class Battleship_1v1:
         for column in range(self.atk_offset, self.atk_offset+10):
             for row in range(0, 10):
                 a = tk.Button(self.root, state=tk.DISABLED)  ##, bg="cyan"
-                a["command"] = lambda a=a: self.attack(a)
+                a["command"] = lambda a2=a: self.attack(a2)
                 a.grid(row=row, column=column, sticky='nsew')
         ## --------------------------------------------------------------------
 
@@ -670,7 +672,7 @@ class Battleship_1v1:
         for child in all_children(self.root, 'Button'):
             c = child.grid_info()
             if c['row'] < 10 and c['column'] > 15:
-                child.config(command=lambda child=child: self.attack(child), state=tk.NORMAL)
+                child.config(command=lambda child2=child: self.attack(child2), state=tk.NORMAL)
         if self.turns < 2:
             self.count_3 = 0
             self.size_2.config(state=tk.NORMAL)
@@ -701,7 +703,7 @@ class Boat:
 
         self.is_alive = True
         self.coordinates = coordinates
-        self.state = [1 for i in self.coordinates]
+        self.state = [1] * len(coordinates)
         self.size = str(size)
 
     def is_dead(self):
