@@ -43,7 +43,7 @@ class Pawn(Chess_piece):
 
     def __init__(self, color, position):
         super().__init__(color, position, 'Pawn')
-        ## Useless just for a representation of how it can move
+        ## Useless just for a representation of how it can move  {might be useful actually}
         self.move_pattern = [[self.position[0], self.position[1] + 1], [self.position[0] - 1, self.position[1] + 1],
                              [self.position[0] + 1, self.position[1] + 1]]
 
