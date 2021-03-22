@@ -15,20 +15,6 @@ from src.resources.utils.Constants import Constants as Ct
 
 
 #####          STATIC METHODS          ####
-def all_children(wid, child_type):
-    """ Used to return a list of all the elements on a parent
-
-    :param child_type: Type of the child to return, 'all' returns all types
-    :param wid: Window to be executed on
-    :return: List of elements on wid
-    """
-    _list = wid.winfo_children()
-    for item in _list:
-        if item.winfo_children():
-            _list.extend(item.winfo_children())
-    return _list if child_type == "all" else [child for child in _list if str(child.winfo_class()) == child_type]
-
-
 def remove_duplicates(List):
     """ Removes dupes from a given List
     :param List: List to remove dupes from
@@ -388,7 +374,7 @@ class Battleship_1v1:
             if ans == 'yes':
                 self.change_player.config(state=tk.NORMAL, bg='green')
                 if self.turns == 1:
-                    for child in all_children(self.root, 'Button'):
+                    for child in Ct.all_children(self.root, 'Button'):
                         c = child.grid_info()
                         if c['row'] < 10 and c['column'] < 10:
                             child["image"] = ''
@@ -466,7 +452,7 @@ class Battleship_1v1:
         boat_coordinates = [[b['row'], b['column']]]
         board[b["row"]][b['column']] = 1
         if self.boat_state == "horizontal":
-            for child in all_children(self.root, "Button"):
+            for child in Ct.all_children(self.root, "Button"):
                 info = child.grid_info()
                 for j in range(1, arm_size):
                     if info['row'] == b["row"] and info['column'] == b["column"] - j:
@@ -476,7 +462,7 @@ class Battleship_1v1:
                         board[b["row"]][b['column'] + j] = 1
                         boat_coordinates.append([b["row"], b['column'] + j])
         elif self.boat_state == "vertical":
-            for child in all_children(self.root, "Button"):
+            for child in Ct.all_children(self.root, "Button"):
                 info = child.grid_info()
                 for j in range(1, arm_size):
                     if info['row'] == b["row"] - j and info['column'] == b["column"]:
@@ -503,7 +489,7 @@ class Battleship_1v1:
         orientation = "vertical" if coordinates[0][1] == coordinates[1][1] else 'horizontal'
         part = 0
         boat_state = boat.state
-        for child in all_children(self.root, 'Button'):
+        for child in Ct.all_children(self.root, 'Button'):
             c = child.grid_info()
             if [c['row'], c['column']] == coordinates[part]:
                 if part == 0:
@@ -527,7 +513,7 @@ class Battleship_1v1:
     def draw_attacks(self):
         """Draws the attacks and attempts in the player's atk board {visual}"""
         board = self.atk_boards[self.player]
-        for child in all_children(self.root, 'Button'):
+        for child in Ct.all_children(self.root, 'Button'):
             c = child.grid_info()
             if c['column'] >= self.atk_offset:
                 if board[c['row']][c['column'] - self.atk_offset] == 1:
@@ -541,7 +527,7 @@ class Battleship_1v1:
         :param size: Size to next boat
         """
         self.boat = size
-        for child in all_children(self.root, "Button"):
+        for child in Ct.all_children(self.root, "Button"):
             info = child.grid_info()
             if info["column"] == 13:
                 child.config(bg="white")
@@ -593,7 +579,7 @@ class Battleship_1v1:
 
     def end_turn(self):
         """ Called at every end of turn from the moment self.turns >= 2"""
-        for child in all_children(self.root, 'Button'):
+        for child in Ct.all_children(self.root, 'Button'):
             c = child.grid_info()
             if c['row'] < 10 and c['column'] >= self.atk_offset:
                 child.config(command='')
@@ -606,7 +592,7 @@ class Battleship_1v1:
 
     def remove_all_images(self):
         """ Removes every image from every Button on the screen"""
-        for child in all_children(self.root, 'Button'):
+        for child in Ct.all_children(self.root, 'Button'):
             child["image"] = ''
 
     def switch_player(self):
@@ -622,7 +608,7 @@ class Battleship_1v1:
         self.draw_attacks()
         for boat in self.boats[self.player]:
             self.draw_boat_img(boat)
-        for child in all_children(self.root, 'Button'):
+        for child in Ct.all_children(self.root, 'Button'):
             c = child.grid_info()
             if c['row'] < 10 and c['column'] >= self.atk_offset:
                 child.config(command=lambda child2=child: self.attack(child2), state=tk.NORMAL)

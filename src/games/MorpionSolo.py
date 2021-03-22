@@ -6,22 +6,10 @@ from random import Random
 from tkinter import *
 from tkinter import messagebox
 
+from src.resources.utils.Constants import Constants as Ct
+
 
 #####          STATIC METHODS          ####
-def all_children(wid, child_type):
-    """ Used to return a list of all the elements on a parent
-
-    :param child_type: Type of the child to return, 'all' returns all types
-    :param wid: Window to be executed on
-    :return: List of elements on wid
-    """
-    _list = wid.winfo_children()
-    for item in _list:
-        if item.winfo_children():
-            _list.extend(item.winfo_children())
-    return _list if child_type == "all" else [child for child in _list if str(child.winfo_class()) == child_type]
-
-
 def difficultyHelp():
     """ Used to display a difficultyHelp in a messageBox """
     messagebox.showinfo(title="Help", message="Difficulty: \n"
@@ -104,7 +92,7 @@ class MorpionSolo:
         self.tiesLabel = Label(text=f"Number of Ties:  {self.ties}", fg="orange", font=customLabelFont)
         self.tiesLabel.grid(row=1, column=5, sticky='nsew')
 
-        for labels in all_children(self.w, "Label"):
+        for labels in Ct.all_children(self.w, "Label"):
             labels.config(bg="lightgray")
             labels.config(bd=8, relief=RIDGE)
 
@@ -183,7 +171,7 @@ class MorpionSolo:
 
     def _paint(self):
         """ Paints all Buttons in Gray with a Blue Foreground """
-        for child in all_children(self.w, "Button"):
+        for child in Ct.all_children(self.w, "Button"):
             child.config(bg="gray", fg="blue")
 
     def check_win(self, who, bg="green", fg="black"):
@@ -225,7 +213,7 @@ class MorpionSolo:
                             good += 0.5
                         if good == 1:
                             o = 2
-                            for child in all_children(self.w, "Button"):
+                            for child in Ct.dren(self.w, "Button"):
                                 info = child.grid_info()
                                 if info['row'] == k - o and info['column'] == column:
                                     child.config(bg=bg, fg=fg)
@@ -243,7 +231,7 @@ class MorpionSolo:
                             good += 0.5
                         if good == 1:
                             o = 2
-                            for child in all_children(self.w, "Button"):
+                            for child in Ct.all_children(self.w, "Button"):
                                 info = child.grid_info()
                                 if info['row'] == row and info['column'] == k - o:
                                     child.config(bg=bg, fg=fg)
@@ -298,7 +286,7 @@ class MorpionSolo:
         :param row: row of button
         :param column: column of button
         """
-        for child in all_children(self.w, "Button"):
+        for child in Ct.all_children(self.w, "Button"):
             info = child.grid_info()
             if info['row'] == row and info['column'] == column:
                 child.config(text=self.CPUcursor)
@@ -317,7 +305,7 @@ class MorpionSolo:
             if rowValue == row_value_target:
                 for aColumn in range(0, 3):
                     if self.board[aRow][aColumn] == 0:
-                        for child in all_children(self.w, "Button"):
+                        for child in Ct.all_children(self.w, "Button"):
                             info = child.grid_info()
                             if info['row'] == aRow and info['column'] == aColumn:
                                 child.config(text=self.CPUcursor)
@@ -331,7 +319,7 @@ class MorpionSolo:
             if rowValue == row_value_target:
                 for aRow in range(0, 3):
                     if self.board[aRow][aColumn] == 0:
-                        for child in all_children(self.w, "Button"):
+                        for child in Ct.all_children(self.w, "Button"):
                             info = child.grid_info()
                             if info['row'] == aRow and info['column'] == aColumn:
                                 child.config(text=self.CPUcursor)
@@ -349,7 +337,7 @@ class MorpionSolo:
             row = r.randint(0, 2)
             column = r.randint(0, 2)
             if self.board[row][column] == 0:
-                for child in all_children(self.w, "Button"):
+                for child in Ct.all_children(self.w, "Button"):
                     info = child.grid_info()
                     if info['row'] == row and info['column'] == column:
                         child.config(text=self.CPUcursor)
@@ -394,7 +382,7 @@ class MorpionSolo:
                     if rowValue == 2:
                         for aColumn in range(0, 3):
                             if self.board[aRow][aColumn] == 0:
-                                for child in all_children(self.w, "Button"):
+                                for child in Ct.all_children(self.w, "Button"):
                                     info = child.grid_info()
                                     if info['row'] == aRow and info['column'] == aColumn:
                                         child.config(text=self.CPUcursor)
@@ -408,7 +396,7 @@ class MorpionSolo:
                     if rowValue == 2:
                         for aRow in range(0, 3):
                             if self.board[aRow][aColumn] == 0:
-                                for child in all_children(self.w, "Button"):
+                                for child in Ct.all_children(self.w, "Button"):
                                     info = child.grid_info()
                                     if info['row'] == aRow and info['column'] == aColumn:
                                         child.config(text=self.CPUcursor)
@@ -416,7 +404,7 @@ class MorpionSolo:
                                         return
 
                 if self.board[row][column] == 0:
-                    for child in all_children(self.w, "Button"):
+                    for child in Ct.all_children(self.w, "Button"):
                         info = child.grid_info()
                         if info['row'] == row and info['column'] == column:
                             child.config(text=self.CPUcursor)
@@ -485,7 +473,7 @@ class MorpionSolo:
                     return
 
                 if self.board[row][column] == 0:
-                    for child in all_children(self.w, "Button"):
+                    for child in Ct.all_children(self.w, "Button"):
                         info = child.grid_info()
                         if info['row'] == row and info['column'] == column:
                             child.config(text=self.CPUcursor)
