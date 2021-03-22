@@ -639,7 +639,7 @@ class Battleship_1v1:
         self.end_turn()
 
     def end_turn(self):
-        """ Called at every end of turn if self.turns >= 2"""
+        """ Called at every end of turn from the moment self.turns >= 2"""
         for child in all_children(self.root, 'Button'):
             c = child.grid_info()
             if c['row'] < 10 and c['column'] > 15:
@@ -699,7 +699,8 @@ class Battleship_1v1:
 class Boat:
 
     def __init__(self, coordinates, size):
-        ## Coordinates like this: [ [x, y][1/0], [x, y][1/0], [x, y][1/0] ]
+        ## Coordinates like this: [ [x, y], [x, y], [x, y] ]
+        ## State like this:       [  1/0,    1/0,    1/0 ]
 
         self.is_alive = True
         self.coordinates = coordinates
