@@ -112,6 +112,7 @@ class Battleship_1v1:
         for i in range(0, 30):
             self.root.rowconfigure(i, minsize=50)
             self.root.columnconfigure(i, minsize=50)
+        self.root.columnconfigure(14, minsize=75)
 
         alpha = "abcdefghijklmnopqrstuvwxyz"
         ##Boat Board--------------------------------------------------------
@@ -661,17 +662,9 @@ class Boat:
         return not self.state.__contains__(1)
 
     def get_type(self):
-        if self.size == "2":  # 2 tiles boat is a Destroyer // 3 tiles boats are Submarine and Cruiser#
-            boat_type = 'Destroyer'  # 4 tiles boat is a Battleship // 5 tiles boat is a Carrier #
-        elif self.size == "3":
-            boat_type = 'Cruiser/Submarine'
-        elif self.size == "4":
-            boat_type = 'Battleship'
-        elif self.size == "5":
-            boat_type = 'Carrier'
-        else:
-            boat_type = "Error"
-        return boat_type
+        # 2 tiles boat is a Destroyer // 3 tiles boats are Submarine and Cruiser #
+        # 4 tiles boat is a Battleship // 5 tiles boat is a Carrier #
+        return ['Destroyer', 'Cruiser/Submarine', 'Battleship', 'Carrier'][int(self.size)-2]
     
     def get_coordinates(self):
         return self.coordinates
