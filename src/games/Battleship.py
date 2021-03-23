@@ -212,12 +212,12 @@ class Battleship_1v1:
                 self.count_3 += 1
                 if self.count_3 == 2:
                     self.size_3.config(state=tk.DISABLED)
-                    self.size_3.config(state=tk.DISABLED, bg=self.defaultbg)
+                    self.size_3.config(state=tk.DISABLED, bg='white')
                     self.boat = ""
             elif self.boat == "5":
                 self.draw_boat(3, button)
                 self.size_5.config(state=tk.DISABLED)
-                self.size_5.config(state=tk.DISABLED, bg=self.defaultbg)
+                self.size_5.config(state=tk.DISABLED, bg='white')
                 self.boat = ""
             elif self.boat == "2":
                 b = button.grid_info()
@@ -235,7 +235,7 @@ class Battleship_1v1:
                         print(new_boat_coord)
                         self.draw_boat_img(new_boat)
                         self.last_clicked = None
-                        self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
+                        self.size_2.config(state=tk.DISABLED, bg='white')
                         self.boat = ""
                         return
 
@@ -250,7 +250,7 @@ class Battleship_1v1:
                         print(new_boat_coord)
                         self.draw_boat_img(new_boat)
                         self.last_clicked = None
-                        self.size_2.config(state=tk.DISABLED, bg=self.defaultbg)
+                        self.size_2.config(state=tk.DISABLED, bg='white')
                         self.boat = ""
                         return
 
@@ -297,8 +297,7 @@ class Battleship_1v1:
                             print(new_boat_coord)
                             self.draw_boat_img(new_boat)
                             self.last_clicked = None
-                            self.size_4.config(state=tk.DISABLED)
-                            self.size_4.config(state=tk.DISABLED, bg=self.defaultbg)
+                            self.size_4.config(state=tk.DISABLED, bg='white')
                             self.boat = ""
 
                             return
@@ -339,8 +338,7 @@ class Battleship_1v1:
                             print(new_boat_coord)
                             self.draw_boat_img(new_boat)
                             self.last_clicked = None
-                            self.size_4.config(state=tk.DISABLED)
-                            self.size_4.config(state=tk.DISABLED, bg=self.defaultbg)
+                            self.size_4.config(state=tk.DISABLED, bg='white')
                             self.boat = ""
                             return
 
