@@ -523,8 +523,8 @@ class Battleship_1v1:
         :param size: Size to next boat
         """
         self.boat = size
-        for button in self.size_buttons:
-            button.config(bg=self.defaultbg)
+        for buttons in self.size_buttons:
+            buttons.config(bg='white')
         button.config(bg="green")
 
     def print_console(self):
@@ -645,28 +645,28 @@ class Battleship_1v1:
                 if i == 0:
                     self.size_buttons[i].config(bg='green')
                 else:
-                    self.size_buttons[i].config(bg=self.defaultbg)
+                    self.size_buttons[i].config(bg='white')
         elif key_pressed in '3':
             self.boat = '3'
             for i in range(len(self.size_buttons)):
                 if i == 1:
                     self.size_buttons[i].config(bg='green')
                 else:
-                    self.size_buttons[i].config(bg=self.defaultbg)
+                    self.size_buttons[i].config(bg='white')
         elif key_pressed in '4':
             self.boat = '4'
             for i in range(len(self.size_buttons)):
                 if i == 2:
                     self.size_buttons[i].config(bg='green')
                 else:
-                    self.size_buttons[i].config(bg=self.defaultbg)
+                    self.size_buttons[i].config(bg='white')
         elif key_pressed in '5':
             self.boat = '5'
             for i in range(len(self.size_buttons)):
                 if i == 3:
                     self.size_buttons[i].config(bg='green')
                 else:
-                    self.size_buttons[i].config(bg=self.defaultbg)
+                    self.size_buttons[i].config(bg='white')
         print("on_key_press", repr(event.char))
 
     def on_key_release_repeat(self, event):
