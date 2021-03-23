@@ -1,6 +1,7 @@
 import ctypes
 import random
 import tkinter as tk
+from time import sleep
 from tkinter import messagebox
 from pathlib import Path
 from PIL import ImageTk, Image
@@ -51,6 +52,14 @@ class Battleship_1v1:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Path(__file__).parent.parent
         self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Battleship_taskbar.ico'))
+
+        self.has_prev_key_release = None
+        self.root.bind("<KeyRelease-r>", self.on_key_release_repeat)
+        self.root.bind("<KeyPress-r>", self.on_key_press_repeat)
+        self.root.bind("<KeyPress-2>", self.on_key_press_repeat)
+        self.root.bind("<KeyPress-3>", self.on_key_press_repeat)
+        self.root.bind("<KeyPress-4>", self.on_key_press_repeat)
+        self.root.bind("<KeyPress-5>", self.on_key_press_repeat)
 
         ## Scale and test volume button creation
         w = tk.Scale(self.root, from_=0, to=100, orient=tk.HORIZONTAL, label="Change Volume")
@@ -135,6 +144,7 @@ class Battleship_1v1:
         self.size_4.grid(row=3, column=13, sticky='nsew')
         self.size_5 = tk.Button(self.root, bg="white", text="Size: 5", command=lambda: self.size(self.size_5, "5"))
         self.size_5.grid(row=4, column=13, sticky='nsew')
+        self.size_buttons = [self.size_2, self.size_3, self.size_4, self.size_5]
 
         ## Helper Buttons   {TO BE REMOVED}
         self.console_out = tk.Button(self.root, bg="white", text="print_board", command=self.print_console)
@@ -513,10 +523,8 @@ class Battleship_1v1:
         :param size: Size to next boat
         """
         self.boat = size
-        for child in Ct.all_children(self.root, "Button"):
-            info = child.grid_info()
-            if info["column"] == 13:
-                child.config(bg="white")
+        for button in self.size_buttons:
+            button.config(bg=self.defaultbg)
         button.config(bg="green")
 
     def print_console(self):
@@ -619,6 +627,59 @@ class Battleship_1v1:
         pygame.mixer.music.load(path)  # Loading File Into Mixer
         pygame.mixer.music.set_volume(self.volume)
         pygame.mixer.music.play()
+
+    def on_key_release(self, event):
+        self.has_prev_key_release = None
+        print("on_key_release", repr(event.char))
+
+    def on_key_press(self, event):
+        key_pressed = repr(event.char).replace("'", '', 2)
+        if key_pressed == 'r':
+            self.boat_state = "horizontal" if self.boat_state == "vertical" else "vertical"
+            self.curr_rotation.config(text='Vertical') if self.curr_rotation.cget(
+                'text') == 'Horizontal' else self.curr_rotation.config(text='Horizontal')
+        elif key_pressed in '2':
+            print('HA')
+            self.boat = '2'
+            for i in range(len(self.size_buttons)):
+                if i == 0:
+                    self.size_buttons[i].config(bg='green')
+                else:
+                    self.size_buttons[i].config(bg=self.defaultbg)
+        elif key_pressed in '3':
+            self.boat = '3'
+            for i in range(len(self.size_buttons)):
+                if i == 1:
+                    self.size_buttons[i].config(bg='green')
+                else:
+                    self.size_buttons[i].config(bg=self.defaultbg)
+        elif key_pressed in '4':
+            self.boat = '4'
+            for i in range(len(self.size_buttons)):
+                if i == 2:
+                    self.size_buttons[i].config(bg='green')
+                else:
+                    self.size_buttons[i].config(bg=self.defaultbg)
+        elif key_pressed in '5':
+            self.boat = '5'
+            for i in range(len(self.size_buttons)):
+                if i == 3:
+                    self.size_buttons[i].config(bg='green')
+                else:
+                    self.size_buttons[i].config(bg=self.defaultbg)
+        print("on_key_press", repr(event.char))
+
+    def on_key_release_repeat(self, event):
+        self.has_prev_key_release = self.root.after_idle(self.on_key_release, event)
+        print("on_key_release_repeat", repr(event.char))
+
+    def on_key_press_repeat(self, event):
+        if self.has_prev_key_release:
+            self.root.after_cancel(self.has_prev_key_release)
+            self.has_prev_key_release = None
+            print("on_key_press_repeat", repr(event.char))
+        else:
+            self.on_key_press(event)
 
 
 class Boat:
