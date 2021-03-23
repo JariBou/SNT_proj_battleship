@@ -50,7 +50,7 @@ class Battleship_1v1:
         myappid = 'mjcorp.battleship.alphav1.2'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Path(__file__).parent.parent
-        self.root.iconbitmap(default=self.path.joinpath('resources\\images\\taskbar.ico'))
+        self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Battleship_taskbar.ico'))
 
         ## Scale and test volume button creation
         w = tk.Scale(self.root, from_=0, to=100, orient=tk.HORIZONTAL, label="Change Volume")
