@@ -106,8 +106,7 @@ class Last_letter:
 
     def turn(self):
         if not self.test_word(self.player_input):
-            ## Wrong input
-            return
+            return            ## Wrong input
         elif self.player_input not in self.used:
             word_points = self.get_word_points(self.player_input)
             self.mylist.insert(tk.END, f"{self.player_input}     {word_points}")
@@ -117,8 +116,8 @@ class Last_letter:
             self.points += word_points
             self.update_gui()
         else:
-            ## Word already used
-            pass
+            self.console_output.config(text="You already used that word!")
+            return             ## Word already used
         pass
 
     def update_gui(self):
