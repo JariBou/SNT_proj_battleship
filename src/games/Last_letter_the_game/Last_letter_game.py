@@ -19,8 +19,7 @@ def help():
     messagebox.showinfo(title="About", message="""Rules: You have to write a word that starts with the las letter of the previous word.
 The game reminds you of the last written word and the last letter.
 The game gives you the letter for the first word.
-You can close the game at any moment by typing 'stop'
-You can get the list of the words used by typing 'words'
+You can close the game at any moment by typing 'stop' or 'exit'
 Once you fail 3 times you lose. 
 Please keep in mind that you cannot use special characters nor uppercase letters.""")
 
@@ -130,6 +129,8 @@ class Last_letter:
         self.turn()
 
     def turn(self):
+        if self.player_input in ['stop', 'exit']:
+            self.exit_game()
         if not self.test_word(self.player_input):
             self.tries += 1
             ## Wrong input
