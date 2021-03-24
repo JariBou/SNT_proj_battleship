@@ -57,6 +57,17 @@ class MorpionSolo:
         self.menubar = Menu(self.w)
         self.create_menu()
 
+        self.has_prev_key_release = None
+        self.w.bind("<KeyPress-1>", self.on_key_press_repeat)
+        self.w.bind("<KeyPress-2>", self.on_key_press_repeat)
+        self.w.bind("<KeyPress-3>", self.on_key_press_repeat)
+        self.w.bind("<KeyPress-4>", self.on_key_press_repeat)
+        self.w.bind("<KeyPress-5>", self.on_key_press_repeat)
+        self.w.bind("<KeyPress-6>", self.on_key_press_repeat)
+        self.w.bind("<KeyPress-7>", self.on_key_press_repeat)
+        self.w.bind("<KeyPress-8>", self.on_key_press_repeat)
+        self.w.bind("<KeyPress-9>", self.on_key_press_repeat)
+
         self.board = [[0, 0, 0],
                       [0, 0, 0],
                       [0, 0, 0]]
@@ -564,3 +575,32 @@ class MorpionSolo:
         else:
             self.w.destroy()
             system.exit("User Cancelation")
+
+    def on_key_press(self, event):
+        key_pressed = repr(event.char).replace("'", '', 2)
+        if key_pressed == '7':
+            self.button(self.button1)
+        elif key_pressed == '8':
+            self.button(self.button2)
+        elif key_pressed == '9':
+            self.button(self.button3)
+        elif key_pressed == '4':
+            self.button(self.button4)
+        elif key_pressed == '5':
+            self.button(self.button5)
+        elif key_pressed == '6':
+            self.button(self.button6)
+        elif key_pressed == '1':
+            self.button(self.button7)
+        elif key_pressed == '2':
+            self.button(self.button8)
+        elif key_pressed == '3':
+            self.button(self.button9)
+
+    def on_key_press_repeat(self, event):
+        if self.has_prev_key_release:
+            self.w.after_cancel(self.has_prev_key_release)
+            self.has_prev_key_release = None
+            print("on_key_press_repeat", repr(event.char))
+        else:
+            self.on_key_press(event)
