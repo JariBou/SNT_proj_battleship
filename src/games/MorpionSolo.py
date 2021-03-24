@@ -213,7 +213,7 @@ class MorpionSolo:
                             good += 0.5
                         if good == 1:
                             o = 2
-                            for child in Ct.dren(self.w, "Button"):
+                            for child in Ct.all_children(self.w, "Button"):
                                 info = child.grid_info()
                                 if info['row'] == k - o and info['column'] == column:
                                     child.config(bg=bg, fg=fg)
