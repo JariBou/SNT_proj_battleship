@@ -1,4 +1,7 @@
 import ctypes
+import multiprocessing
+import threading
+import time
 from pathlib import Path
 from random import randint
 import tkinter as tk
@@ -19,7 +22,14 @@ The game reminds you of the last written word and the last letter.
 The game gives you the letter for the first word.
 You can close the game at any moment by typing 'stop'
 You can get the list of the words used by typing 'words'
+Once you fail 3 times you lose. 
 Please keep in mind that you cannot use special characters nor uppercase letters.""")
+
+
+def new_game(old_window=None):
+    if old_window is not None:
+        old_window.destroy()
+    Last_letter()
 
 
 class Last_letter:
@@ -27,9 +37,9 @@ class Last_letter:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Last letter - Alpha V0.6")
-        self.root.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
-        w = 475
-        h = 300
+        self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
+        w = 550
+        h = 310
         ## get screen width and height
         ws = self.root.winfo_screenwidth()
         hs = self.root.winfo_screenheight()
@@ -48,16 +58,22 @@ class Last_letter:
         self.cons = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t",
                      "v", "w", "x", "y", "z"]
 
-        self.used = []
+        self.quiting = False
 
-        for i in range(3):
+        self.used = []
+        self.t1 = None
+
+        for i in range(4):
             self.root.rowconfigure(i, minsize=75)
             self.root.columnconfigure(i, minsize=110)
-
         customLabelFont = font.Font(family="Times", size=13)
 
-        self.mylist = tk.Listbox(self.root)
-        self.mylist.grid(row=1, column=4)
+        scrollbar = tk.Scrollbar(self.root)
+        scrollbar.grid(row=1, column=5, sticky='nsew')
+        self.mylist = tk.Listbox(self.root, yscrollcommand=scrollbar.set)
+        self.mylist.grid(row=1, column=3, columnspan=2, sticky='nsew')
+        self.mylist.insert(tk.END, 'Word  +  Points')
+        scrollbar.config(command=self.mylist.yview)
 
         ## Create a Menubar
         menubar = tk.Menu(self.root)
@@ -72,17 +88,24 @@ class Last_letter:
 
         self.last_word = 'None'
         self.last_word_display = tk.Label(self.root, text=f"Last Word: {self.last_word}", font=customLabelFont, borderwidth=3, relief='sunken')
-        self.last_word_display.grid(row=0, column=1, sticky='nsew')
+        self.last_word_display.grid(row=0, column=1, columnspan=2, sticky='nsew')
 
         self.points = 0
         self.points_display = tk.Label(self.root, text=f"Points: {self.points}", font=customLabelFont, borderwidth=3, relief='sunken')
-        self.points_display.grid(row=0, column=2, sticky='nsew')
+        self.points_display.grid(row=0, column=3, sticky='nsew')
+
+        self.next_game_button = tk.Button(self.root, text="New Game", font=customLabelFont, borderwidth=3, command=lambda: new_game(self.root))
+        self.next_game_button.grid(row=0, column=4, sticky='nsew')
 
         self.console_output = tk.Label(self.root, text='', font=customLabelFont, borderwidth=3, relief='sunken')
         self.console_output.grid(row=1, column=0, sticky='nsew', columnspan=3)
 
+        self.tries = 0
         self.input_field = tk.Entry(self.root, bd=5)
-        self.input_field.grid(row=2, column=1)
+        self.input_field.grid(row=2, column=1, columnspan=2, sticky='ew')
+
+        self.tries_state_button = tk.Label(self.root, text=f"Tries left: {3 - self.tries}", font=customLabelFont, borderwidth=3, relief='sunken')
+        self.tries_state_button.grid(row=2, column=3, columnspan=2, sticky='nsew')
 
         self.enter_word_label = tk.Label(self.root, text='Enter a word:', font=customLabelFont)
         self.enter_word_label.grid(row=2, column=0)
@@ -106,30 +129,41 @@ class Last_letter:
 
     def turn(self):
         if not self.test_word(self.player_input):
-            return            ## Wrong input
+            self.tries += 1
+            ## Wrong input
         elif self.player_input not in self.used:
             word_points = self.get_word_points(self.player_input)
-            self.mylist.insert(tk.END, f"{self.player_input}     {word_points}")
+            self.mylist.insert(tk.END, f"{self.player_input}              {word_points}")
             self.last_word = self.player_input
             self.used.append(self.player_input)
             self.first_letter = self.player_input[-1]
             self.points += word_points
-            self.update_gui()
         else:
             self.console_output.config(text="You already used that word!")
-            return             ## Word already used
-        pass
+            self.tries += 1
+            ## Word already used
+        self.update_gui()
+        if 3 - self.tries == 0:
+            self.input_field.config(state=tk.DISABLED)
+            self.tries_state_button.config(text="Game Over", bg='red')
+            self.t1 = threading.Thread(target=self.game_over, args=())
+            self.t1.start()
 
     def update_gui(self):
         self.letter_display.config(text=f"First letter: {self.first_letter}")
         self.points_display.config(text=f"Points: {self.points}")
         self.last_word_display.config(text=f"Last Word: {self.last_word}")
+        self.tries_state_button.config(text=f"Tries left: {3 - self.tries}")
         self.player_input = ''
 
     def test_word(self, w):
         lon = len(w)
         if lon == 1:
             self.console_output.config(text="Please use words longer than 1 letter, c'mon")
+            print("Please use words longer than 1 letter, c'mon")
+            return False
+        elif self.player_input[0] != self.first_letter:
+            self.console_output.config(text="Wrong first letter")
             print("Please use words longer than 1 letter, c'mon")
             return False
         for i in range(0, lon):
@@ -152,6 +186,27 @@ class Last_letter:
                 points += 2
         return points
 
+    def exit_game(self):
+        self.quiting = True
+        try:
+            self.t1.join()
+        except AttributeError:
+            pass
+        system.exit('User Cancelation')
+
+    def game_over(self):
+        while not self.quiting:
+            try:
+                self.tries_state_button.config(text="Game Over", bg='red')
+                time.sleep(0.7)
+                self.tries_state_button.config(text="Press New Game", bg='red')
+                time.sleep(0.7)
+                self.tries_state_button.config(text="To Continue", bg='red')
+                time.sleep(0.7)
+            except Exception:
+                pass
+        return
+
 
 if __name__ == '__main__':
-    Last_letter()
+    a = Last_letter()
