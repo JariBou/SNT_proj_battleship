@@ -109,7 +109,7 @@ class Last_letter:
         self.enter_word_label = tk.Label(self.root, text='Enter a word:', font=customLabelFont)
         self.enter_word_label.grid(row=2, column=0)
 
-        self.print_input = tk.Button(self.root, text='print_input', command=self.print_input_to_console)
+        self.print_input = tk.Button(self.root, text='print_input', command=self.admin_command)
         self.print_input.grid(row=3, column=0)
 
         self.player_input = ''
@@ -118,6 +118,9 @@ class Last_letter:
         self.turns_count = 1
 
         self.root.mainloop()
+
+    def admin_command(self):
+        print(self.mylist.get(0, tk.END))
 
     def print_input_to_console(self, event):
         self.console_output.config(text="")
