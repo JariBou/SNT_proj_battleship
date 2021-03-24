@@ -188,6 +188,7 @@ class Last_letter:
 
     def exit_game(self):
         self.quiting = True
+        time.sleep(0.2)
         try:
             self.t1.join()
         except AttributeError:
@@ -199,12 +200,16 @@ class Last_letter:
             try:
                 self.tries_state_button.config(text="Game Over", bg='red')
                 time.sleep(0.7)
+                if self.quiting:   ## To fix window not exiting, main thread probably continues when time.sleep is called
+                    return         ## So we need to check the more often possible
                 self.tries_state_button.config(text="Press New Game", bg='red')
                 time.sleep(0.7)
+                if self.quiting:
+                    return
                 self.tries_state_button.config(text="To Continue", bg='red')
                 time.sleep(0.7)
-            except Exception:
-                pass
+            except:
+                return
         return
 
 
