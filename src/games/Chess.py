@@ -11,7 +11,7 @@ class Board:
             [None, Knight('White', [1, 0]), None, None, None, None, Knight('White', [6, 0]), None],
             [Pawn('White', [i, 1]) for i in range(8)],
             [None, None, None, None, None, None, None, None],
-            [None, None, None, None, None, None, None, None],
+            [None, None, Tower('White', [2, 3]), None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [Pawn('Black', [i, 6]) for i in range(8)],
@@ -26,6 +26,9 @@ class Position:
     def __init__(self, coordinates):
         self.x = coordinates[0]
         self.y = coordinates[1]
+
+    def get_position(self):
+        return self.x, self.y
 
 
 class Chess_piece(ABC):
@@ -43,6 +46,9 @@ class Chess_piece(ABC):
 
     def get_type(self):
         return self.type
+
+    def get_name(self):
+        return f"{self.color.capitalize()} {self.type}"
 
     @abstractmethod  ## Every subclass of this class will have to implement it
     def can_move_to(self, board, new_position):
@@ -109,28 +115,32 @@ class Bishop(Chess_piece):
             if not top_right:
                 try:
                     board_position = board[self.position.y + i][self.position.x + i]
-                    if (board_position is None) or (board.get_color is not self.get_color()):
+                    top_right = True if board_position is not None else False
+                    if (board_position is None) or not (board_position.get_color is self.get_color()):
                         valid_positions.append(Position([self.position.x + i, self.position.y + i]))
                 except IndexError:
                     top_right = True
-            if not top_left:
+            if (not top_left) and (self.position.x - i >= 0):
                 try:
                     board_position = board[self.position.y + i][self.position.x - i]
-                    if (board_position is None) or (board.get_color is not self.get_color()):
+                    bottom_left = True if board_position is not None else False
+                    if (board_position is None) or not (board_position.get_color is self.get_color()):
                         valid_positions.append(Position([self.position.x - i, self.position.y + i]))
                 except IndexError:
                     top_left = True
-            if not bottom_left:
+            if (not bottom_left) and (self.position.y - i >= 0 and self.position.x - i >= 0):
                 try:
                     board_position = board[self.position.y - i][self.position.x - i]
-                    if (board_position is None) or (board.get_color is not self.get_color()):
+                    bottom_left = True if board_position is not None else False
+                    if (board_position is None) or not (board_position.get_color is self.get_color()):
                         valid_positions.append(Position([self.position.x - i, self.position.y - i]))
                 except IndexError:
                     bottom_left = True
-            if not bottom_right:
+            if (not bottom_right) and (self.position.y - i >= 0):
                 try:
                     board_position = board[self.position.y - i][self.position.x + i]
-                    if (board_position is None) or (board.get_color is not self.get_color()):
+                    bottom_right = True if board_position is not None else False
+                    if (board_position is None) or not (board_position.get_color is self.get_color()):
                         valid_positions.append(Position([self.position.x + i, self.position.y - i]))
                 except IndexError:
                     bottom_right = True
@@ -160,3 +170,87 @@ class King(Chess_piece):
 
     def get_valid_positions(self, board):
         pass
+
+    def is_checked(self, board):
+        for row in board:
+            for piece in [p for p in row if p.get_color() != self.get_color()]:
+                if piece.can_move_to(board, self.position):
+                    return True
+        return False
+
+
+class Tower(Chess_piece):
+
+    def can_move_to(self, board, new_position):
+        pass
+
+    def get_valid_positions(self, board):
+        valid_positions = []
+        top = False
+        bottom = False
+        left = False
+        right = False
+        for i in range(1, len(board)):
+            if not top:
+                try:
+                    board_position = board[self.position.y + i][self.position.x]
+                    top = True if board_position is not None else False
+                    if (board_position is None) or not (board_position.get_color is self.get_color()):
+                        valid_positions.append(Position([self.position.x, self.position.y + i]))
+                except IndexError:
+                    top = True
+            if (not bottom) and (self.position.y - i >= 0):
+                try:
+                    board_position = board[self.position.y - i][self.position.x]
+                    bottom = True if board_position is not None else False
+                    try:
+                        print(((board_position is None) or not (board_position.get_color() is self.get_color())))
+                        if (board_position is None) or (not (board_position.get_color == self.get_color())):
+                            print('Mother fucker')
+                    except AttributeError:
+                        print('fuck you')
+                    if (board_position is None) or not (board_position.get_color == self.get_color()):
+                        print('Hello im here')
+                        valid_positions.append(Position([self.position.x, self.position.y - i]))
+                except IndexError:
+                    bottom = True
+            if (not left) and (self.position.x - i >= 0):
+                try:
+                    board_position = board[self.position.y][self.position.x - i]
+                    left = True if board_position is not None else False
+                    if (board_position is None) or not (board_position.get_color is self.get_color()):
+                        valid_positions.append(Position([self.position.x - i, self.position.y]))
+                except IndexError:
+                    left = True
+            if not right:
+                try:
+                    board_position = board[self.position.y][self.position.x + i]
+                    right = True if board_position is not None else False
+                    if (board_position is None) or not (board_position.get_color is self.get_color()):
+                        valid_positions.append(Position([self.position.x + i, self.position.y]))
+                except IndexError:
+                    right = True
+        return valid_positions
+
+    def checks(self):
+        pass
+
+    def __init__(self, color, position):
+        super().__init__(color, position, 'Tower')
+        ## Useless just for a representation of how it can move  {might be useful actually}
+        i = 0
+        self.move_pattern = [[self.position.x + i, self.position.y], [self.position.x - i, self.position.y],
+                             [self.position.x, self.position.y - i], [self.position.x, self.position.y + i]]
+
+
+if __name__ == '__main__':
+    b = Board()
+    for value in b.board:
+        print(value)
+    positions = []
+    for a in b.board[3][2].get_valid_positions(b.board):
+        positions.append(a.get_position())
+    positions.sort()
+    for k in positions:
+        print(k)
+    print(b.board[3][2].get_valid_positions(b.board))
