@@ -11,7 +11,7 @@ class Board:
             [None, Knight('White', [1, 0]), None, None, None, None, Knight('White', [6, 0]), None],
             [Pawn('White', [i, 1]) for i in range(8)],
             [None, None, None, None, None, None, None, None],
-            [None, None, Tower('White', [2, 3]), None, None, None, None, None],
+            [None, None, Bishop('White', [2, 3]), None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [Pawn('Black', [i, 6]) for i in range(8)],
