@@ -11,7 +11,7 @@ class Board:
             [None, Knight('White', [1, 0]), None, None, None, None, Knight('White', [6, 0]), None],
             [Pawn('White', [i, 1]) for i in range(8)],
             [None, None, None, None, None, None, None, None],
-            [None, None, Bishop('White', [2, 3]), None, None, None, None, None],
+            [None, None, Knight('White', [2, 3]), None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [Pawn('Black', [i, 6]) for i in range(8)],
@@ -19,6 +19,10 @@ class Board:
             ]
         ## Do a dynamic board where instead of using a binary system to know if a piece is there just move the pieces in that list?
         ## Might be too hard tho....dk
+
+    def move_piece_to(self, piece, new_position):
+        if piece.move_to(new_position):
+            self.board[new_position.y][new_position.x] = piece
 
 
 class Position:
@@ -50,12 +54,21 @@ class Chess_piece(ABC):
     def get_name(self):
         return f"{self.color.capitalize()} {self.type}"
 
-    @abstractmethod  ## Every subclass of this class will have to implement it
+    def move_to(self, new_position):
+        """ Moves the piece to New position
+        :param new_position: New position as [x, y]
+        """
+        if self.can_move_to(new_position):
+            self.position = Position([new_position])
+            return True
+        else:
+            return False
+
     def can_move_to(self, board, new_position):
-        pass
+        return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions(board)]
 
     @abstractmethod
-    def checks(self):
+    def checks(self):  ## Every subclass of this class will have to implement it
         """Checks if this piece puts the adversary king in check"""
         pass
 
@@ -68,25 +81,93 @@ class Chess_piece(ABC):
 class Pawn(Chess_piece):
 
     def get_valid_positions(self, board):
-        pass
+        ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION
+        side = 1 if self.color == 'White' else -1
+        valid_positions = []
+        if self.first_move:
+            if board[self.position.y + (side * 2)][self.position.x] is None:
+                valid_positions.append(Position([self.position.x, self.position.y + (side * 2)]))
+
+        if board[self.position.y + side][self.position.x] is None:
+            valid_positions.append(Position([self.position.x, self.position.y + side]))
+        try:
+            if not (board[self.position.y + side][self.position.x + 1].get_color() is self.color):
+                valid_positions.append(Position([self.position.x + 1, self.position.y + side]))
+            if not (board[self.position.y + side][self.position.x - 1].get_color() is self.color):
+                valid_positions.append(Position([self.position.x - 1, self.position.y + side]))
+        except AttributeError:
+            pass  ## No pieces in it's diagonal
+        return valid_positions
 
     def checks(self):
         pass
 
     def __init__(self, color, position):
         super().__init__(color, position, 'Pawn')
+        self.first_move = True  ## When you move for the first time, set this to false pretty please
         ## Useless just for a representation of how it can move  {might be useful actually}
         self.move_pattern = [[self.position.x, self.position.y + 1], [self.position.x - 1, self.position.y + 1],
                              [self.position.x + 1, self.position.y + 1]]
-
-    def can_move_to(self, board, new_position):
-        pass
 
 
 class Knight(Chess_piece):
 
     def get_valid_positions(self, board):
-        pass
+        ## THIS SHIT WORKED ON FIRST TRY
+        ##  print('HAPPINESS LVL MAXIMUM')
+        valid_positions = []
+        to_test = []
+        offsets = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
+        for offset in offsets:
+            try:
+                to_test.append(board[self.position.y + offset[0]][self.position.x + offset[1]])
+                to_test.append([self.position.x + offset[1], self.position.y + offset[0]])
+            except IndexError:
+                pass
+        # to_test = [board[self.position.y + 2][self.position.x + 1], [self.position.x + 1, self.position.y + 2],
+        #            board[self.position.y + 2][self.position.x - 1], [self.position.x - 1, self.position.y + 2],
+        #            board[self.position.y - 2][self.position.x + 1], [self.position.x + 1, self.position.y - 2],
+        #            board[self.position.y - 2][self.position.x - 1], [self.position.x - 1, self.position.y - 2],
+        #            board[self.position.y + 1][self.position.x - 2], [self.position.x - 2, self.position.y + 1],
+        #            board[self.position.y + 1][self.position.x + 2], [self.position.x + 2, self.position.y + 1],
+        #            board[self.position.y - 1][self.position.x - 2], [self.position.x - 2, self.position.y - 1],
+        #            board[self.position.y - 1][self.position.x + 2], [self.position.x + 2, self.position.y - 1]]
+
+        for i in range(0, len(to_test), 2):
+            try:
+                if (to_test[i] is None) or not (to_test[i].get_color() is self.color):
+                    valid_positions.append(Position(to_test[i + 1]))
+            except AttributeError:
+                pass
+
+        # try:
+        #     if (board[self.position.y + 2][self.position.x + 1] is None) or not (
+        #             board[self.position.y + 2][self.position.x + 1].get_color() is self.color):
+        #         valid_positions.append(Position([self.position.x + 1, self.position.y + 2]))
+        #     if board[self.position.y + 2][self.position.x - 1] is None or not (
+        #             board[self.position.y + 2][self.position.x - 1].get_color() is self.color):
+        #         valid_positions.append(Position([self.position.x - 1, self.position.y + 2]))
+        #     if board[self.position.y - 2][self.position.x + 1] is None or not (
+        #             board[self.position.y - 2][self.position.x + 1].get_color() is self.color):
+        #         valid_positions.append(Position([self.position.x + 1, self.position.y - 2]))
+        #     if board[self.position.y - 2][self.position.x - 1] is None or not (
+        #             board[self.position.y - 2][self.position.x - 1].get_color() is self.color):
+        #         valid_positions.append(Position([self.position.x - 1, self.position.y - 2]))
+        #     if board[self.position.y + 1][self.position.x - 2] is None or not (
+        #             board[self.position.y + 1][self.position.x - 2].get_color() is self.color):
+        #         valid_positions.append(Position([self.position.x - 2, self.position.y + 1]))
+        #     if board[self.position.y + 1][self.position.x + 2] is None or not (
+        #             board[self.position.y + 1][self.position.x + 2].get_color() is self.color):
+        #         valid_positions.append(Position([self.position.x + 2, self.position.y + 1]))
+        #     if board[self.position.y - 1][self.position.x - 2] is None or not (
+        #             board[self.position.y - 1][self.position.x - 2].get_color() is self.color):
+        #         valid_positions.append(Position([self.position.x - 2, self.position.y - 1]))
+        #     if board[self.position.y - 1][self.position.x + 2] is None or not (
+        #             board[self.position.y - 1][self.position.x + 2].get_color() is self.color):
+        #         valid_positions.append(Position([self.position.x + 2, self.position.y - 1]))
+        # except AttributeError:
+        #     pass
+        return valid_positions
 
     def checks(self):
         pass
@@ -98,9 +179,6 @@ class Knight(Chess_piece):
                              [self.position.x + 1, self.position.y - 2], [self.position.x - 1, self.position.y - 2],
                              [self.position.x + 2, self.position.y + 1], [self.position.x + 2, self.position.y - 1],
                              [self.position.x - 2, self.position.y + 1], [self.position.x - 2, self.position.y - 1]]
-
-    def can_move_to(self, board, new_position):
-        pass
 
 
 class Bishop(Chess_piece):
@@ -116,7 +194,7 @@ class Bishop(Chess_piece):
                 try:
                     board_position = board[self.position.y + i][self.position.x + i]
                     top_right = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x + i, self.position.y + i]))
                 except IndexError:
                     top_right = True
@@ -124,7 +202,7 @@ class Bishop(Chess_piece):
                 try:
                     board_position = board[self.position.y + i][self.position.x - i]
                     bottom_left = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x - i, self.position.y + i]))
                 except IndexError:
                     top_left = True
@@ -132,7 +210,7 @@ class Bishop(Chess_piece):
                 try:
                     board_position = board[self.position.y - i][self.position.x - i]
                     bottom_left = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x - i, self.position.y - i]))
                 except IndexError:
                     bottom_left = True
@@ -140,7 +218,7 @@ class Bishop(Chess_piece):
                 try:
                     board_position = board[self.position.y - i][self.position.x + i]
                     bottom_right = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x + i, self.position.y - i]))
                 except IndexError:
                     bottom_right = True
@@ -156,14 +234,8 @@ class Bishop(Chess_piece):
         self.move_pattern = [[self.position.x + i, self.position.y + i], [self.position.x - i, self.position.y + i],
                              [self.position.x + i, self.position.y - i], [self.position.x - i, self.position.y - i]]
 
-    def can_move_to(self, board, new_position):
-        pass
-
 
 class King(Chess_piece):
-
-    def can_move_to(self, board, new_position):
-        pass
 
     def checks(self):
         pass
@@ -181,9 +253,6 @@ class King(Chess_piece):
 
 class Tower(Chess_piece):
 
-    def can_move_to(self, board, new_position):
-        pass
-
     def get_valid_positions(self, board):
         valid_positions = []
         top = False
@@ -195,7 +264,7 @@ class Tower(Chess_piece):
                 try:
                     board_position = board[self.position.y + i][self.position.x]
                     top = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x, self.position.y + i]))
                 except IndexError:
                     top = True
@@ -203,8 +272,7 @@ class Tower(Chess_piece):
                 try:
                     board_position = board[self.position.y - i][self.position.x]
                     bottom = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color() == self.get_color()):
-                        print('Hello im here')
+                    if (board_position is None) or not (board_position.get_color() == self.color):
                         valid_positions.append(Position([self.position.x, self.position.y - i]))
                 except IndexError:
                     bottom = True
@@ -212,7 +280,7 @@ class Tower(Chess_piece):
                 try:
                     board_position = board[self.position.y][self.position.x - i]
                     left = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x - i, self.position.y]))
                 except IndexError:
                     left = True
@@ -220,7 +288,7 @@ class Tower(Chess_piece):
                 try:
                     board_position = board[self.position.y][self.position.x + i]
                     right = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x + i, self.position.y]))
                 except IndexError:
                     right = True
@@ -239,12 +307,13 @@ class Tower(Chess_piece):
 
 if __name__ == '__main__':
     b = Board()
-    for value in b.board:
-        print(value)
+    # for value in b.board:
+    #     print(value)
     positions = []
     for a in b.board[3][2].get_valid_positions(b.board):
         positions.append(a.get_position())
     positions.sort()
     for k in positions:
         print(k)
-    print(b.board[3][2].get_valid_positions(b.board))
+    # print(b.board[3][2].get_valid_positions(b.board))
+    # print(b.board[3][2].can_move_to(b.board, Position([2, 2])))
