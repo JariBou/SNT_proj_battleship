@@ -116,7 +116,7 @@ class Bishop(Chess_piece):
                 try:
                     board_position = board[self.position.y + i][self.position.x + i]
                     top_right = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
                         valid_positions.append(Position([self.position.x + i, self.position.y + i]))
                 except IndexError:
                     top_right = True
@@ -124,7 +124,7 @@ class Bishop(Chess_piece):
                 try:
                     board_position = board[self.position.y + i][self.position.x - i]
                     bottom_left = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
                         valid_positions.append(Position([self.position.x - i, self.position.y + i]))
                 except IndexError:
                     top_left = True
@@ -132,7 +132,7 @@ class Bishop(Chess_piece):
                 try:
                     board_position = board[self.position.y - i][self.position.x - i]
                     bottom_left = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
                         valid_positions.append(Position([self.position.x - i, self.position.y - i]))
                 except IndexError:
                     bottom_left = True
@@ -140,7 +140,7 @@ class Bishop(Chess_piece):
                 try:
                     board_position = board[self.position.y - i][self.position.x + i]
                     bottom_right = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
                         valid_positions.append(Position([self.position.x + i, self.position.y - i]))
                 except IndexError:
                     bottom_right = True
@@ -195,7 +195,7 @@ class Tower(Chess_piece):
                 try:
                     board_position = board[self.position.y + i][self.position.x]
                     top = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
                         valid_positions.append(Position([self.position.x, self.position.y + i]))
                 except IndexError:
                     top = True
@@ -203,13 +203,7 @@ class Tower(Chess_piece):
                 try:
                     board_position = board[self.position.y - i][self.position.x]
                     bottom = True if board_position is not None else False
-                    try:
-                        print(((board_position is None) or not (board_position.get_color() == self.get_color())))
-                        if (board_position is None) or (not (board_position.get_color == self.get_color())):
-                            print('Mother fucker')
-                    except AttributeError:
-                        print('fuck you')
-                    if (board_position is None) or not (board_position.get_color == self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() == self.get_color()):
                         print('Hello im here')
                         valid_positions.append(Position([self.position.x, self.position.y - i]))
                 except IndexError:
@@ -218,7 +212,7 @@ class Tower(Chess_piece):
                 try:
                     board_position = board[self.position.y][self.position.x - i]
                     left = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
                         valid_positions.append(Position([self.position.x - i, self.position.y]))
                 except IndexError:
                     left = True
@@ -226,7 +220,7 @@ class Tower(Chess_piece):
                 try:
                     board_position = board[self.position.y][self.position.x + i]
                     right = True if board_position is not None else False
-                    if (board_position is None) or not (board_position.get_color is self.get_color()):
+                    if (board_position is None) or not (board_position.get_color() is self.get_color()):
                         valid_positions.append(Position([self.position.x + i, self.position.y]))
                 except IndexError:
                     right = True
