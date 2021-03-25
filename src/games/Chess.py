@@ -204,7 +204,7 @@ class Tower(Chess_piece):
                     board_position = board[self.position.y - i][self.position.x]
                     bottom = True if board_position is not None else False
                     try:
-                        print(((board_position is None) or not (board_position.get_color() is self.get_color())))
+                        print(((board_position is None) or not (board_position.get_color() == self.get_color())))
                         if (board_position is None) or (not (board_position.get_color == self.get_color())):
                             print('Mother fucker')
                     except AttributeError:
