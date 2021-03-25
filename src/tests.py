@@ -1,2 +1,7 @@
+def f(*args, **kwargs):
+   print ('args: ', args, ' kwargs: ', kwargs)
+
+
 if __name__ == '__main__':
-    print('hello')
+    f(1, 2)
+
