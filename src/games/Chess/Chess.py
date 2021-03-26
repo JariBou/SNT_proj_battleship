@@ -260,6 +260,8 @@ class King(Chess_piece):
         pass
 
     def is_checked(self, board):
+        ### MAYBE DO A REVERSE? LIKE, YOU CHECK FROM THE KING IF HE WERE SAID PIECE IF IT COULD GET TO HIM
+        ### LIKE YOU CHECK DIAGONALLY FROM THE KING AND STUFF
         checkers = []
         for row in board:
             for piece in [p for p in row if (not (p is None) and p.get_color() != self.get_color())]:

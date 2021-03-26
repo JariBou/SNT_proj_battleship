@@ -3,7 +3,6 @@ import random
 import tkinter as tk
 from time import sleep
 from tkinter import messagebox
-from pathlib import Path
 from PIL import ImageTk, Image
 import pygame as pygame
 import sys as system
@@ -50,8 +49,8 @@ class Battleship_1v1:
         ## Add Icon
         myappid = 'mjcorp.battleship.alphav1.2'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        self.path = Path(__file__).parent.parent
-        self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Battleship_taskbar.ico'))
+        self.path = Ct.get_path()
+        self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Battleship\\Battleship_taskbar.ico'))
 
         self.has_prev_key_release = None
         self.root.bind("<KeyRelease-r>", self.on_key_release_repeat)
@@ -182,14 +181,14 @@ class Battleship_1v1:
         self.last_clicked = None
 
         ## Creation of the dictionary with all images
-        self.images_root = {'touched': get_img(self.path.joinpath('resources\\images\\touched.png')),
-                            'missed': get_img(self.path.joinpath('resources\\images\\missed.png'))}
-        self.images_horizontal = {'center': get_img(self.path.joinpath('resources\\images\\horizontal\\center.png')),
-                                  'first': get_img(self.path.joinpath('resources\\images\\horizontal\\first.png')),
-                                  'last': get_img(self.path.joinpath('resources\\images\\horizontal\\last.png'))}
-        self.images_vertical = {'center': get_img(self.path.joinpath('resources\\images\\vertical\\center.png')),
-                                'first': get_img(self.path.joinpath('resources\\images\\vertical\\first.png')),
-                                'last': get_img(self.path.joinpath('resources\\images\\vertical\\last.png'))}
+        self.images_root = {'touched': get_img(self.path.joinpath('resources\\images\\Battleship\\touched.png')),
+                            'missed': get_img(self.path.joinpath('resources\\images\\Battleship\\missed.png'))}
+        self.images_horizontal = {'center': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\center.png')),
+                                  'first': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\first.png')),
+                                  'last': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\last.png'))}
+        self.images_vertical = {'center': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\center.png')),
+                                'first': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\first.png')),
+                                'last': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\last.png'))}
         self.images_root['horizontal'] = self.images_horizontal
         self.images_root['vertical'] = self.images_vertical
 
@@ -600,10 +599,11 @@ class Battleship_1v1:
         self.draw_attacks()
         for boat in self.boats[self.player]:
             self.draw_boat_img(boat)
-        for child in Ct.all_children(self.root, 'Button'):
-            c = child.grid_info()
-            if c['row'] < 10 and c['column'] >= self.atk_offset:
-                child.config(command=lambda child2=child: self.attack(child2), state=tk.NORMAL)
+        if self.turns >= 2:
+            for child in Ct.all_children(self.root, 'Button'):
+                c = child.grid_info()
+                if c['row'] < 10 and c['column'] >= self.atk_offset:
+                    child.config(command=lambda child2=child: self.attack(child2), state=tk.NORMAL)
         if self.turns < 2:
             self.count_3 = 0
             self.size_2.config(state=tk.NORMAL)

@@ -1,8 +1,14 @@
 from enum import Enum
 from PIL import Image, ImageTk
 
+from pathlib import Path
+
 
 class Constants(Enum):
+
+    @classmethod
+    def get_path(cls):
+        return Path(__file__).parent.parent.parent
 
     @classmethod
     def new_board(cls):

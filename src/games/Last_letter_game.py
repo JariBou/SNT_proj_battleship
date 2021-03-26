@@ -7,6 +7,8 @@ import tkinter as tk
 import sys as system
 from tkinter import font, messagebox
 
+from src.resources.utils.Constants import Constants as Ct
+
 
 # noinspection SpellCheckingInspection
 def about():
@@ -47,7 +49,7 @@ class Last_letter:
         ## Add Icon
         myappid = 'mjcorp.lastword.alphav0.6'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        self.path = Path(__file__).parent.parent
+        self.path = Ct.get_path()
         self.root.bind('<Return>', self.print_input_to_console)
 
         self.alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",

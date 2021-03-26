@@ -1,12 +1,10 @@
-def test():
-    List = ['5', '7', 'q', '8']
-    for i in List:
-        try:
-            print(int(i))
-        except Exception:
-            print('HOOOOO')
+import tkinter as tk
+from PIL import Image, ImageTk
+from time import sleep, time
+
+from src.resources.utils.Constants import Constants as Ct
+path = Ct.get_path()
+#button_load = Image.open(path.joinpath('resources\\images\\Chess\\taskbar.png'))
 
 
-if __name__ == '__main__':
-    test()
 
