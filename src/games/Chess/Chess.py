@@ -1,7 +1,20 @@
+import copy
 from abc import ABC, abstractmethod
 
 
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
+
+def flatten(seq):
+    se = copy.deepcopy(seq)
+    l = []
+    for elt in se:
+        t = type(elt)
+        if t is tuple or t is list:
+            for elt2 in flatten(elt):
+                l.append(elt2)
+        else:
+            l.append(elt)
+    return l
 
 
 class Board:
@@ -26,19 +39,19 @@ class Board:
 
     def check_for_checks(self):
 
-        pieces_list_test = [piece for piece in [pieces for pieces in [elements for elements in self.board]] if piece.__class__ == King]
+        kings_list = [piece for piece in flatten(self.board) if piece.__class__ == King]
 
-        for element in pieces_list_test:
-            print(element.get_name())
+        for king in kings_list:
+            king.is_checked(self.board)
 
-        pieces_list = []
-        for row in range(len(self.board)):
-            for column in range(len(self.board[0])):
-                piece = self.board[row][column]
-                if piece.__class__ == King:
-                    pieces_list.append(self.board[row][column])
-        for element in pieces_list:
-            print(element.get_name())
+        # pieces_list = []
+        # for row in range(len(self.board)):
+        #     for column in range(len(self.board[0])):
+        #         piece = self.board[row][column]
+        #         if piece.__class__ == King:
+        #             pieces_list.append(self.board[row][column])
+        # for element in pieces_list:
+        #     print(element.get_name())
         #
         #
         # row_list = [row for row in self.board]

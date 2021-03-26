@@ -128,7 +128,6 @@ class Chess_Gui:
 
     def exit_game(self):
         self.playing = False
-        cleanup_stop_thread()
         system.exit('User cancelation')
         self.t1.join()
         sleep(0.5)
