@@ -24,6 +24,28 @@ class Board:
         if piece.move_to(new_position):
             self.board[new_position.y][new_position.x] = piece
 
+    def check_for_checks(self):
+
+        pieces_list_test = [piece for piece in [pieces for pieces in [elements for elements in self.board]] if piece.__class__ == King]
+
+        for element in pieces_list_test:
+            print(element.get_name())
+
+        pieces_list = []
+        for row in range(len(self.board)):
+            for column in range(len(self.board[0])):
+                piece = self.board[row][column]
+                if piece.__class__ == King:
+                    pieces_list.append(self.board[row][column])
+        for element in pieces_list:
+            print(element.get_name())
+        #
+        #
+        # row_list = [row for row in self.board]
+        # pieces_list = [element for element in row_list]
+        # for king in [kings for kings in [element for element in [self.board[i] for i in range(len(self.board))]] if kings.__class__ == King]:
+        #     king.is_checked()
+
 
 class Position:
 
@@ -339,6 +361,7 @@ if __name__ == '__main__':
     # positions.sort()
     # for k in positions:
     #     print(k)
-    print(b.board[2][1].is_checked(b.board))
+    b.check_for_checks()
+    #print(b.board[2][1].is_checked(b.board))
     # print(b.board[3][2].get_valid_positions(b.board))
     # print(b.board[3][2].can_move_to(b.board, Position([2, 2])))
