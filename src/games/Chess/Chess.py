@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 
 
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
+from time import time
+
 
 def get_flattened(seq):
     se = copy.deepcopy(seq)
@@ -24,9 +26,9 @@ class Board:
             [None, Knight('White', [1, 0]), None, None, None, None, Knight('White', [6, 0]), None],
             [Pawn('White', [i, 1]) for i in range(8)],
             [None, King('Black', [1, 2]), None, None, None, None, None, None],
-            [None, None, Knight('White', [2, 3]), None, None, None, None, None],
+            [Bishop('White', [0, 3]), None, Knight('White', [2, 3]), None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
-            [None, None, None, None, None, None, None, None],
+            [None, Tower('White', [1, 5]), None, None, None, None, None, None],
             [Pawn('Black', [i, 6]) for i in range(8)],
             [None, Knight('Black', [1, 7]), None, None, None, None, Knight('Black', [6, 7]), None]
             ]
@@ -42,7 +44,7 @@ class Board:
         kings_list = [piece for piece in get_flattened(self.board) if piece.__class__ == King]
 
         for king in kings_list:
-            king.is_checked(self.board)
+            king.is_checked()
 
         # pieces_list = []
         # for row in range(len(self.board)):
@@ -63,6 +65,16 @@ class Board:
         for row in range(len(self.board)):
             for element in [e for e in self.board[row] if e is not None]:
                 element.pass_new_board(self.board)
+
+    def print_board(self):
+        for row in self.board:
+            string_row = ''
+            for element in row:
+                try:
+                    string_row += element.get_name() + ', '
+                except AttributeError:
+                    string_row += 'None' + ', '
+            print(string_row)
 
 
 class Position:
@@ -97,7 +109,7 @@ class ChessPiece(ABC):
 
     def move_to(self, new_position):
         """ Moves the piece to New position
-        :param new_position: New position as [x, y]
+        :param new_position: New position as a Position class
         """
         if self.can_move_to(new_position):
             self.position = Position([new_position])
@@ -298,25 +310,55 @@ class King(ChessPiece):
         super().__init__(color, position, 'King')
 
     def checks(self):
-        pass
+        pass   ## Useless to check for check because it cannot do dat
 
     def get_valid_positions(self):
-        pass
+        offsets = [[1, -1], [1, 0], [1, 1], [0, 1]]
+        valid_positions = []
+        for i in [1, -1]:
+            for offset in offsets:
+                try:
+                    position = self.board[self.position.y + offset[0]*i][self.position.x + offset[1]*i]
+                    if (position is None) or (position.get_color() != self.color):
+                        valid_positions.append(Position([self.position.x + offset[1]*i, self.position.y + offset[0]*i]))
+                except IndexError:
+                    pass
+        return valid_positions
 
-    def is_checked(self):
+    def is_checked(self, next_board=None):
         ### MAYBE DO A REVERSE? LIKE, YOU CHECK FROM THE KING IF HE WERE SAID PIECE IF IT COULD GET TO HIM
         ### LIKE YOU CHECK DIAGONALLY FROM THE KING AND STUFF
+        ## Na we good fam
+        ### Use this to check if a move prevents the check
+        board = self.board if next_board is None else next_board
+        start_time = time()
         checkers = []
-        for row in self.board:
+        for row in board:
             for piece in [p for p in row if (not (p is None) and p.get_color() != self.get_color())]:
-                if piece.can_move_to(self.board, self.position):
+                if piece.can_move_to(self.position):
                     checkers.append(piece)
+        end_time = time()
+        print(start_time - end_time)
         if checkers:
             print(f"{self.get_name()} is checked by:")
             for piece in checkers:
                 print(f"- {piece.get_name()} in {piece.get_position(True)}")
             return True
         return False
+
+    def gets_checked(self, new_position):
+        next_board = copy.deepcopy(self.board)
+        next_board[self.position.y][self.position.x] = None
+        next_board[new_position.y][new_position.x] = self
+        if self.is_checked(next_board):
+            return False
+        return True
+
+    def can_move_to(self, new_position):
+        if not self.gets_checked(new_position):
+            return False
+        else:
+            return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
 
 
 class Tower(ChessPiece):
@@ -383,7 +425,10 @@ if __name__ == '__main__':
     # positions.sort()
     # for k in positions:
     #     print(k)
+    b.pass_board_to_pieces()
+    b.print_board()
     b.check_for_checks()
+    print(b.board[2][1].can_move_to(Position([1, 3])))
     #print(b.board[2][1].is_checked(b.board))
     # print(b.board[3][2].get_valid_positions(b.board))
     # print(b.board[3][2].can_move_to(b.board, Position([2, 2])))
