@@ -22,6 +22,10 @@ def get_flattened(seq):
 class Board:
 
     def __init__(self):
+        ##TODO: implement system to force to get out of check
+        self.colors = ['White', 'Black']
+        self.checks_list = {'White': False, 'Black': False}
+        self.player = 0
         self.board = [
             [None, Knight('White', [1, 0]), None, None, None, None, Knight('White', [6, 0]), None],
             [Pawn('White', [i, 1]) for i in range(8)],
@@ -75,6 +79,12 @@ class Board:
                 except AttributeError:
                     string_row += 'None' + ', '
             print(string_row)
+
+    def witch_player(self):
+        self.player = 1 if self.player == 0 else 0
+
+    def can_move_freely(self, player):
+        return not self.checks_list[self.colors[player]]
 
 
 class Position:
