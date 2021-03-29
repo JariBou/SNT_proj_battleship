@@ -1,7 +1,6 @@
 import ctypes
 import random
 import tkinter as tk
-from time import sleep
 from tkinter import messagebox
 from PIL import ImageTk, Image
 import pygame as pygame
