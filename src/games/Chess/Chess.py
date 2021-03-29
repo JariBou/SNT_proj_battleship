@@ -4,13 +4,13 @@ from abc import ABC, abstractmethod
 
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
 
-def flatten(seq):
+def get_flattened(seq):
     se = copy.deepcopy(seq)
     flattened_list = []
     for elt in se:
         t = type(elt)
         if t is tuple or t is list:
-            for elt2 in flatten(elt):
+            for elt2 in get_flattened(elt):
                 flattened_list.append(elt2)
         else:
             flattened_list.append(elt)
@@ -39,7 +39,7 @@ class Board:
 
     def check_for_checks(self):
 
-        kings_list = [piece for piece in flatten(self.board) if piece.__class__ == King]
+        kings_list = [piece for piece in get_flattened(self.board) if piece.__class__ == King]
 
         for king in kings_list:
             king.is_checked(self.board)
