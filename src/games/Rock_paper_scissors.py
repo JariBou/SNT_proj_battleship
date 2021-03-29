@@ -43,7 +43,7 @@ class Game:
         self.humainP = Label(text="0")
         self.humainP.grid(row=1, column=0)
 
-        # Pierre               #Feuille            #Ciseaux             #Lezard            #Spock
+                        # Pierre             #Feuille           #Ciseaux           #Lezard           #Spock
         self.list = [[0, -1, 1, 1, -1], [1, 0, -1, -1, 1], [-1, 1, 0, 1, -1], [-1, 1, -1, 0, 1], [1, -1, 1, -1, 0]]
 
         self.cpuWin = 0
