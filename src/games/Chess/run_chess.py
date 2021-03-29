@@ -5,7 +5,6 @@ import sys as system
 from time import sleep
 from tkinter import messagebox
 from PIL import ImageTk, Image
-from threading import Timer
 
 from src.resources.utils.Constants import Constants as Ct
 from src.games.Chess.Chess import *
@@ -28,7 +27,7 @@ def about():
     ####                                  ####
 
 
-class Chess_Gui:
+class ChessGui:
 
     def __init__(self):
         ## Window creation
@@ -139,4 +138,4 @@ class Chess_Gui:
 
 
 if __name__ == '__main__':
-    a = Chess_Gui()
+    a = ChessGui()
