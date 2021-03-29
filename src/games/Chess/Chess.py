@@ -6,15 +6,15 @@ from abc import ABC, abstractmethod
 
 def flatten(seq):
     se = copy.deepcopy(seq)
-    l = []
+    flattened_list = []
     for elt in se:
         t = type(elt)
         if t is tuple or t is list:
             for elt2 in flatten(elt):
-                l.append(elt2)
+                flattened_list.append(elt2)
         else:
-            l.append(elt)
-    return l
+            flattened_list.append(elt)
+    return flattened_list
 
 
 class Board:
@@ -59,6 +59,11 @@ class Board:
         # for king in [kings for kings in [element for element in [self.board[i] for i in range(len(self.board))]] if kings.__class__ == King]:
         #     king.is_checked()
 
+    def pass_board_to_pieces(self):
+        for row in range(len(self.board)):
+            for element in [e for e in self.board[row] if e is not None]:
+                element.pass_new_board(self.board)
+
 
 class Position:
 
@@ -70,12 +75,13 @@ class Position:
         return self.x, self.y
 
 
-class Chess_piece(ABC):
+class ChessPiece(ABC):
 
     def __init__(self, color, position, Type):
         self.color = color
         self.position = Position(position)
         self.type = Type
+        self.board = None
 
     def get_position(self, coordinates=False):
         return self.position if coordinates == False else self.position.get_position()
@@ -99,8 +105,11 @@ class Chess_piece(ABC):
         else:
             return False
 
-    def can_move_to(self, board, new_position):
-        return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions(board)]
+    def can_move_to(self, new_position):
+        return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
+
+    def pass_new_board(self, board):
+        self.board = board
 
     @abstractmethod
     def checks(self):  ## Every subclass of this class will have to implement it
@@ -108,28 +117,28 @@ class Chess_piece(ABC):
         pass
 
     @abstractmethod
-    def get_valid_positions(self, board):
+    def get_valid_positions(self):
         """Returns a list of valid positions to move the piece to"""
         pass
 
 
-class Pawn(Chess_piece):
+class Pawn(ChessPiece):
 
-    def get_valid_positions(self, board):
+    def get_valid_positions(self):
         ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION
         side = 1 if self.color == 'White' else -1
         valid_positions = []
         if self.first_move:
-            if board[self.position.y + (side * 2)][self.position.x] is None:
+            if self.board[self.position.y + (side * 2)][self.position.x] is None:
                 valid_positions.append(Position([self.position.x, self.position.y + (side * 2)]))
-        if board[self.position.y + side][self.position.x] is None:
+        if self.board[self.position.y + side][self.position.x] is None:
             valid_positions.append(Position([self.position.x, self.position.y + side]))
 
         to_test = []
         offsets = (1, -1)
         for offset in offsets:
             try:
-                to_test.append(board[self.position.y + side][self.position.x + offset])
+                to_test.append(self.board[self.position.y + side][self.position.x + offset])
                 to_test.append([self.position.x + offset, self.position.y + side])
             except IndexError:
                 pass
@@ -157,9 +166,9 @@ class Pawn(Chess_piece):
                              [self.position.x + 1, self.position.y + 1]]
 
 
-class Knight(Chess_piece):
+class Knight(ChessPiece):
 
-    def get_valid_positions(self, board):
+    def get_valid_positions(self):
         ## THIS SHIT WORKED ON FIRST TRY
         ##  print('HAPPINESS LVL MAXIMUM')
         valid_positions = []
@@ -167,7 +176,7 @@ class Knight(Chess_piece):
         offsets = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
         for offset in offsets:
             try:
-                to_test.append(board[self.position.y + offset[0]][self.position.x + offset[1]])
+                to_test.append(self.board[self.position.y + offset[0]][self.position.x + offset[1]])
                 to_test.append([self.position.x + offset[1], self.position.y + offset[0]])
             except IndexError:
                 pass
@@ -228,19 +237,19 @@ class Knight(Chess_piece):
                              [self.position.x - 2, self.position.y + 1], [self.position.x - 2, self.position.y - 1]]
 
 
-class Bishop(Chess_piece):
+class Bishop(ChessPiece):
 
-    def get_valid_positions(self, board):
+    def get_valid_positions(self):
         valid_positions = []
         top_right = False
         top_left = False
         bottom_right = False
         bottom_left = False
 
-        for i in range(1, len(board)):
+        for i in range(1, len(self.board)):
             if not top_right:
                 try:
-                    board_position = board[self.position.y + i][self.position.x + i]
+                    board_position = self.board[self.position.y + i][self.position.x + i]
                     top_right = True if board_position is not None else False
                     if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x + i, self.position.y + i]))
@@ -248,7 +257,7 @@ class Bishop(Chess_piece):
                     top_right = True
             if (not top_left) and (self.position.x - i >= 0):
                 try:
-                    board_position = board[self.position.y + i][self.position.x - i]
+                    board_position = self.board[self.position.y + i][self.position.x - i]
                     bottom_left = True if board_position is not None else False
                     if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x - i, self.position.y + i]))
@@ -256,7 +265,7 @@ class Bishop(Chess_piece):
                     top_left = True
             if (not bottom_left) and (self.position.y - i >= 0 and self.position.x - i >= 0):
                 try:
-                    board_position = board[self.position.y - i][self.position.x - i]
+                    board_position = self.board[self.position.y - i][self.position.x - i]
                     bottom_left = True if board_position is not None else False
                     if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x - i, self.position.y - i]))
@@ -264,7 +273,7 @@ class Bishop(Chess_piece):
                     bottom_left = True
             if (not bottom_right) and (self.position.y - i >= 0):
                 try:
-                    board_position = board[self.position.y - i][self.position.x + i]
+                    board_position = self.board[self.position.y - i][self.position.x + i]
                     bottom_right = True if board_position is not None else False
                     if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x + i, self.position.y - i]))
@@ -283,7 +292,7 @@ class Bishop(Chess_piece):
                              [self.position.x + i, self.position.y - i], [self.position.x - i, self.position.y - i]]
 
 
-class King(Chess_piece):
+class King(ChessPiece):
 
     def __init__(self, color, position):
         super().__init__(color, position, 'King')
@@ -291,16 +300,16 @@ class King(Chess_piece):
     def checks(self):
         pass
 
-    def get_valid_positions(self, board):
+    def get_valid_positions(self):
         pass
 
-    def is_checked(self, board):
+    def is_checked(self):
         ### MAYBE DO A REVERSE? LIKE, YOU CHECK FROM THE KING IF HE WERE SAID PIECE IF IT COULD GET TO HIM
         ### LIKE YOU CHECK DIAGONALLY FROM THE KING AND STUFF
         checkers = []
-        for row in board:
+        for row in self.board:
             for piece in [p for p in row if (not (p is None) and p.get_color() != self.get_color())]:
-                if piece.can_move_to(board, self.position):
+                if piece.can_move_to(self.board, self.position):
                     checkers.append(piece)
         if checkers:
             print(f"{self.get_name()} is checked by:")
@@ -310,18 +319,18 @@ class King(Chess_piece):
         return False
 
 
-class Tower(Chess_piece):
+class Tower(ChessPiece):
 
-    def get_valid_positions(self, board):
+    def get_valid_positions(self):
         valid_positions = []
         top = False
         bottom = False
         left = False
         right = False
-        for i in range(1, len(board)):
+        for i in range(1, len(self.board)):
             if not top:
                 try:
-                    board_position = board[self.position.y + i][self.position.x]
+                    board_position = self.board[self.position.y + i][self.position.x]
                     top = True if board_position is not None else False
                     if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x, self.position.y + i]))
@@ -329,7 +338,7 @@ class Tower(Chess_piece):
                     top = True
             if (not bottom) and (self.position.y - i >= 0):
                 try:
-                    board_position = board[self.position.y - i][self.position.x]
+                    board_position = self.board[self.position.y - i][self.position.x]
                     bottom = True if board_position is not None else False
                     if (board_position is None) or not (board_position.get_color() == self.color):
                         valid_positions.append(Position([self.position.x, self.position.y - i]))
@@ -337,7 +346,7 @@ class Tower(Chess_piece):
                     bottom = True
             if (not left) and (self.position.x - i >= 0):
                 try:
-                    board_position = board[self.position.y][self.position.x - i]
+                    board_position = self.board[self.position.y][self.position.x - i]
                     left = True if board_position is not None else False
                     if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x - i, self.position.y]))
@@ -345,7 +354,7 @@ class Tower(Chess_piece):
                     left = True
             if not right:
                 try:
-                    board_position = board[self.position.y][self.position.x + i]
+                    board_position = self.board[self.position.y][self.position.x + i]
                     right = True if board_position is not None else False
                     if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x + i, self.position.y]))
