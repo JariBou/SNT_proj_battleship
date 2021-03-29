@@ -1,7 +1,6 @@
 import copy
 from abc import ABC, abstractmethod
 
-
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
 from time import time
 
@@ -40,8 +39,13 @@ class Board:
         ## Might be too hard tho....dk
 
     def move_piece_to(self, piece, new_position):
+        """
+        :param piece: ChessPiece class
+        :param new_position: Position class
+        """
         if piece.move_to(new_position):
             self.board[new_position.y][new_position.x] = piece
+        print(f'Moved {piece.get_name()} to {piece.get_position(True)}')
 
     def check_for_checks(self):
 
@@ -80,11 +84,14 @@ class Board:
                     string_row += 'None' + ', '
             print(string_row)
 
-    def witch_player(self):
+    def switch_player(self):
         self.player = 1 if self.player == 0 else 0
 
     def can_move_freely(self, player):
         return not self.checks_list[self.colors[player]]
+
+    def return_board(self):
+        return self.board
 
 
 class Position:
@@ -106,7 +113,7 @@ class ChessPiece(ABC):
         self.board = None
 
     def get_position(self, coordinates=False):
-        return self.position if coordinates == False else self.position.get_position()
+        return self.position if not coordinates else self.position.get_position()
 
     def get_color(self):
         return self.color
@@ -120,9 +127,12 @@ class ChessPiece(ABC):
     def move_to(self, new_position):
         """ Moves the piece to New position
         :param new_position: New position as a Position class
+        :return: True if success, False if fail
         """
         if self.can_move_to(new_position):
-            self.position = Position([new_position])
+            self.board[self.position.y][self.position.x] = None
+            self.position = new_position
+            self.board[new_position.y][new_position.x] = self
             return True
         else:
             return False
@@ -166,7 +176,7 @@ class Pawn(ChessPiece):
                 pass
         for i in range(0, len(to_test), 2):
             if not (to_test[i] is None) and not (to_test[i].get_color() is self.color):
-                valid_positions.append(Position(to_test[i+1]))
+                valid_positions.append(Position(to_test[i + 1]))
 
         # try:
         #     if not (board[self.position.y + side][self.position.x + 1].get_color() is self.color):
@@ -179,6 +189,14 @@ class Pawn(ChessPiece):
 
     def checks(self):
         pass
+
+    def move_to(self, new_position):
+        if super().move_to(new_position):
+            self.first_move = True
+            return True
+        else:
+            self.first_move = True
+            return False
 
     def __init__(self, color, position):
         super().__init__(color, position, 'Pawn')
@@ -320,7 +338,7 @@ class King(ChessPiece):
         super().__init__(color, position, 'King')
 
     def checks(self):
-        pass   ## Useless to check for check because it cannot do dat
+        pass  ## Useless to check for check because it cannot do dat
 
     def get_valid_positions(self):
         offsets = [[1, -1], [1, 0], [1, 1], [0, 1]]
@@ -328,9 +346,10 @@ class King(ChessPiece):
         for i in [1, -1]:
             for offset in offsets:
                 try:
-                    position = self.board[self.position.y + offset[0]*i][self.position.x + offset[1]*i]
+                    position = self.board[self.position.y + offset[0] * i][self.position.x + offset[1] * i]
                     if (position is None) or (position.get_color() != self.color):
-                        valid_positions.append(Position([self.position.x + offset[1]*i, self.position.y + offset[0]*i]))
+                        valid_positions.append(
+                            Position([self.position.x + offset[1] * i, self.position.y + offset[0] * i]))
                 except IndexError:
                     pass
         return valid_positions
@@ -439,6 +458,6 @@ if __name__ == '__main__':
     b.print_board()
     b.check_for_checks()
     print(b.board[2][1].can_move_to(Position([1, 3])))
-    #print(b.board[2][1].is_checked(b.board))
+    # print(b.board[2][1].is_checked(b.board))
     # print(b.board[3][2].get_valid_positions(b.board))
     # print(b.board[3][2].can_move_to(b.board, Position([2, 2])))

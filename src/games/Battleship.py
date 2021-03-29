@@ -128,7 +128,7 @@ class Battleship_1v1:
         ## --------------------------------------------------------------------
 
         ## Rotate boat orientation button and current orientation display
-        self.rotate = tk.Button(self.root, bg="white", text="Rotate", command=self.rotate)
+        self.rotate = tk.Button(self.root, bg="white", text="Rotate", command=self.rotate_boat)
         self.rotate.grid(row=0, column=13, sticky='nsew')
         self.curr_rotation = tk.Label(self.root, text='Horizontal')
         self.curr_rotation.grid(row=0, column=14, sticky='nsew')
@@ -193,7 +193,7 @@ class Battleship_1v1:
 
         self.root.mainloop()
 
-    def rotate(self):
+    def rotate_boat(self):
         """Changes the placement orientation for odd numbers """
         self.boat_state = "horizontal" if self.boat_state == "vertical" else "vertical"
         self.curr_rotation.config(text='Vertical') if self.curr_rotation.cget('text') == 'Horizontal' else self.curr_rotation.config(text='Horizontal')
@@ -632,38 +632,15 @@ class Battleship_1v1:
     def on_key_press(self, event):
         key_pressed = repr(event.char).replace("'", '', 2)
         if key_pressed == 'r':
-            self.boat_state = "horizontal" if self.boat_state == "vertical" else "vertical"
-            self.curr_rotation.config(text='Vertical') if self.curr_rotation.cget(
-                'text') == 'Horizontal' else self.curr_rotation.config(text='Horizontal')
-        elif key_pressed in '2':
-            print('HA')
-            self.boat = '2'
-            for i in range(len(self.size_buttons)):
-                if i == 0:
-                    self.size_buttons[i].config(bg='green')
-                else:
-                    self.size_buttons[i].config(bg='white')
-        elif key_pressed in '3':
-            self.boat = '3'
-            for i in range(len(self.size_buttons)):
-                if i == 1:
-                    self.size_buttons[i].config(bg='green')
-                else:
-                    self.size_buttons[i].config(bg='white')
-        elif key_pressed in '4':
-            self.boat = '4'
-            for i in range(len(self.size_buttons)):
-                if i == 2:
-                    self.size_buttons[i].config(bg='green')
-                else:
-                    self.size_buttons[i].config(bg='white')
-        elif key_pressed in '5':
-            self.boat = '5'
-            for i in range(len(self.size_buttons)):
-                if i == 3:
-                    self.size_buttons[i].config(bg='green')
-                else:
-                    self.size_buttons[i].config(bg='white')
+            self.rotate_boat()
+        elif key_pressed == '2':
+            self.size(self.size_2, "2")
+        elif key_pressed == '3':
+            self.size(self.size_3, "3")
+        elif key_pressed == '4':
+            self.size(self.size_4, "4")
+        elif key_pressed == '5':
+            self.size(self.size_5, "5")
         print("on_key_press", repr(event.char))
 
     def on_key_release_repeat(self, event):
