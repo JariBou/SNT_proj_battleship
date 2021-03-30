@@ -4,6 +4,16 @@ from PIL import Image, ImageTk
 from pathlib import Path
 
 
+class Position:
+
+    def __init__(self, coordinates):
+        self.x = coordinates[0]
+        self.y = coordinates[1]
+
+    def get_position(self):
+        return self.x, self.y
+
+
 class Constants(Enum):
 
     @classmethod
