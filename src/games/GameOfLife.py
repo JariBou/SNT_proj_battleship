@@ -69,7 +69,7 @@ class GameOfLife:
                 a.grid(row=row, column=column, sticky='nsew')
                 board.append(a)
 
-        self.logic_board = [board[n:n + self.size.x] for n in range(0, len(board), self.size.x)]
+        self.logic_board = [board[n:n + self.size.x+1] for n in range(0, len(board)+1, self.size.x)]
 
         self.start_button = tk.Button(self.root, text='Start', command=self.start)
         self.start_button.grid(row=0, column=self.size.x)

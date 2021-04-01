@@ -117,6 +117,7 @@ class ChessGui:
         self.last_button_clicked = None
         self.last_piece = None
         self.last_position = None
+        self.last_color = ''
 
         self.b_class.pass_board_to_pieces()
 
@@ -153,23 +154,33 @@ class ChessGui:
 
     def clicked(self, button):
         print('----------------------------')
+        print(self.last_button_clicked)
         self.b_class.print_board()
         board = self.b_class.board
         curr_pos = Position([button.grid_info()['column'], button.grid_info()['row']])
         piece_clicked_on = board[curr_pos.y][curr_pos.x]
         if self.last_piece is not None:
-            print('hello')
-            print(self.last_piece.get_valid_positions())
-            if curr_pos.get_position() in [pos.get_position() for pos in self.last_piece.get_valid_positions()]:
-                print('hello')
-                self.b_class.move_piece_to(self.last_piece, curr_pos)
+            if button == self.last_button_clicked:
                 self.last_piece = None
+                self.last_button_clicked['bg'] = self.last_color
+                self.last_color = ''
+                self.last_button_clicked = None
+            elif curr_pos.get_position() in [pos.get_position() for pos in self.last_piece.get_valid_positions()]:
+                self.b_class.move_piece_to(self.last_piece, curr_pos)
+                self.last_button_clicked['bg'] = self.last_color
+                if isinstance(self.last_piece, Pawn) and self.last_piece.return_over():
+                    self.update_board()
+                    self.last_piece.transform()
+                    self.update_board()
+                self.last_color = ''
+                self.last_piece = None
+                self.last_button_clicked = None
         else:
-            if self.last_piece is None:
+            if self.last_piece is None and piece_clicked_on is not None:
                 self.last_piece = piece_clicked_on
-            if self.last_button_clicked is None:
+                self.last_color = button['bg']
+                button['bg'] = 'blue'
                 self.last_button_clicked = button
-            if self.last_position is None:
                 self.last_position = Position([curr_pos.x, curr_pos.y])
         self.update_board()
 
@@ -183,10 +194,7 @@ class ChessGui:
             try:
                 button['image'] = self.images.get(piece.get_color()).get(piece.get_type())
             except AttributeError:
-                pass
-
-
-
+                button['image'] = ''
 
 
 if __name__ == '__main__':

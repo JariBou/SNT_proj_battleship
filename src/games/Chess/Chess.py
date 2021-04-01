@@ -1,4 +1,5 @@
 import copy
+import tkinter as tk
 from abc import ABC, abstractmethod
 
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
@@ -108,7 +109,10 @@ class ChessPiece(ABC):
 
     def __init__(self, color, position, Type):
         self.color = color
-        self.position = Position(position)
+        if isinstance(position, Position):
+            self.position = position
+        else:
+            self.position = Position(position)
         self.type = Type
         self.board = None
 
@@ -192,7 +196,10 @@ class Pawn(ChessPiece):
 
     def move_to(self, new_position):
         if super().move_to(new_position):
-            self.first_move = True
+            self.first_move = False
+            side_max = 7 if self.color == 'White' else 0
+            if self.position.y == side_max:
+                self.over = True
             return True
         else:
             self.first_move = True
@@ -204,6 +211,27 @@ class Pawn(ChessPiece):
         ## Useless just for a representation of how it can move  {might be useful actually}
         self.move_pattern = [[self.position.x, self.position.y + 1], [self.position.x - 1, self.position.y + 1],
                              [self.position.x + 1, self.position.y + 1]]
+        self.over = False
+
+    def return_over(self):
+        return self.over
+
+    def transform(self):
+        w = tk.Tk()
+        w.title('Trasform into:')
+        bishop = tk.Button(w, text='Bishop', command=lambda: self.t_intp(Bishop, w))
+        bishop.grid(row=0, column=0)
+        tower = tk.Button(w, text='Tower', command=lambda: self.t_intp(Tower, w))
+        tower.grid(row=0, column=1)
+        #queen = tk.Button(w, text='Queen', command=lambda: self.t_intp(Queen, w))
+        #queen.grid(row=1, column=0)
+        knight = tk.Button(w, text='Knight', command=lambda: self.t_intp(Knight, w))
+        knight.grid(row=1, column=1)
+        w.mainloop()
+
+    def t_intp(self, piece_type, window):
+        self.board[self.position.y][self.position.x] = piece_type(self.color, self.position)
+        window.destroy()
 
 
 class Knight(ChessPiece):
@@ -334,6 +362,8 @@ class Bishop(ChessPiece):
 
 class King(ChessPiece):
 
+    ##TODO: Fix bishop not detecting pawns for check and king not being able to move while in check
+
     def __init__(self, color, position):
         super().__init__(color, position, 'King')
 
@@ -354,17 +384,18 @@ class King(ChessPiece):
                     pass
         return valid_positions
 
-    def is_checked(self, next_board=None):
+    def is_checked(self, next_board=None, next_position=None):
         ### MAYBE DO A REVERSE? LIKE, YOU CHECK FROM THE KING IF HE WERE SAID PIECE IF IT COULD GET TO HIM
         ### LIKE YOU CHECK DIAGONALLY FROM THE KING AND STUFF
         ## Na we good fam
         ### Use this to check if a move prevents the check
         board = self.board if next_board is None else next_board
         start_time = time()
-        checkers = []
+        checkers = []   
+        position = self.position if next_position is None else next_position
         for row in board:
             for piece in [p for p in row if (not (p is None) and p.get_color() != self.get_color())]:
-                if piece.can_move_to(self.position):
+                if piece.can_move_to(position):
                     checkers.append(piece)
         end_time = time()
         print(start_time - end_time)
@@ -379,7 +410,7 @@ class King(ChessPiece):
         next_board = copy.deepcopy(self.board)
         next_board[self.position.y][self.position.x] = None
         next_board[new_position.y][new_position.x] = self
-        if self.is_checked(next_board):
+        if self.is_checked(next_board, new_position):
             return False
         return True
 
