@@ -7,27 +7,26 @@ path = Ct.get_path()
 #button_load = Image.open(path.joinpath('resources\\images\\Chess\\taskbar.png'))
 
 
-class Board:
+class A:
 
-    def __init__(self):
-        self.board = Ct.new_board()
+    def a(self):
+        return 'a'
 
 
-class Game:
+class B:
 
-    def __init__(self):
-        self.b_class = Board()
-        self.board = self.b_class.board
+    def a(self):
+        return 'b'
 
-    def get_class(self):
-        return self.b_class
+
+class C(A, B):
+
+    def total(self):
+        string = A.a(self)
+        string += B.a(self)
+        return string
 
 
 if __name__ == '__main__':
-    g = Game()
-    g.board[0][0] = 1
-    for element in g.get_class().board:
-        print(element)
-    print('---------')
-    for element in g.board:
-        print(element)
+    C = C()
+    print([None] * 7)

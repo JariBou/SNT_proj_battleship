@@ -71,3 +71,15 @@ class Constants(Enum):
             img = img.resize((size, size))
         photo = ImageTk.PhotoImage(img)
         return photo
+
+    @classmethod
+    def regroup_list(cls, List, size_of_sublist):
+        return [List[n:n + size_of_sublist] for n in range(0, len(List), size_of_sublist)]
+
+    @classmethod
+    def print_matrice(cls, matrice, separator=', '):
+        for row in matrice:
+            line = ''
+            for column in row:
+                line += column + separator
+            print(line)

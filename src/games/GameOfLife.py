@@ -105,8 +105,6 @@ class GameOfLife:
                                 count += 1
                         except IndexError:
                             pass
-                        except KeyError:
-                            print(f'row={row+offset.y}, column={column+offset.x}')
                     if (curr_cell['bg'] == 'white') and (count == 3):
                         to_born.append(self.logic_board[row][column])
                     elif (curr_cell['bg'] == 'black') and (count < 2 or count > 3):

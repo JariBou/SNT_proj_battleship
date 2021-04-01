@@ -27,14 +27,18 @@ class Board:
         self.checks_list = {'White': False, 'Black': False}
         self.player = 0
         self.board = [
-            [None, Knight('White', [1, 0]), None, None, None, None, Knight('White', [6, 0]), None],
+            [Tower('White', [0, 0]), Knight('White', [1, 0]), Bishop('White', [2, 0]), Queen('White', [3, 0]),
+             King('White', [4, 0]), Bishop('White', [5, 0]), Knight('White', [6, 0]), Tower('White', [7, 0])],
             [Pawn('White', [i, 1]) for i in range(8)],
-            [None, King('Black', [1, 2]), None, None, None, None, None, None],
-            [Bishop('White', [0, 3]), None, Knight('White', [2, 3]), None, None, None, None, None],
-            [None, None, None, None, None, None, None, None],
-            [None, Tower('White', [1, 5]), None, None, None, None, None, None],
+
+            [None] * 8,
+            [None] * 8,
+            [None] * 8,
+            [None] * 8,
+
             [Pawn('Black', [i, 6]) for i in range(8)],
-            [None, Knight('Black', [1, 7]), None, None, None, None, Knight('Black', [6, 7]), None]
+            [Tower('Black', [0, 7]), Knight('Black', [1, 7]), Bishop('Black', [2, 7]), Queen('Black', [3, 7]),
+             King('Black', [4, 7]), Bishop('Black', [5, 7]), Knight('Black', [6, 7]), Tower('Black', [7, 7])]
             ]
         ## Do a dynamic board where instead of using a binary system to know if a piece is there just move the pieces in that list?
         ## Might be too hard tho....dk
@@ -46,14 +50,23 @@ class Board:
         """
         if piece.move_to(new_position):
             self.board[new_position.y][new_position.x] = piece
-        print(f'Moved {piece.get_name()} to {piece.get_position(True)}')
+            print(f'Moved {piece.get_name()} to {piece.get_position(True)}')
+            return True
+        else:
+            print('Critical Error')
+            return False
 
-    def check_for_checks(self):
+    def check_for_checks(self, color):
+        """returns True if king of color is check"""
 
         kings_list = [piece for piece in get_flattened(self.board) if piece.__class__ == King]
 
         for king in kings_list:
-            king.is_checked()
+            if king.is_checked() and king.get_color() == color:
+                print(king.get_name())
+                print(king.get_position(True))
+                return True
+        return False
 
         # pieces_list = []
         # for row in range(len(self.board)):
@@ -89,10 +102,13 @@ class Board:
         self.player = 1 if self.player == 0 else 0
 
     def can_move_freely(self, player):
-        return not self.checks_list[self.colors[player]]
+        return not self.check_for_checks(self.colors[player])
 
     def return_board(self):
         return self.board
+
+    def set_board(self, board):
+        self.board = board
 
 
 class Position:
@@ -133,13 +149,37 @@ class ChessPiece(ABC):
         :param new_position: New position as a Position class
         :return: True if success, False if fail
         """
-        if self.can_move_to(new_position):
-            self.board[self.position.y][self.position.x] = None
-            self.position = new_position
-            self.board[new_position.y][new_position.x] = self
-            return True
-        else:
+        if not self.can_move_to(new_position):
             return False
+        print('Can move')
+        print(new_position.get_position())
+        logic_board = copy.deepcopy(self.board)
+        logic_board[self.position.y][self.position.x] = None
+        logic_piece = copy.deepcopy(self)
+        logic_piece.position = new_position
+        logic_board[new_position.y][new_position.x] = logic_piece
+        b_class = Board()
+
+        b_class.set_board(logic_board)
+
+        b_class.pass_board_to_pieces()
+
+        player = 0 if self.color == 'White' else 1
+        print('------logic board-------')
+        b_class.print_board()
+        print('------------------------')
+        if isinstance(logic_piece, King):
+            print(logic_piece.is_checked(next_board=logic_board, next_position=new_position))
+        print('------------------------')
+
+        if not b_class.can_move_freely(player):
+            print('FFFFFFF')
+            return False
+
+        self.board[self.position.y][self.position.x] = None
+        self.position = new_position
+        self.board[new_position.y][new_position.x] = self
+        return True
 
     def can_move_to(self, new_position):
         return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
@@ -148,20 +188,26 @@ class ChessPiece(ABC):
         self.board = board
 
     @abstractmethod
-    def checks(self):  ## Every subclass of this class will have to implement it
+    def checks(self):  ## USELESS??? MAYBE REMOVE IT DUMBASS??
         """Checks if this piece puts the adversary king in check"""
         pass
 
     @abstractmethod
-    def get_valid_positions(self):
+    def get_valid_positions(self):   ## Every subclass of this class will have to implement it
         """Returns a list of valid positions to move the piece to"""
         pass
 
 
 class Pawn(ChessPiece):
 
+    def __init__(self, color, position):
+        super().__init__(color, position, 'Pawn')
+        self.first_move = True  ## When you move for the first time, set this to false pretty please
+        self.over = False
+        self.w = None
+
     def get_valid_positions(self):
-        ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION
+        ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION, na its good fam, done it
         side = 1 if self.color == 'White' else -1
         valid_positions = []
         if self.first_move:
@@ -205,36 +251,33 @@ class Pawn(ChessPiece):
             self.first_move = True
             return False
 
-    def __init__(self, color, position):
-        super().__init__(color, position, 'Pawn')
-        self.first_move = True  ## When you move for the first time, set this to false pretty please
-        ## Useless just for a representation of how it can move  {might be useful actually}
-        self.move_pattern = [[self.position.x, self.position.y + 1], [self.position.x - 1, self.position.y + 1],
-                             [self.position.x + 1, self.position.y + 1]]
-        self.over = False
-
-    def return_over(self):
+    def reached_end(self):
         return self.over
 
     def transform(self):
-        w = tk.Tk()
-        w.title('Trasform into:')
-        bishop = tk.Button(w, text='Bishop', command=lambda: self.t_intp(Bishop, w))
+        self.w = tk.Tk()
+        self.w.title('Trasform into:')
+        bishop = tk.Button(self.w, text='Bishop', command=lambda: self.t_intp(Bishop))
         bishop.grid(row=0, column=0)
-        tower = tk.Button(w, text='Tower', command=lambda: self.t_intp(Tower, w))
+        tower = tk.Button(self.w, text='Tower', command=lambda: self.t_intp(Tower))
         tower.grid(row=0, column=1)
-        #queen = tk.Button(w, text='Queen', command=lambda: self.t_intp(Queen, w))
+        #queen = tk.Button(w, text='Queen', command=lambda: self.t_intp(Queen))
         #queen.grid(row=1, column=0)
-        knight = tk.Button(w, text='Knight', command=lambda: self.t_intp(Knight, w))
+        knight = tk.Button(self.w, text='Knight', command=lambda: self.t_intp(Knight))
         knight.grid(row=1, column=1)
-        w.mainloop()
+        self.w.mainloop()
 
-    def t_intp(self, piece_type, window):
+    def t_intp(self, piece_type):
+        print(piece_type)
         self.board[self.position.y][self.position.x] = piece_type(self.color, self.position)
-        window.destroy()
+        self.w.destroy()
+        self.w.quit()
 
 
 class Knight(ChessPiece):
+
+    def __init__(self, color, position):
+        super().__init__(color, position, 'Knight')
 
     def get_valid_positions(self):
         ## THIS SHIT WORKED ON FIRST TRY
@@ -296,16 +339,11 @@ class Knight(ChessPiece):
     def checks(self):
         pass
 
-    def __init__(self, color, position):
-        super().__init__(color, position, 'Knight')
-        ## Useless just for a representation of how it can move  {might be useful actually}
-        self.move_pattern = [[self.position.x + 1, self.position.y + 2], [self.position.x - 1, self.position.y + 2],
-                             [self.position.x + 1, self.position.y - 2], [self.position.x - 1, self.position.y - 2],
-                             [self.position.x + 2, self.position.y + 1], [self.position.x + 2, self.position.y - 1],
-                             [self.position.x - 2, self.position.y + 1], [self.position.x - 2, self.position.y - 1]]
-
 
 class Bishop(ChessPiece):
+
+    def __init__(self, color, position):
+        super().__init__(color, position, 'Bishop')
 
     def get_valid_positions(self):
         valid_positions = []
@@ -352,13 +390,6 @@ class Bishop(ChessPiece):
     def checks(self):
         pass
 
-    def __init__(self, color, position):
-        super().__init__(color, position, 'Bishop')
-        ## Useless just for a representation of how it can move  {might be useful actually}
-        i = 0
-        self.move_pattern = [[self.position.x + i, self.position.y + i], [self.position.x - i, self.position.y + i],
-                             [self.position.x + i, self.position.y - i], [self.position.x - i, self.position.y - i]]
-
 
 class King(ChessPiece):
 
@@ -398,11 +429,10 @@ class King(ChessPiece):
                 if piece.can_move_to(position):
                     checkers.append(piece)
         end_time = time()
-        print(start_time - end_time)
         if checkers:
-            print(f"{self.get_name()} is checked by:")
-            for piece in checkers:
-                print(f"- {piece.get_name()} in {piece.get_position(True)}")
+            # print(f"{self.get_name()} is checked by:")
+            # for piece in checkers:
+            #     print(f"- {piece.get_name()} in {piece.get_position(True)}")
             return True
         return False
 
@@ -422,6 +452,9 @@ class King(ChessPiece):
 
 
 class Tower(ChessPiece):
+
+    def __init__(self, color, position):
+        super().__init__(color, position, 'Tower')
 
     def get_valid_positions(self):
         valid_positions = []
@@ -467,12 +500,24 @@ class Tower(ChessPiece):
     def checks(self):
         pass
 
+
+class Queen(ChessPiece):
+
     def __init__(self, color, position):
-        super().__init__(color, position, 'Tower')
-        ## Useless just for a representation of how it can move  {might be useful actually}
-        i = 0
-        self.move_pattern = [[self.position.x + i, self.position.y], [self.position.x - i, self.position.y],
-                             [self.position.x, self.position.y - i], [self.position.x, self.position.y + i]]
+        super().__init__(color, position, 'Queen')
+
+    def checks(self):
+        pass
+
+    def get_valid_positions(self):
+        logic_board = copy.deepcopy(self.board)
+        positions_list = []
+        for Type in [Bishop, Tower]:
+            piece = Type(self.color, self.position)
+            logic_board[self.position.y][self.position.x] = piece
+            piece.pass_new_board(logic_board)
+            positions_list += piece.get_valid_positions()
+        return positions_list
 
 
 if __name__ == '__main__':
@@ -487,7 +532,6 @@ if __name__ == '__main__':
     #     print(k)
     b.pass_board_to_pieces()
     b.print_board()
-    b.check_for_checks()
     print(b.board[2][1].can_move_to(Position([1, 3])))
     # print(b.board[2][1].is_checked(b.board))
     # print(b.board[3][2].get_valid_positions(b.board))
