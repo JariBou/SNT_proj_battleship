@@ -177,7 +177,9 @@ class ChessGui:
             self.last_button_clicked = None
             return
 
-        if self.last_piece is None and piece_clicked_on is not None:
+        if self.last_piece is None:
+            if piece_clicked_on is None:
+                return
             for p, color in zip([0, 1], ['Black', 'White']):
                 try:
                     if self.player == p and piece_clicked_on.get_color() == color:
@@ -190,9 +192,6 @@ class ChessGui:
             button['bg'] = 'blue'
             self.last_button_clicked = button
             self.last_position = Position([curr_pos.x, curr_pos.y])
-            return
-
-        if self.last_piece is None:
             return
 
         if curr_pos.get_position() in [pos.get_position() for pos in self.last_piece.get_valid_positions()]:
