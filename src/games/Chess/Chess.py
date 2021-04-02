@@ -213,13 +213,19 @@ class Pawn(ChessPiece):
         if self.first_move:
             if self.board[self.position.y + (side * 2)][self.position.x] is None:
                 valid_positions.append(Position([self.position.x, self.position.y + (side * 2)]))
+
+        side_max = 7 if self.color == 'White' else 0
+        if self.position.y == side_max:
+            return []
+
         if self.board[self.position.y + side][self.position.x] is None:
             valid_positions.append(Position([self.position.x, self.position.y + side]))
 
         to_test = []
         offsets = (1, -1)
         for offset in offsets:
-            try:
+            try:  ##TODO: FIX THIS SHIT MOTHERFUCKER LIKE RN, MOVE YA ASS BOIIII
+                ##TODO: YOU FCKING LAZY PERSON, MOVE YA ASSSSSSS
                 to_test.append(self.board[self.position.y + side][self.position.x + offset])
                 to_test.append([self.position.x + offset, self.position.y + side])
             except IndexError:
@@ -247,9 +253,7 @@ class Pawn(ChessPiece):
             if self.position.y == side_max:
                 self.over = True
             return True
-        else:
-            self.first_move = True
-            return False
+        return False
 
     def reached_end(self):
         return self.over
@@ -261,8 +265,8 @@ class Pawn(ChessPiece):
         bishop.grid(row=0, column=0)
         tower = tk.Button(self.w, text='Tower', command=lambda: self.t_intp(Tower))
         tower.grid(row=0, column=1)
-        #queen = tk.Button(w, text='Queen', command=lambda: self.t_intp(Queen))
-        #queen.grid(row=1, column=0)
+        queen = tk.Button(self.w, text='Queen', command=lambda: self.t_intp(Queen))
+        queen.grid(row=1, column=0)
         knight = tk.Button(self.w, text='Knight', command=lambda: self.t_intp(Knight))
         knight.grid(row=1, column=1)
         self.w.mainloop()
@@ -397,6 +401,9 @@ class King(ChessPiece):
 
     def __init__(self, color, position):
         super().__init__(color, position, 'King')
+        self.first_move = True
+        self.ruck_pos_tower = []   ## [ [Position, Tower], [Position, Tower ]
+        self.ruck_pos_king = []
 
     def checks(self):
         pass  ## Useless to check for check because it cannot do dat
@@ -404,13 +411,50 @@ class King(ChessPiece):
     def get_valid_positions(self):
         offsets = [[1, -1], [1, 0], [1, 1], [0, 1]]
         valid_positions = []
+        x = self.position.x
+        y = self.position.y
+
+        ## Ruck mechanics
+        # if self.first_move:
+        #     for i in [1, -1]:  ## Problem????????
+        #         position = self.board[y][x + 2 * i]
+        #         position2 = self.board[y][x + 1 * i]
+        #         if position is None and position2 is None:
+        #             for k in [3, -4]:
+        #                 side = 1 if self.color == 'Black' else -1
+        #                 possible_tower = self.board[y][x + k*side]
+        #                 if isinstance(possible_tower, Tower):  ## Not finished
+        #                     if possible_tower.first_move:
+        #                         valid_positions.append(Position[])
+        #                     pass
+        #                 pass
+        #             pass
+
+        if self.first_move:
+            self.ruck_pos_tower = []
+            self.ruck_pos_king = []
+            for i, k in zip([1, -1], [3, -4]):  ## Problem????????
+                position = self.board[y][x + 2 * i]
+                position2 = self.board[y][x + 1 * i]
+                if position is None and position2 is None:
+                    possible_tower = self.board[y][x + k]
+                    if isinstance(possible_tower, Tower):  ## Not finished /!\
+                        print(possible_tower.first_move)
+                        print(k)
+                        if possible_tower.first_move:
+                            possible_position = Position([x + 2 * i, y])
+                            print(possible_position.get_position())
+                            valid_positions.append(possible_position)
+                            self.ruck_pos_tower.append([possible_position, possible_tower])
+                            self.ruck_pos_king.append(Position([x + 1 * i, y]))
+
         for i in [1, -1]:
             for offset in offsets:
                 try:
-                    position = self.board[self.position.y + offset[0] * i][self.position.x + offset[1] * i]
+                    position = self.board[y + offset[0] * i][x + offset[1] * i]
                     if (position is None) or (position.get_color() != self.color):
                         valid_positions.append(
-                            Position([self.position.x + offset[1] * i, self.position.y + offset[0] * i]))
+                            Position([x + offset[1] * i, y + offset[0] * i]))
                 except IndexError:
                     pass
         return valid_positions
@@ -421,14 +465,12 @@ class King(ChessPiece):
         ## Na we good fam
         ### Use this to check if a move prevents the check
         board = self.board if next_board is None else next_board
-        start_time = time()
         checkers = []   
         position = self.position if next_position is None else next_position
         for row in board:
             for piece in [p for p in row if (not (p is None) and p.get_color() != self.get_color())]:
                 if piece.can_move_to(position):
                     checkers.append(piece)
-        end_time = time()
         if checkers:
             # print(f"{self.get_name()} is checked by:")
             # for piece in checkers:
@@ -450,11 +492,22 @@ class King(ChessPiece):
         else:
             return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
 
+    def move_to(self, new_position):
+        if super().move_to(new_position):
+            if self.ruck_pos_tower:  # if it is != []
+                for i in range(len(self.ruck_pos_tower)):
+                    if new_position.get_position() == self.ruck_pos_king[i].get_position():
+                        self.ruck_pos_tower[i][1].move_to(self.ruck_pos_tower[i][0])
+            self.first_move = False
+            return True
+        return False
+
 
 class Tower(ChessPiece):
 
     def __init__(self, color, position):
         super().__init__(color, position, 'Tower')
+        self.first_move = True
 
     def get_valid_positions(self):
         valid_positions = []
@@ -499,6 +552,12 @@ class Tower(ChessPiece):
 
     def checks(self):
         pass
+
+    def move_to(self, new_position):
+        if super().move_to(new_position):
+            self.first_move = False
+            return True
+        return False
 
 
 class Queen(ChessPiece):
