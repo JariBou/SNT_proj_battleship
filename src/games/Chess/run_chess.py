@@ -201,7 +201,7 @@ class ChessGui:
             if isinstance(self.last_piece, Pawn) and self.last_piece.reached_end():
                 self.update_board()
                 self.last_piece.transform()
-                self.b_class.pass_board_to_pieces()
+            self.b_class.pass_board_to_pieces()
             self.update_board()
             self.last_color = ''
             self.last_piece = None

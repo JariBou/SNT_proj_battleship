@@ -28,5 +28,5 @@ class C(A, B):
 
 
 if __name__ == '__main__':
-    C = C()
-    print([None] * 7)
+    for i, k in zip([1, -1], [3, -4]):
+        print(i, k)

@@ -40,8 +40,9 @@ class Board:
             [Tower('Black', [0, 7]), Knight('Black', [1, 7]), Bishop('Black', [2, 7]), Queen('Black', [3, 7]),
              King('Black', [4, 7]), Bishop('Black', [5, 7]), Knight('Black', [6, 7]), Tower('Black', [7, 7])]
             ]
-        ## Do a dynamic board where instead of using a binary system to know if a piece is there just move the pieces in that list?
-        ## Might be too hard tho....dk
+        ### Do a dynamic board where instead of using a binary system to know if a piece is there just move the pieces in that list?
+        ### Might be too hard tho....dk
+        ##  Actually super easy, Barely an inconveniance, shoulda used cell class for each cell tho....
 
     def move_piece_to(self, piece, new_position):
         """
@@ -125,10 +126,7 @@ class ChessPiece(ABC):
 
     def __init__(self, color, position, Type):
         self.color = color
-        if isinstance(position, Position):
-            self.position = position
-        else:
-            self.position = Position(position)
+        self.position = position if isinstance(position, Position) else Position(position)
         self.type = Type
         self.board = None
 
@@ -144,6 +142,12 @@ class ChessPiece(ABC):
     def get_name(self):
         return f"{self.color.capitalize()} {self.type}"
 
+    def force_move_to(self, new_position):
+        self.board[self.position.y][self.position.x] = None
+        self.position = new_position
+        self.board[new_position.y][new_position.x] = self
+        return True
+
     def move_to(self, new_position):
         """ Moves the piece to New position
         :param new_position: New position as a Position class
@@ -151,8 +155,8 @@ class ChessPiece(ABC):
         """
         if not self.can_move_to(new_position):
             return False
-        print('Can move')
-        print(new_position.get_position())
+        # print('Can move')
+        # print(new_position.get_position())
         logic_board = copy.deepcopy(self.board)
         logic_board[self.position.y][self.position.x] = None
         logic_piece = copy.deepcopy(self)
@@ -165,12 +169,12 @@ class ChessPiece(ABC):
         b_class.pass_board_to_pieces()
 
         player = 0 if self.color == 'White' else 1
-        print('------logic board-------')
-        b_class.print_board()
-        print('------------------------')
-        if isinstance(logic_piece, King):
-            print(logic_piece.is_checked(next_board=logic_board, next_position=new_position))
-        print('------------------------')
+        # print('------logic board-------')
+        # b_class.print_board()
+        # print('------------------------')
+        # if isinstance(logic_piece, King):
+        #     print(logic_piece.is_checked(next_board=logic_board, next_position=new_position))
+        # print('------------------------')
 
         if not b_class.can_move_freely(player):
             print('FFFFFFF')
@@ -414,39 +418,34 @@ class King(ChessPiece):
         x = self.position.x
         y = self.position.y
 
-        ## Ruck mechanics
-        # if self.first_move:
-        #     for i in [1, -1]:  ## Problem????????
-        #         position = self.board[y][x + 2 * i]
-        #         position2 = self.board[y][x + 1 * i]
-        #         if position is None and position2 is None:
-        #             for k in [3, -4]:
-        #                 side = 1 if self.color == 'Black' else -1
-        #                 possible_tower = self.board[y][x + k*side]
-        #                 if isinstance(possible_tower, Tower):  ## Not finished
-        #                     if possible_tower.first_move:
-        #                         valid_positions.append(Position[])
-        #                     pass
-        #                 pass
-        #             pass
-
         if self.first_move:
             self.ruck_pos_tower = []
             self.ruck_pos_king = []
             for i, k in zip([1, -1], [3, -4]):  ## Problem????????
-                position = self.board[y][x + 2 * i]
-                position2 = self.board[y][x + 1 * i]
-                if position is None and position2 is None:
-                    possible_tower = self.board[y][x + k]
-                    if isinstance(possible_tower, Tower):  ## Not finished /!\
-                        print(possible_tower.first_move)
-                        print(k)
-                        if possible_tower.first_move:
-                            possible_position = Position([x + 2 * i, y])
-                            print(possible_position.get_position())
-                            valid_positions.append(possible_position)
-                            self.ruck_pos_tower.append([possible_position, possible_tower])
-                            self.ruck_pos_king.append(Position([x + 1 * i, y]))
+                position_1off = self.board[y][x + 1 * i]
+                Position_1off = Position([x + 1 * i, y])
+                position_2off = self.board[y][x + 2 * i]
+                Position_2off = Position([x + 2 * i, y])
+
+                if position_1off is not None or position_2off is not None:
+                    print('continue 1')
+                    continue
+                if self.ruck_check_test(Position_1off, Position_2off):
+                    print('continue2.5')
+                    continue
+
+                possible_tower = self.board[y][x + k]
+                if not isinstance(possible_tower, Tower):
+                    print('continue 3')
+                    continue
+
+                if possible_tower.first_move:
+                    possible_tower_position = Position([x + k, y])
+                    possible_position = Position([x + 2 * i, y])
+                    print(possible_position.get_position())
+                    valid_positions.append(possible_position)
+                    self.ruck_pos_tower.append([Position([x + 1 * i, y]), possible_tower_position])
+                    self.ruck_pos_king.append(Position([x + 2 * i, y]))
 
         for i in [1, -1]:
             for offset in offsets:
@@ -458,6 +457,26 @@ class King(ChessPiece):
                 except IndexError:
                     pass
         return valid_positions
+
+    def ruck_check_test(self, Position_1off, Position_2off):
+        b_class = Board()
+
+        player = 0 if self.color == 'White' else 1
+
+        logic_piece = copy.deepcopy(self)
+        for position in [Position_1off, Position_2off]:
+            logic_board = copy.deepcopy(self.board)
+            b_class.set_board(logic_board)
+            b_class.pass_board_to_pieces()
+            logic_board[self.position.y][self.position.x] = None
+            logic_piece.position = position
+            logic_board[position.y][position.x] = logic_piece
+
+            try:
+                if not b_class.can_move_freely(player):
+                    return True
+            except IndexError:
+                pass
 
     def is_checked(self, next_board=None, next_position=None):
         ### MAYBE DO A REVERSE? LIKE, YOU CHECK FROM THE KING IF HE WERE SAID PIECE IF IT COULD GET TO HIM
@@ -472,9 +491,9 @@ class King(ChessPiece):
                 if piece.can_move_to(position):
                     checkers.append(piece)
         if checkers:
-            # print(f"{self.get_name()} is checked by:")
+            # print(f"{self.get_name()} in {self.get_position(True)} is checked by:")
             # for piece in checkers:
-            #     print(f"- {piece.get_name()} in {piece.get_position(True)}")
+            #     print(f"- {piece.get_name()} in {piece.get_position(True)}  --  {[pos.get_position() for pos in piece.get_valid_positions()]}")
             return True
         return False
 
@@ -495,9 +514,14 @@ class King(ChessPiece):
     def move_to(self, new_position):
         if super().move_to(new_position):
             if self.ruck_pos_tower:  # if it is != []
+                print('list not None')
                 for i in range(len(self.ruck_pos_tower)):
+                    print(f'new_position: {new_position.get_position()}  -  king_pos: {self.ruck_pos_king[i].get_position()}')
+                    print(f'Tower_test={self.board[self.ruck_pos_tower[i][1].y][self.ruck_pos_tower[i][1].x]}')
+                    print(f'Tower_position={self.ruck_pos_tower[i][0].get_position()}')
                     if new_position.get_position() == self.ruck_pos_king[i].get_position():
-                        self.ruck_pos_tower[i][1].move_to(self.ruck_pos_tower[i][0])
+                        print('inside if condition')
+                        self.board[self.ruck_pos_tower[i][1].y][self.ruck_pos_tower[i][1].x].force_move_to(self.ruck_pos_tower[i][0])
             self.first_move = False
             return True
         return False
@@ -575,6 +599,7 @@ class Queen(ChessPiece):
             piece = Type(self.color, self.position)
             logic_board[self.position.y][self.position.x] = piece
             piece.pass_new_board(logic_board)
+            # print(f'Queen-side: {{{Type}}}={[pos.get_position() for pos in piece.get_valid_positions()]}')
             positions_list += piece.get_valid_positions()
         return positions_list
 
