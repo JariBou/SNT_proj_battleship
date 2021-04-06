@@ -418,34 +418,37 @@ class King(ChessPiece):
         x = self.position.x
         y = self.position.y
 
-        if self.first_move:
-            self.ruck_pos_tower = []
-            self.ruck_pos_king = []
-            for i, k in zip([1, -1], [3, -4]):  ## Problem????????
-                position_1off = self.board[y][x + 1 * i]
-                Position_1off = Position([x + 1 * i, y])
-                position_2off = self.board[y][x + 2 * i]
-                Position_2off = Position([x + 2 * i, y])
+        try:
+            if self.first_move:
+                self.ruck_pos_tower = []
+                self.ruck_pos_king = []
+                for i, k in zip([1, -1], [3, -4]):  ## Problem????????
+                    position_1off = self.board[y][x + 1 * i]
+                    Position_1off = Position([x + 1 * i, y])
+                    position_2off = self.board[y][x + 2 * i]
+                    Position_2off = Position([x + 2 * i, y])
 
-                if position_1off is not None or position_2off is not None:
-                    print('continue 1')
-                    continue
-                if self.ruck_check_test(Position_1off, Position_2off):
-                    print('continue2.5')
-                    continue
+                    if position_1off is not None or position_2off is not None:
+                        print('continue 1')
+                        continue
+                    if self.ruck_check_test(Position_1off, Position_2off):
+                        print('continue2.5')
+                        continue
 
-                possible_tower = self.board[y][x + k]
-                if not isinstance(possible_tower, Tower):
-                    print('continue 3')
-                    continue
+                    possible_tower = self.board[y][x + k]
+                    if not isinstance(possible_tower, Tower):
+                        print('continue 3')
+                        continue
 
-                if possible_tower.first_move:
-                    possible_tower_position = Position([x + k, y])
-                    possible_position = Position([x + 2 * i, y])
-                    print(possible_position.get_position())
-                    valid_positions.append(possible_position)
-                    self.ruck_pos_tower.append([Position([x + 1 * i, y]), possible_tower_position])
-                    self.ruck_pos_king.append(Position([x + 2 * i, y]))
+                    if possible_tower.first_move:
+                        possible_tower_position = Position([x + k, y])
+                        possible_position = Position([x + 2 * i, y])
+                        print(possible_position.get_position())
+                        valid_positions.append(possible_position)
+                        self.ruck_pos_tower.append([Position([x + 1 * i, y]), possible_tower_position])
+                        self.ruck_pos_king.append(Position([x + 2 * i, y]))
+        except IndexError:   ##when getting valid positions right before rucking
+            pass
 
         for i in [1, -1]:
             for offset in offsets:
