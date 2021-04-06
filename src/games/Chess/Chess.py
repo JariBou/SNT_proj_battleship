@@ -595,6 +595,7 @@ class Queen(ChessPiece):
     def checks(self):
         pass
 
+    # noinspection PyTypeChecker
     def get_valid_positions(self):
         logic_board = copy.deepcopy(self.board)
         positions_list = []
