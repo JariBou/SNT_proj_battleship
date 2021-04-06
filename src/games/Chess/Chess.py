@@ -130,6 +130,9 @@ class ChessPiece(ABC):
         self.type = Type
         self.board = None
 
+    def __repr__(self):
+        return f'{self.__class__.__name__}(name={self.get_name()}, position={self.position.get_position()}'
+
     def get_position(self, coordinates=False):
         return self.position if not coordinates else self.position.get_position()
 
@@ -620,7 +623,7 @@ if __name__ == '__main__':
     #     print(k)
     b.pass_board_to_pieces()
     b.print_board()
-    print(b.board[2][1].can_move_to(Position([1, 3])))
+    print(b.board[1][1])
     # print(b.board[2][1].is_checked(b.board))
     # print(b.board[3][2].get_valid_positions(b.board))
     # print(b.board[3][2].can_move_to(b.board, Position([2, 2])))
