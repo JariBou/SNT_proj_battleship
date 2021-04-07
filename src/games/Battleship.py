@@ -27,6 +27,11 @@ def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: LeTiramissu & Jari\n "
                                                "Version: Alpha V1.3")
+
+
+def g_help():
+    """Used to display help about the game"""
+    pass
 ####                                  ####
 
 
@@ -72,7 +77,7 @@ class Battleship_1v1:
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
         # diffmenu = tk.Menu(menubar, tearoff=0)
-        menubar.add_command(label="Help")  ##TODO: create help window with rules
+        menubar.add_command(label="Help", command=g_help)  ##TODO: create help window with rules
         menubar.add_command(label="About", command=about)
 
         ## Creation of the dictionary with all sounds

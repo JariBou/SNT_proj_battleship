@@ -537,6 +537,9 @@ class King(ChessPiece):
             return True
         return False
 
+    def is_mat(self):  ##TODO: implement this
+        pass
+
 
 class Tower(ChessPiece):
 

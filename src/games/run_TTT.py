@@ -26,9 +26,9 @@ class run:
         # and where it is placed
         self.w.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
-        self.w.columnconfigure(0, minsize=130)
-        self.w.columnconfigure(1, minsize=150)
-        self.w.rowconfigure(0, minsize=150)
+        self.w.columnconfigure(0, minsize=round(w/2))
+        self.w.columnconfigure(1, minsize=round(w/2))
+        self.w.rowconfigure(0, minsize=h)
 
         customFont = ft.Font(size=20)
         single = Button(text="SinglePlayer", command=self.single, font=customFont)
