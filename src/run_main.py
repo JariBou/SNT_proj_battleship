@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter.font as ft
 from src.games.MorpionSolo import MorpionSolo
 from src.games.MorpionMulti import MorpionMulti
+import src.games.run_TTT as runmorpion
 
 
 class run:
@@ -34,20 +35,20 @@ class run:
 
         # Set all buttons for apps
 
-        morpion = Button(text="Morpion", command=self.morpion, font=customFont)
+        morpion = Button(text="Morpion", font=customFont)
         morpion.grid(row=0, column=0, sticky="nsew")
-        battleship = Button(text="Battleship", command=self.battleship, font=customFont)
+        battleship = Button(text="Battleship", font=customFont)
         battleship.grid(row=0, column=1, sticky="nsew")
-        chess = Button(text="Chess", command=self.chess, font=customFont)
+        chess = Button(text="Chess",font=customFont)
         chess.grid(row=0, column=2, sticky="nsew")
-        gameoflife = Button(text="Jeu de la Vie", command=self.gameoflife, font=customFont)
-        gameoflife.grid(row=0, column=0, sticky="nsew")
-        last_letter = Button(text="Dernière Lettre", command=self.lastletter, font=customFont)
-        last_letter.grid(row=0, column=0, sticky="nsew")
-        rockps = Button(text="Shifumi", command=self.rockps, font=customFont)
-        rockps.grid(row=0, column=0, sticky="nsew")
-        lastgame = Button(text="???", command=self.???, font=customFont)
-        lastgame.grid(row=0, column=0, sticky="nsew")
+        gameoflife = Button(text="Jeu de la Vie", font=customFont)
+        gameoflife.grid(row=0, column=3, sticky="nsew")
+        last_letter = Button(text="Dernière Lettre", font=customFont)
+        last_letter.grid(row=1, column=0, sticky="nsew")
+        rockps = Button(text="Shifumi", font=customFont)
+        rockps.grid(row=1, column=1, sticky="nsew")
+        lastgame = Button(text="???", font=customFont)
+        lastgame.grid(row=1, column=2, sticky="nsew")
 
 
 
@@ -55,6 +56,7 @@ class run:
 
     def morpion(self):
         self.w.destroy()
+        runmorpion()
 
     def single(self):
         self.w.destroy()
