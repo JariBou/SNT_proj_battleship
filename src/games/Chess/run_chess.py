@@ -24,7 +24,7 @@ def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: Jari\n "
                                                "Version: Alpha V0.1")
-    ####                                  ####
+####                                  ####
 
 
 class ChessGui:
@@ -100,8 +100,8 @@ class ChessGui:
                 self.buttons_list.append(a)
                 self.color_pattern.append(a['bg'])
 
-        print(self.color_pattern)
-        print(len(self.color_pattern))
+        # print(self.color_pattern)
+        # print(len(self.color_pattern))
         self.buttons_list = Ct.regroup_list(self.buttons_list, 8)
         self.color_pattern = Ct.regroup_list(self.color_pattern, 8)
 
@@ -206,10 +206,11 @@ class ChessGui:
             self.last_color = ''
             self.last_piece = None
             self.last_button_clicked = None
-            self.b_class.print_board()
+            # self.b_class.print_board()
             self.switch_players()
             return
 
+        print(self.b_class.get(curr_pos.x, curr_pos.y))
         if self.b_class.get(curr_pos.x, curr_pos.y).get_color() == self.last_piece.get_color():
             self.last_button_clicked['bg'] = self.last_color
 

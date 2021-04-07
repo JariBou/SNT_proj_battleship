@@ -426,6 +426,7 @@ class King(ChessPiece):
         y = self.position.y
 
         try:
+            # print(self, self.first_move)
             if self.first_move:
                 self.ruck_pos_tower = []
                 self.ruck_pos_king = []
@@ -436,15 +437,15 @@ class King(ChessPiece):
                     Position_2off = Position([x + 2 * i, y])
 
                     if position_1off is not None or position_2off is not None:
-                        print('continue 1')
+                        # print('continue 1')
                         continue
                     if self.ruck_check_test(Position_1off, Position_2off):
-                        print('continue2.5')
+                        # print('continue2.5')
                         continue
 
                     possible_tower = self.board[y][x + k]
                     if not isinstance(possible_tower, Tower):
-                        print('continue 3')
+                        # print('continue 3')
                         continue
 
                     if possible_tower.first_move:
@@ -524,13 +525,13 @@ class King(ChessPiece):
     def move_to(self, new_position):
         if super().move_to(new_position):
             if self.ruck_pos_tower:  # if it is != []
-                print('list not None')
+                # print('list not None')
                 for i in range(len(self.ruck_pos_tower)):
-                    print(f'new_position: {new_position.get_position()}  -  king_pos: {self.ruck_pos_king[i].get_position()}')
-                    print(f'Tower_test={self.board[self.ruck_pos_tower[i][1].y][self.ruck_pos_tower[i][1].x]}')
-                    print(f'Tower_position={self.ruck_pos_tower[i][0].get_position()}')
+                    # print(f'new_position: {new_position.get_position()}  -  king_pos: {self.ruck_pos_king[i].get_position()}')
+                    # print(f'Tower_test={self.board[self.ruck_pos_tower[i][1].y][self.ruck_pos_tower[i][1].x]}')
+                    # print(f'Tower_position={self.ruck_pos_tower[i][0].get_position()}')
                     if new_position.get_position() == self.ruck_pos_king[i].get_position():
-                        print('inside if condition')
+                        # print('inside if condition')
                         self.board[self.ruck_pos_tower[i][1].y][self.ruck_pos_tower[i][1].x].force_move_to(self.ruck_pos_tower[i][0])
             self.first_move = False
             return True
