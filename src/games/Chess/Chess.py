@@ -44,6 +44,10 @@ class Board:
         ### Might be too hard tho....dk
         ##  Actually super easy, Barely an inconveniance, shoulda used cell class for each cell tho....
 
+    def get(self, x, y):
+        print(f'getting at: {x, y}')
+        return self.board[y][x]
+
     def move_piece_to(self, piece, new_position):
         """
         :param piece: ChessPiece class

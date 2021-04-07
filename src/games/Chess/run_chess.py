@@ -208,6 +208,17 @@ class ChessGui:
             self.last_button_clicked = None
             self.b_class.print_board()
             self.switch_players()
+            return
+
+        if self.b_class.get(curr_pos.x, curr_pos.y).get_color() == self.last_piece.get_color():
+            self.last_button_clicked['bg'] = self.last_color
+
+            self.last_piece = piece_clicked_on
+            self.last_color = button['bg']
+            button['bg'] = 'blue'
+            self.last_button_clicked = button
+            self.last_position = Position([curr_pos.x, curr_pos.y])
+            return
 
     def update_board(self):
         board = self.b_class.return_board()
