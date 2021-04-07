@@ -2,6 +2,8 @@ import copy
 import tkinter as tk
 from abc import ABC, abstractmethod
 
+from src.resources.utils.Constants import Position
+
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
 from time import time
 
@@ -114,16 +116,6 @@ class Board:
 
     def set_board(self, board):
         self.board = board
-
-
-class Position:
-
-    def __init__(self, coordinates):
-        self.x = coordinates[0]
-        self.y = coordinates[1]
-
-    def get_position(self):
-        return self.x, self.y
 
 
 class ChessPiece(ABC):

@@ -10,6 +10,9 @@ class Position:
         self.x = coordinates[0]
         self.y = coordinates[1]
 
+    def __repr__(self):
+        return f'{self.__class__.__name__} at ( x={x}, y={y} )'
+
     def get_position(self):
         return self.x, self.y
 
