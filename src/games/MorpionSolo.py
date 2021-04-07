@@ -34,8 +34,7 @@ class MorpionSolo:
             pass
         self.wChoose = Tk().destroy()  # Just so that PyCharms gives me a break
         self.Pcursor, self.CPUcursor = "", ""
-        self.baseCursorList = ["X", "O", "><", "@", "^^", "*", "~|~", "#", "}-{", "0_0", "~", "+", "[  ]", ":-:", "UwU",
-                               "|/|\\|"]
+        self.baseCursorList = ["X", "O", "><", "@", "^^", "*", "~|~", "#", "}-{", "0_0", "~", "+", "[  ]", ":-:", "UwU"]
         self.cursor_window()
         self.cursorList = self.baseCursorList.copy()
         self.Ppoints, self.CPUpoints, self.ties, self.whooseTurn, self.lvl = Ppoints, CPUpoints, ties, whooseTurn, level

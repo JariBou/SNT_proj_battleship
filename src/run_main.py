@@ -1,10 +1,11 @@
 from tkinter import *
 import tkinter.font as ft
-from src.games.MorpionSolo import MorpionSolo
-from src.games.MorpionMulti import MorpionMulti
+from src.games import MorpionMulti, MorpionSolo, Battleship, GameOfLife, Rock_paper_scissors, Pendu, Last_letter_game
+from src.games.Chess import run_chess
+from src.games.run_TTT import run as runmorpion
 
 
-class run:
+class run_main:
 
     def __init__(self):
         self.w = Tk()
@@ -88,4 +89,4 @@ class run:
 
 
 if __name__ == '__main__':
-    run()
+    run_main()
