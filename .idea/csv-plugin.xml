@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\src\games\GameOfLife.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\src\games\Last_letter_the_game\Last_letter_game.py">
           <value>
             <Attribute>

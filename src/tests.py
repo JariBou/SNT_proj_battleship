@@ -28,5 +28,24 @@ class C(A, B):
 
 
 if __name__ == '__main__':
-    for i, k in zip([1, -1], [3, -4]):
-        print(i, k)
+    list_1 = [a for a in range(1000)]
+    list_2 = [a for a in range(1000)]
+
+    start_for = time()
+    for k in list_1:
+        print(k)
+    for k in list_2:
+        print(k)
+    end_for = time()
+    difference_for = end_for - start_for
+
+    start_zip = time()
+    for k, i in zip(list_1, list_2):
+        print(k)
+        print(i)
+    end_zip = time()
+    difference_zip = end_zip - start_zip
+
+    print(f'''for loop: {difference_for}
+zip loop: {difference_zip}''')
+
