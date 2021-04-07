@@ -59,7 +59,7 @@ class Chess_Gui:
         menubar.add_command(label="Help")  ##TODO: create help window with rules
         menubar.add_command(label="About", command=about)
 
-        self.image = {'Test_Pawn': get_img(self.path.joinpath('resources\\images\\Chess\\taskbar.png'))}
+        self.image = {'Test_Pawn': get_img(self.path.joinpath('resources\\images\\Chess\\taskbar_img.png'))}
 
         for i in range(0, 9):
             self.root.rowconfigure(i, minsize=75)
