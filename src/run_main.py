@@ -1,7 +1,8 @@
 from tkinter import *
 import tkinter.font as ft
-from src.games import MorpionMulti, MorpionSolo, Battleship, GameOfLife, Rock_paper_scissors, Pendu, Last_letter_game
+from src.games import Battleship, GameOfLife, Rock_paper_scissors, Pendu, Last_letter_game
 from src.games.Chess import run_chess
+from src.games import run_TTT as runmorpion
 
 
 class run_main:
@@ -35,19 +36,19 @@ class run_main:
         morpion = Button(text="Morpion", command=self.morpion, font=customFont)
         buttonList.append(morpion)
 
-        battleship = Button(text="Battleship", command='', font=customFont)
+        battleship = Button(text="Battleship", command=self.battleship, font=customFont)
         buttonList.append(battleship)
 
-        chess = Button(text="Chess", command='', font=customFont)
+        chess = Button(text="Echecs", command=self.chess, font=customFont)
         buttonList.append(chess)
 
-        gameoflife = Button(text="Jeu de la Vie", command='', font=customFont)
+        gameoflife = Button(text="Jeu de la Vie", command=self.gameoflife, font=customFont)
         buttonList.append(gameoflife)
 
-        last_letter = Button(text="Dernière Lettre", command='', font=customFont)
+        last_letter = Button(text="Dernière Lettre", command=self.lastletter, font=customFont)
         buttonList.append(last_letter)
 
-        rockps = Button(text="Shifumi", command='', font=customFont)
+        rockps = Button(text="Shifumi", command=self.rockps, font=customFont)
         buttonList.append(rockps)
 
         lastgame = Button(text="???", command='', font=customFont)
@@ -77,12 +78,28 @@ class run_main:
 
     def morpion(self):
         self.w.destroy()
+        runmorpion.run()
 
-    def single(self):
+    def battleship(self):
         self.w.destroy()
+        Battleship.Battleship_1v1()
 
-    def multi(self):
+    def chess(self):
         self.w.destroy()
+        run_chess.ChessGui()
+
+    def gameoflife(self):
+        self.w.destroy()
+        GameOfLife.GameOfLife()
+
+    def lastletter(self):
+        self.w.destroy()
+        Last_letter_game.Last_letter()
+
+    def rockps(self):
+        self.w.destroy()
+        Rock_paper_scissors.Game()
+
 
 
 if __name__ == '__main__':
