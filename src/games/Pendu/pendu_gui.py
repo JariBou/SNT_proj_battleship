@@ -116,7 +116,7 @@ class Game:
     def test_win(self):
         if self.test_full():
             self._over()
-        elif self.wrong >= 6:
+        elif self.wrong > 6:
             self._over()
 
     def _over(self):
