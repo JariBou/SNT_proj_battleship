@@ -27,25 +27,38 @@ class C(A, B):
         return string
 
 
+def q():
+    print('q')
+
+
+def g():
+    print('g')
+
+
 if __name__ == '__main__':
-    list_1 = [a for a in range(100000)]
-    list_2 = [a for a in range(100000)]
+    print(5%2)
 
-    start_for = time()
-    for k in list_1:
-        print(k)
-    for k in list_2:
-        print(k)
-    end_for = time()
-    difference_for = end_for - start_for
+    lambda: q(), g()
 
-    start_zip = time()
-    for k, i in enumerate(list_1):
-        print(k)
-        print(list_2[i])
-    end_zip = time()
-    difference_zip = end_zip - start_zip
 
-    print(f'''for loop: {difference_for}
-zip loop: {difference_zip}''')
+#     list_1 = [a for a in range(100000)]
+#     list_2 = [a for a in range(100000)]
+#
+#     start_for = time()
+#     for k in list_1:
+#         print(k)
+#     for k in list_2:
+#         print(k)
+#     end_for = time()
+#     difference_for = end_for - start_for
+#
+#     start_zip = time()
+#     for k, i in enumerate(list_1):
+#         print(k)
+#         print(list_2[i])
+#     end_zip = time()
+#     difference_zip = end_zip - start_zip
+#
+#     print(f'''for loop: {difference_for}
+# zip loop: {difference_zip}''')
 

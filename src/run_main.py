@@ -2,7 +2,6 @@ from tkinter import *
 import tkinter.font as ft
 from src.games.MorpionSolo import MorpionSolo
 from src.games.MorpionMulti import MorpionMulti
-import src.games.run_TTT as runmorpion
 
 
 class run:
@@ -34,29 +33,52 @@ class run:
         customFont = ft.Font(size=20)
 
         # Set all buttons for apps
+        size = 4
+        buttonList = []
 
-        morpion = Button(text="Morpion", font=customFont)
-        morpion.grid(row=0, column=0, sticky="nsew")
-        battleship = Button(text="Battleship", font=customFont)
-        battleship.grid(row=0, column=1, sticky="nsew")
-        chess = Button(text="Chess",font=customFont)
-        chess.grid(row=0, column=2, sticky="nsew")
-        gameoflife = Button(text="Jeu de la Vie", font=customFont)
-        gameoflife.grid(row=0, column=3, sticky="nsew")
-        last_letter = Button(text="Dernière Lettre", font=customFont)
-        last_letter.grid(row=1, column=0, sticky="nsew")
-        rockps = Button(text="Shifumi", font=customFont)
-        rockps.grid(row=1, column=1, sticky="nsew")
-        lastgame = Button(text="???", font=customFont)
-        lastgame.grid(row=1, column=2, sticky="nsew")
+        morpion = Button(text="Morpion", command=self.morpion, font=customFont)
+        buttonList.append(morpion)
 
+        battleship = Button(text="Battleship", command='', font=customFont)
+        buttonList.append(battleship)
 
+        chess = Button(text="Chess", command='', font=customFont)
+        buttonList.append(chess)
+
+        gameoflife = Button(text="Jeu de la Vie", command='', font=customFont)
+        buttonList.append(gameoflife)
+
+        last_letter = Button(text="Dernière Lettre", command='', font=customFont)
+        buttonList.append(last_letter)
+
+        rockps = Button(text="Shifumi", command='', font=customFont)
+        buttonList.append(rockps)
+
+        lastgame = Button(text="???", command='', font=customFont)
+        buttonList.append(lastgame)
+
+        while len(buttonList) % size != 0:
+            buttonList.append('None')
+
+        buttonList = [buttonList[n:n + size + 1] for n in range(0, len(buttonList) + 1, size)]
+
+        print(buttonList)
+        exit_flag = False
+
+        for row_index, row in enumerate(buttonList):
+            print(row)
+            if exit_flag:
+                break
+            for index, button in enumerate(row):
+                if button == 'None':
+                    exit_flag = True
+                    break
+                button.grid(row=row_index, column=index, sticky='nsew')
 
         self.w.mainloop()
 
     def morpion(self):
         self.w.destroy()
-        runmorpion()
 
     def single(self):
         self.w.destroy()
