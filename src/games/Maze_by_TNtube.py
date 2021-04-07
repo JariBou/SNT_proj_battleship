@@ -84,7 +84,7 @@ def next_square(stack, squares, maze_width, maze_height, square_width):
             last.south = True
             s = Square(x, y+1, square_width)
 
-        stack.push(s)
+        stack.push(s)   ##Pushes the Square class, thus being able to access its position
         squares.append(s)
         return True
     return False
