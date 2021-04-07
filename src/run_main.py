@@ -26,10 +26,6 @@ class run:
         # and where it is placed
         self.w.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
-        self.w.columnconfigure(0, minsize=130)
-        self.w.columnconfigure(1, minsize=150)
-        self.w.rowconfigure(0, minsize=150)
-
         customFont = ft.Font(size=20)
 
         # Set all buttons for apps
@@ -67,9 +63,11 @@ class run:
 
         for row_index, row in enumerate(buttonList):
             print(row)
+            self.w.rowconfigure(row_index, minsize=150)
             if exit_flag:
                 break
             for index, button in enumerate(row):
+                self.w.columnconfigure(index, minsize=150)
                 if button == 'None':
                     exit_flag = True
                     break
