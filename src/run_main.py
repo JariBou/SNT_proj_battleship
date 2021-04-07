@@ -101,6 +101,5 @@ class run_main:
         Rock_paper_scissors.Game()
 
 
-
 if __name__ == '__main__':
     run_main()

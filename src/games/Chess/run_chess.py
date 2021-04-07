@@ -6,6 +6,7 @@ from time import sleep
 from tkinter import messagebox
 from PIL import ImageTk, Image
 
+from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 from src.games.Chess.Chess import *
 
@@ -59,6 +60,7 @@ class ChessGui:
         # diffmenu = tk.Menu(menubar, tearoff=0)
         menubar.add_command(label="Help")  ##TODO: create help window with rules
         menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
         whites = {'Pawn': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\White\\Pawn.png')),
                   'King': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\White\\King.png')),

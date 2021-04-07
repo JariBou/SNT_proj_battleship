@@ -1,3 +1,6 @@
+from src import run_main
+
+
 8## Code Cleaned Up##
 
 from pathlib import Path
@@ -25,6 +28,13 @@ class Game:
         self.result = Label(w, text='')
         self.result.grid(row=1, column=1)
         path = Path(__file__).parent.parent
+
+        ## Create a Menubar
+        menubar = Menu(w)
+        w.config(menu=menubar)
+        # menubar.add_command(label="Help", command=help)
+        # menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Game Select Menu", command=lambda: [w.destroy(), run_main.run_main()])
 
         humain = Label(text="Humain:")
         humain.grid(row=0, column=0)

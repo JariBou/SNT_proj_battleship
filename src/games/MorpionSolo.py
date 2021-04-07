@@ -6,6 +6,7 @@ from random import Random
 from tkinter import *
 from tkinter import messagebox
 
+from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 
 
@@ -165,6 +166,7 @@ class MorpionSolo:
         self.menubar.add_command(label="Help", command=difficultyHelp)
         self.menubar.add_command(label="About", command=about)
         self.menubar.add_command(label="SwitchGamemode", command=self.switch)
+        self.menubar.add_command(label="Game Select Menu", command=lambda: [self.w.destroy(), run_main.run_main()])
 
     def setCursor(self, cursor):
         """ Used to choose the Player's cursor
@@ -604,3 +606,7 @@ class MorpionSolo:
             print("on_key_press_repeat", repr(event.char))
         else:
             self.on_key_press(event)
+
+
+if __name__ == '__main__':
+    MorpionSolo()

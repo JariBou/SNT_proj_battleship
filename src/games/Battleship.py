@@ -6,6 +6,7 @@ from PIL import ImageTk, Image
 import pygame as pygame
 import sys as system
 
+from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 
 ## TODO: code cleanup
@@ -79,6 +80,7 @@ class Battleship_1v1:
         # diffmenu = tk.Menu(menubar, tearoff=0)
         menubar.add_command(label="Help", command=g_help)  ##TODO: create help window with rules
         menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
         ## Creation of the dictionary with all sounds
         self.sounds = {'destroy': [self.path.joinpath('resources\\sounds\\destroy\\amaterasu-sound-effect.mp3'),

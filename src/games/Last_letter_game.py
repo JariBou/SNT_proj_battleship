@@ -6,6 +6,7 @@ import tkinter as tk
 from random import randint
 from tkinter import font, messagebox
 
+from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 
 
@@ -77,9 +78,9 @@ class Last_letter:
         ## Create a Menubar
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
-        # diffmenu = tk.Menu(menubar, tearoff=0)
         menubar.add_command(label="Help", command=help)
         menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
         self.first_letter = self.alphabet[randint(0, 25)]
         self.letter_display = tk.Label(self.root, text=f"First letter: {self.first_letter}", font=customLabelFont, borderwidth=3, relief='sunken')

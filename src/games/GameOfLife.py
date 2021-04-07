@@ -4,6 +4,7 @@ import sys as system
 import threading
 import tkinter as tk
 
+from src import run_main
 from src.resources.utils.Constants import Constants as Ct, Position
 
 
@@ -50,6 +51,14 @@ class GameOfLife:
         myappid = 'mjcorp.gameoflife.alphav0.1'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
+
+        ## Create a Menubar
+        menubar = tk.Menu(self.root)
+        self.root.config(menu=menubar)
+        # diffmenu = tk.Menu(menubar, tearoff=0)
+        # menubar.add_command(label="Help", command=g_help)  ##TODO: create help window with rules
+        # menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
         self.size = Position([self.width, self.height])  ## [X, Y]
         board = []

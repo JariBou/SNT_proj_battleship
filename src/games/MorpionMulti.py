@@ -5,6 +5,7 @@ import tkinter.font as font
 from tkinter import *
 from tkinter import messagebox
 
+from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 
 
@@ -58,6 +59,7 @@ class MorpionMulti:
         self.menubar.add_command(label="Help", command=turnHelp)
         self.menubar.add_command(label="About", command=about)
         self.menubar.add_command(label="SwitchGamemode", command=self.switch)
+        self.menubar.add_command(label="Game Select Menu", command=lambda: [self.w.destroy(), run_main.run_main()])
 
         self.has_prev_key_release = None
         self.w.bind("<KeyPress-1>", self.on_key_press_repeat)
