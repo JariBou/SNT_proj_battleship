@@ -1,10 +1,9 @@
 import ctypes
+import sys as system
 import threading
 import time
-from pathlib import Path
-from random import randint
 import tkinter as tk
-import sys as system
+from random import randint
 from tkinter import font, messagebox
 
 from src.resources.utils.Constants import Constants as Ct

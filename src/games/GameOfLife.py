@@ -1,18 +1,17 @@
 import ctypes
-import math
+import random
 import sys as system
 import threading
 import tkinter as tk
-import random
-from time import sleep
 
-from src.resources.utils.Constants import Constants as Ct
-from src.resources.utils.Constants import Position
+from src.resources.utils.Constants import Constants as Ct, Position
 
 
 #####          STATIC METHODS          ####
 def place(button):
     button['bg'] = 'black' if button['bg'] == 'white' else 'white'
+
+
 ####                                  ####
 
 
@@ -52,7 +51,7 @@ class GameOfLife:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
 
-        self.size = Position([self.width, self.height])    ## [X, Y]
+        self.size = Position([self.width, self.height])  ## [X, Y]
         board = []
         for i in range(0, max(self.size.x, self.size.y)):
             self.root.rowconfigure(i, minsize=25)
@@ -73,13 +72,13 @@ class GameOfLife:
                 a.grid(row=row, column=column, sticky='nsew')
                 board.append(a)
 
-        self.logic_board = [board[n:n + self.size.x+1] for n in range(0, len(board)+1, self.size.x)]
+        self.logic_board = [board[n:n + self.size.x + 1] for n in range(0, len(board) + 1, self.size.x)]
 
         self.start_button = tk.Button(self.root, text='Start', command=self.start)
         self.start_button.grid(row=0, column=self.size.x)
 
         self.quit_button = tk.Button(self.root, text='Quit', command=self.exit)
-        self.quit_button.grid(row=0, column=self.size.x+1)
+        self.quit_button.grid(row=0, column=self.size.x + 1)
 
         self.restart_button = tk.Button(self.root, text='Restart', command=self.restart)
         self.restart_button.grid(row=0, column=self.size.x + 2)
@@ -118,7 +117,7 @@ class GameOfLife:
                     curr_cell = self.logic_board[row][column]
                     for offset in self.offsets:
                         try:
-                            if self.logic_board[row+offset.y][column+offset.x]['bg'] == 'black':
+                            if self.logic_board[row + offset.y][column + offset.x]['bg'] == 'black':
                                 count += 1
                         except IndexError:
                             pass
