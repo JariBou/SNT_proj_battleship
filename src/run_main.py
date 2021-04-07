@@ -2,7 +2,6 @@ from tkinter import *
 import tkinter.font as ft
 from src.games import MorpionMulti, MorpionSolo, Battleship, GameOfLife, Rock_paper_scissors, Pendu, Last_letter_game
 from src.games.Chess import run_chess
-from src.games.run_TTT import run as runmorpion
 
 
 class run_main:
@@ -81,11 +80,9 @@ class run_main:
 
     def single(self):
         self.w.destroy()
-        MorpionSolo()
 
     def multi(self):
         self.w.destroy()
-        MorpionMulti()
 
 
 if __name__ == '__main__':

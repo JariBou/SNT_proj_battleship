@@ -26,6 +26,7 @@ def about():
 
 
 class MorpionSolo:
+
     def __init__(self, Ppoints=0, CPUpoints=0, ties=0, whooseTurn=1, level="Noob", previous=None):
         """ class Initialization """
         try:

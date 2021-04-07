@@ -109,6 +109,3 @@ class Game:
         self.voidCPU.config(image=self.rien)
         self.voidH.config(image=self.rien)
         self.draw()
-
-
-a = Game()
