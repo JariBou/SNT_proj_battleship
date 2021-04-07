@@ -57,7 +57,7 @@ class Game:
         self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Hangman\\Pendu.ico'))
 
         self.mots = []
-        with open(fileName if fileName.endswith(".txt") else fileName + ".txt", "r") as f:
+        with open(self.path.joinpath('resources\\txt_files\\' + (fileName if fileName.endswith(".txt") else fileName + ".txt")), "r") as f:
             for line in f:
                 self.mots.append(line.replace("\n", ""))
         self.wrong = 0
