@@ -78,7 +78,7 @@ class GameOfLife:
         self.start_button = tk.Button(self.root, text='Start', command=self.start)
         self.start_button.grid(row=0, column=self.size.x)
 
-        self.quit_button = tk.Button(self.root, text='Quit', command=self.quit)
+        self.quit_button = tk.Button(self.root, text='Quit', command=self.exit)
         self.quit_button.grid(row=0, column=self.size.x+1)
 
         self.restart_button = tk.Button(self.root, text='Restart', command=self.restart)
@@ -131,17 +131,9 @@ class GameOfLife:
             for button in to_born:
                 button['bg'] = 'black'
 
-    def quit(self):
-        self.exit_flag = True
-        sleep(0.1)
-        try:
-            self.t1.join()
-        except AttributeError:
-            pass
-        self.root.destroy()
-        system.exit('User Cancelation')
-
     def restart(self):
+        self.exit_flag = True
+
         self.root.destroy()
         GameOfLife()
 

@@ -28,8 +28,8 @@ class C(A, B):
 
 
 if __name__ == '__main__':
-    list_1 = [a for a in range(1000)]
-    list_2 = [a for a in range(1000)]
+    list_1 = [a for a in range(100000)]
+    list_2 = [a for a in range(100000)]
 
     start_for = time()
     for k in list_1:
@@ -40,9 +40,9 @@ if __name__ == '__main__':
     difference_for = end_for - start_for
 
     start_zip = time()
-    for k, i in zip(list_1, list_2):
+    for k, i in enumerate(list_1):
         print(k)
-        print(i)
+        print(list_2[i])
     end_zip = time()
     difference_zip = end_zip - start_zip
 
