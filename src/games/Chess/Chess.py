@@ -60,20 +60,18 @@ class Board:
             print(f'Moved {piece.get_name()} to {piece.get_position(True)}')
             return True
         else:
-            print('Critical Error')
+            print(f'Error while moving piece: {piece} to {new_position}')
             return False
 
     def check_for_checks(self, color):
         """returns True if king of color is check"""
 
-        kings_list = [piece for piece in get_flattened(self.board) if (piece.__class__ == King and piece.get_color == color)]
+        kings_list = [piece for piece in [cell for cell in get_flattened(self.board) if cell is not None] if (piece.__class__ == King and piece.get_color == color)]
 
         for king in kings_list:
-            if king.is_checked() and king.get_color() == color:
-                print(king.get_name())
-                print(king.get_position(True))
-                return True
-        return False
+            print(king.get_name())
+            print(king.get_position(True))
+            return king.is_checked()
 
         # pieces_list = []
         # for row in range(len(self.board)):
@@ -127,7 +125,7 @@ class ChessPiece(ABC):
         self.board = None
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(name={self.get_name()}, position={self.position.get_position()}'
+        return f'{self.__class__.__name__}(name={self.get_name()}, position={self.position.get_position(True)}'
 
     def get_position(self, coordinates=False):
         return self.position if not coordinates else self.position.get_position()
