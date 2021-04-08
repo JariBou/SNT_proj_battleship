@@ -66,7 +66,7 @@ class Board:
     def check_for_checks(self, color):
         """returns True if king of color is check"""
 
-        kings_list = [piece for piece in get_flattened(self.board) if piece.__class__ == King]
+        kings_list = [piece for piece in get_flattened(self.board) if (piece.__class__ == King and piece.get_color == color)]
 
         for king in kings_list:
             if king.is_checked() and king.get_color() == color:
