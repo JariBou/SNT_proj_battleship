@@ -1,10 +1,8 @@
 import ctypes
 import threading
-import tkinter as tk
 import sys as system
 from time import sleep
 from tkinter import messagebox
-from PIL import ImageTk, Image
 
 from src import run_main
 from src.resources.utils.Constants import Constants as Ct
