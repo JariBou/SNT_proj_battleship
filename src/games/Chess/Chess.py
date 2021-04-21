@@ -125,7 +125,7 @@ class ChessPiece(ABC):
         self.board = None
 
     def __repr__(self):
-        return f'{self.__class__.__name__}(name={self.get_name()}, position={self.position.get_position(True)}'
+        return f'{self.__class__.__name__}(name={self.get_name()}, position={self.position.get_position()}'
 
     def get_position(self, coordinates=False):
         return self.position if not coordinates else self.position.get_position()

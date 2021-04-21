@@ -8,18 +8,11 @@ from PIL import ImageTk, Image
 
 from src import run_main
 from src.resources.utils.Constants import Constants as Ct
+from src.resources.utils.Constants import ImgLoader as Il
 from src.games.Chess.Chess import *
 
 
 #####          STATIC METHODS          ####
-def get_img(path):
-    """ resources\\images\\XXX """
-    img = Image.open(path)
-    new_img = img.resize((52, 52))
-    photo = ImageTk.PhotoImage(new_img)
-    return photo
-
-
 # noinspection SpellCheckingInspection
 def about():
     """ Used to display an about messageBox """
@@ -48,11 +41,7 @@ class ChessGui:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Chess\\taskbar.ico'))
-
-        # self.root.overrideredirect(True)
-        # self.root.lift()
-        # self.root.wm_attributes("-topmost", True)
-        # self.root.wm_attributes("-transparentcolor", "white")
+        ImgLoader = Il()
 
         ## Create a Menubar
         menubar = tk.Menu(self.root)
@@ -62,18 +51,20 @@ class ChessGui:
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
-        whites = {'Pawn': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\White\\Pawn.png')),
-                  'King': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\White\\King.png')),
-                  'Queen': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\White\\Queen.png')),
-                  'Tower': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\White\\Tower.png')),
-                  'Bishop': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\White\\Bishop.png')),
-                  'Knight': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\White\\Knight.png'))}
-        blacks = {'Pawn': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\Black\\Pawn.png')),
-                  'King': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\Black\\King.png')),
-                  'Queen': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\Black\\Queen.png')),
-                  'Tower': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\Black\\Tower.png')),
-                  'Bishop': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\Black\\Bishop.png')),
-                  'Knight': get_img(self.path.joinpath('resources\\images\\Chess\\Pieces\\Black\\Knight.png'))}
+        chess_array_img = ImgLoader.load_img('resources\\images\\Chess\\ChessPiecesArray.png')
+
+        whites = {'Pawn': ImgLoader.resize_img(chess_array_img.crop((300, 60, 360, 120)), (52, 52)),
+                  'King': ImgLoader.resize_img(chess_array_img.crop((60, 60, 120, 120)), (52, 52)),
+                  'Queen': ImgLoader.resize_img(chess_array_img.crop((0, 60, 60, 120)), (52, 52)),
+                  'Tower': ImgLoader.resize_img(chess_array_img.crop((120, 60, 180, 120)), (52, 52)),
+                  'Bishop': ImgLoader.resize_img(chess_array_img.crop((240, 60, 300, 120)), (52, 52)),
+                  'Knight': ImgLoader.resize_img(chess_array_img.crop((180, 60, 240, 120)), (52, 52))}
+        blacks = {'Pawn': ImgLoader.resize_img(chess_array_img.crop((300, 0, 360, 60)), (52, 52)),
+                  'King': ImgLoader.resize_img(chess_array_img.crop((60, 0, 120, 60)), (52, 52)),
+                  'Queen': ImgLoader.resize_img(chess_array_img.crop((0, 0, 60, 60)), (52, 52)),
+                  'Tower': ImgLoader.resize_img(chess_array_img.crop((120, 0, 180, 60)), (52, 52)),
+                  'Bishop': ImgLoader.resize_img(chess_array_img.crop((240, 0, 300, 60)), (52, 52)),
+                  'Knight': ImgLoader.resize_img(chess_array_img.crop((180, 0, 240, 60)), (52, 52))}
         self.images = {'White': whites, 'Black': blacks}
 
         for i in range(0, 8):

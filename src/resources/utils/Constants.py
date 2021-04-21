@@ -1,7 +1,33 @@
+import copy
 from enum import Enum
 from PIL import Image, ImageTk
 
 from pathlib import Path
+
+
+class ImgLoader:
+
+    def __init__(self):
+        self.path = Path(__file__).parent.parent.parent
+
+    def load_img(self, relative_path):
+        img = Image.open(self.path.joinpath(relative_path))
+        return img
+
+    @classmethod
+    def resize_img(cls, img, size, get_as_tk=True):
+        new_img = img.resize((size[0], size[1]))
+        if get_as_tk:
+            new_img = ImageTk.PhotoImage(new_img)
+        return new_img
+
+    @classmethod
+    def crop(cls, img, rectangle):
+        return img.crop(rectangle)
+
+    @classmethod
+    def get_as_TkImage(cls, img):
+        return ImageTk.PhotoImage(img)
 
 
 class Position:
@@ -11,7 +37,7 @@ class Position:
         self.y = coordinates[1]
 
     def __repr__(self):
-        return f'{self.__class__.__name__} at ( x={x}, y={y} )'
+        return f'{self.__class__.__name__} at ( x={self.x}, y={self.y} )'
 
     def get_position(self):
         return self.x, self.y

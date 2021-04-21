@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="F:\1.Documents\[COLLEGE]\Maths\Code_Tomé_Fab.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\src\game\main.py">
           <value>
             <Attribute>
@@ -46,6 +53,13 @@
           </value>
         </entry>
         <entry key="\src\games\Last_letter_the_game\Last_letter_game.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\src\games\Sudoku\Sudoku.py">
           <value>
             <Attribute>
               <option name="separator" value="," />
