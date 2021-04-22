@@ -153,7 +153,7 @@ class ChessGui:
     def switch_players(self):
         self.player = 1 if self.player == 0 else 0
         self.curr_player.config(text=f'Current Player: {self.player + 1}  ({self.colors[self.player]})')
-        print('switched players')
+        print('switched players\n')
 
     def clicked(self, button):
         print('----------------------------')
@@ -199,6 +199,13 @@ class ChessGui:
             self.last_button_clicked = None
             # self.b_class.print_board()
             self.switch_players()
+            if self.b_class.check_for_checks(self.player):
+                _over = self.b_class.check_over(self.player)
+                print(f'over: {_over}')
+                if _over:
+                    self.switch_players()
+                    print(f'Player {self.player+1} won!')
+                    self._over()
             return
 
         if self.b_class.get(curr_pos.x, curr_pos.y) is None:
@@ -227,6 +234,11 @@ class ChessGui:
                 button['image'] = self.images.get(piece.get_color()).get(piece.get_type())
                 if isinstance(piece, King) and piece.is_checked():
                     button['bg'] = 'red'
+
+    def _over(self):
+        for button in Ct.all_children(self.root, 'Button'):
+            button['command'] = ''
+        pass
 
 
 if __name__ == '__main__':

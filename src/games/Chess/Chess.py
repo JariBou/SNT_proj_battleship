@@ -5,7 +5,6 @@ from abc import ABC, abstractmethod
 from src.resources.utils.Constants import Position
 
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
-from time import time
 
 
 def get_flattened(seq):
@@ -64,13 +63,19 @@ class Board:
             return False
 
     def check_for_checks(self, color):
+        if color.__class__ != str:
+            color = self.colors[color]
         """returns True if king of color is check"""
+        print('\nchecking for checks for:')
 
-        kings_list = [piece for piece in [cell for cell in get_flattened(self.board) if cell is not None] if (piece.__class__ == King and piece.get_color == color)]
+        # kings_list = [piece for piece in [cell for cell in get_flattened(self.board) if cell is not None] if (piece.__class__ == King and piece.get_color() == color)]
+        kings_list = [piece for piece in get_flattened(self.board) if piece is not None and (piece.__class__ == King and piece.get_color() == color)]
 
+        if not kings_list:
+            print('ERROR KING LIST EMPTY')
         for king in kings_list:
-            print(king.get_name())
-            print(king.get_position(True))
+            print(f'-{king.get_name()}')
+            print(f'-{king.get_position(True)}\n')
             return king.is_checked()
 
         # pieces_list = []
@@ -87,6 +92,20 @@ class Board:
         # pieces_list = [element for element in row_list]
         # for king in [kings for kings in [element for element in [self.board[i] for i in range(len(self.board))]] if kings.__class__ == King]:
         #     king.is_checked()
+
+    def check_over(self, player):
+        color = self.colors[player]
+        piece_list = [piece for piece in [cell for cell in get_flattened(self.board) if cell is not None] if
+                      piece.get_color() == color]
+        if not piece_list:
+            print("ERROR 'check_over', 'piece_list' EMPTY")
+        for piece in piece_list:
+            valid_positions = piece.get_valid_positions()
+            for position in valid_positions:
+                if piece.able_to_move(position):
+                    print(f'hello==={piece, position}')
+                    return False
+        return True
 
     def pass_board_to_pieces(self):
         for row in range(len(self.board)):
@@ -174,7 +193,7 @@ class ChessPiece(ABC):
         # print('------------------------')
 
         if not b_class.can_move_freely(player):
-            print('FFFFFFF')
+            print('cannot_move_freely')
             return False
 
         self.board[self.position.y][self.position.x] = None
@@ -184,6 +203,20 @@ class ChessPiece(ABC):
 
     def can_move_to(self, new_position):
         return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
+
+    def able_to_move(self, new_position):
+        logic_board = copy.deepcopy(self.board)
+        logic_board[self.position.y][self.position.x] = None
+        logic_piece = copy.deepcopy(self)
+        logic_piece.position = new_position
+        logic_board[new_position.y][new_position.x] = logic_piece
+        b_class = Board()
+        b_class.set_board(logic_board)
+        b_class.pass_board_to_pieces()
+        player = 0 if self.color == 'White' else 1
+        if not b_class.can_move_freely(player):
+            return False
+        return True
 
     def pass_new_board(self, board):
         self.board = board
@@ -452,6 +485,8 @@ class King(ChessPiece):
             for offset in offsets:
                 try:
                     position = self.board[y + offset[0] * i][x + offset[1] * i]
+                    if y + offset[0] * i < 0 or x + offset[1] * i < 0:
+                        continue
                     if (position is None) or (position.get_color() != self.color):
                         valid_positions.append(
                             Position([x + offset[1] * i, y + offset[0] * i]))
