@@ -1,3 +1,5 @@
+## Code Cleaned Up ##
+
 from tkinter import *
 import tkinter.font as ft
 

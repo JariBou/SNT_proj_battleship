@@ -1,7 +1,6 @@
+## Code Cleaned Up ##
+
 from src import run_main
-
-
-## Code Cleaned Up##
 
 from pathlib import Path
 from tkinter import *

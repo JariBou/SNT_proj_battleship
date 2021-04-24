@@ -1,3 +1,5 @@
+## Code Cleaned Up ##
+
 import copy
 import tkinter as tk
 from abc import ABC, abstractmethod
@@ -23,7 +25,6 @@ def get_flattened(seq):
 class Board:
 
     def __init__(self):
-        ##TODO: implement system to force to get out of check
         self.colors = ['White', 'Black']
         self.checks_list = {'White': False, 'Black': False}
         self.player = 0
@@ -46,7 +47,7 @@ class Board:
         ##  Actually super easy, Barely an inconveniance, shoulda used cell class for each cell tho....
 
     def get(self, x, y):
-        print(f'getting at: {x, y}')
+        print(f'getting at: {x, y}    -  element: {self.board[y][x]}')
         return self.board[y][x]
 
     def move_piece_to(self, piece, new_position):
@@ -63,35 +64,16 @@ class Board:
             return False
 
     def check_for_checks(self, color):
+        """returns True if king of color is check"""
         if color.__class__ != str:
             color = self.colors[color]
-        """returns True if king of color is check"""
         print('\nchecking for checks for:')
-
-        # kings_list = [piece for piece in [cell for cell in get_flattened(self.board) if cell is not None] if (piece.__class__ == King and piece.get_color() == color)]
         kings_list = [piece for piece in get_flattened(self.board) if piece is not None and (piece.__class__ == King and piece.get_color() == color)]
-
         if not kings_list:
             print('ERROR KING LIST EMPTY')
         for king in kings_list:
-            print(f'-{king.get_name()}')
-            print(f'-{king.get_position(True)}\n')
+            print(f'-{king.get_name()} at {king.get_position(True)}\n')
             return king.is_checked()
-
-        # pieces_list = []
-        # for row in range(len(self.board)):
-        #     for column in range(len(self.board[0])):
-        #         piece = self.board[row][column]
-        #         if piece.__class__ == King:
-        #             pieces_list.append(self.board[row][column])
-        # for element in pieces_list:
-        #     print(element.get_name())
-        #
-        #
-        # row_list = [row for row in self.board]
-        # pieces_list = [element for element in row_list]
-        # for king in [kings for kings in [element for element in [self.board[i] for i in range(len(self.board))]] if kings.__class__ == King]:
-        #     king.is_checked()
 
     def check_over(self, player):
         color = self.colors[player]
@@ -159,6 +141,7 @@ class ChessPiece(ABC):
         return f"{self.color.capitalize()} {self.type}"
 
     def force_move_to(self, new_position):
+        """Moves a piece even if normally wouldn't be able to"""
         self.board[self.position.y][self.position.x] = None
         self.position = new_position
         self.board[new_position.y][new_position.x] = self
@@ -171,8 +154,6 @@ class ChessPiece(ABC):
         """
         if not self.can_move_to(new_position):
             return False
-        # print('Can move')
-        # print(new_position.get_position())
         logic_board = copy.deepcopy(self.board)
         logic_board[self.position.y][self.position.x] = None
         logic_piece = copy.deepcopy(self)
@@ -181,16 +162,9 @@ class ChessPiece(ABC):
         b_class = Board()
 
         b_class.set_board(logic_board)
-
         b_class.pass_board_to_pieces()
 
         player = 0 if self.color == 'White' else 1
-        # print('------logic board-------')
-        # b_class.print_board()
-        # print('------------------------')
-        # if isinstance(logic_piece, King):
-        #     print(logic_piece.is_checked(next_board=logic_board, next_position=new_position))
-        # print('------------------------')
 
         if not b_class.can_move_freely(player):
             print('cannot_move_freely')
@@ -205,6 +179,7 @@ class ChessPiece(ABC):
         return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
 
     def able_to_move(self, new_position):
+        """Just checks if a piece as a valip position that gets the player out of check"""
         logic_board = copy.deepcopy(self.board)
         logic_board[self.position.y][self.position.x] = None
         logic_piece = copy.deepcopy(self)
@@ -222,11 +197,6 @@ class ChessPiece(ABC):
         self.board = board
 
     @abstractmethod
-    def checks(self):  ## USELESS??? MAYBE REMOVE IT DUMBASS??
-        """Checks if this piece puts the adversary king in check"""
-        pass
-
-    @abstractmethod
     def get_valid_positions(self):   ## Every subclass of this class will have to implement it
         """Returns a list of valid positions to move the piece to"""
         pass
@@ -240,8 +210,7 @@ class Pawn(ChessPiece):
         self.over = False
         self.w = None
 
-    def get_valid_positions(self):
-        ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION, na its good fam, done it
+    def get_valid_positions(self):        ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION, na its good fam, done it
         side = 1 if self.color == 'White' else -1
         valid_positions = []
         if self.first_move:
@@ -258,8 +227,7 @@ class Pawn(ChessPiece):
         to_test = []
         offsets = (1, -1)
         for offset in offsets:
-            try:  ##TODO: FIX THIS SHIT MOTHERFUCKER LIKE RN, MOVE YA ASS BOIIII
-                ##TODO: YOU FCKING LAZY PERSON, MOVE YA ASSSSSSS
+            try:
                 to_test.append(self.board[self.position.y + side][self.position.x + offset])
                 to_test.append([self.position.x + offset, self.position.y + side])
             except IndexError:
@@ -267,18 +235,7 @@ class Pawn(ChessPiece):
         for i in range(0, len(to_test), 2):
             if not (to_test[i] is None) and not (to_test[i].get_color() is self.color):
                 valid_positions.append(Position(to_test[i + 1]))
-
-        # try:
-        #     if not (board[self.position.y + side][self.position.x + 1].get_color() is self.color):
-        #         valid_positions.append(Position([self.position.x + 1, self.position.y + side]))
-        #     if not (board[self.position.y + side][self.position.x - 1].get_color() is self.color):
-        #         valid_positions.append(Position([self.position.x - 1, self.position.y + side]))
-        # except AttributeError:
-        #     pass  ## No pieces in it's diagonal
         return valid_positions
-
-    def checks(self):
-        pass
 
     def move_to(self, new_position):
         if super().move_to(new_position):
@@ -293,19 +250,13 @@ class Pawn(ChessPiece):
         return self.over
 
     def transform(self):
-        self.w = tk.Tk()
+        self.w = tk.Tk(screenName='hello')
         self.w.title('Trasform into:')
-        bishop = tk.Button(self.w, text='Bishop', command=lambda: self.t_intp(Bishop))
-        bishop.grid(row=0, column=0)
-        tower = tk.Button(self.w, text='Tower', command=lambda: self.t_intp(Tower))
-        tower.grid(row=0, column=1)
-        queen = tk.Button(self.w, text='Queen', command=lambda: self.t_intp(Queen))
-        queen.grid(row=1, column=0)
-        knight = tk.Button(self.w, text='Knight', command=lambda: self.t_intp(Knight))
-        knight.grid(row=1, column=1)
+        for name, typ, index in zip(['Bishop', 'Tower', 'Queen', 'Knight'], [Bishop, Tower, Queen, Knight], list(range(4))):
+            tk.Button(self.w, text=name, command=lambda: self.t_into(typ)).grid(row=index // 2, column=index % 2)
         self.w.mainloop()
 
-    def t_intp(self, piece_type):
+    def t_into(self, piece_type):
         print(piece_type)
         self.board[self.position.y][self.position.x] = piece_type(self.color, self.position)
         self.w.destroy()
@@ -318,10 +269,8 @@ class Knight(ChessPiece):
         super().__init__(color, position, 'Knight')
 
     def get_valid_positions(self):
-        ## THIS SHIT WORKED ON FIRST TRY
-        ##  print('HAPPINESS LVL MAXIMUM')
-        valid_positions = []
-        to_test = []
+        valid_positions = []                  ## THIS SHIT WORKED ON FIRST TRY
+        to_test = []                          ##  print('HAPPINESS LVL MAXIMUM')
         offsets = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
         for offset in offsets:
             try:
@@ -329,53 +278,13 @@ class Knight(ChessPiece):
                 to_test.append([self.position.x + offset[1], self.position.y + offset[0]])
             except IndexError:
                 pass
-        # to_test = [board[self.position.y + 2][self.position.x + 1], [self.position.x + 1, self.position.y + 2],
-        #            board[self.position.y + 2][self.position.x - 1], [self.position.x - 1, self.position.y + 2],
-        #            board[self.position.y - 2][self.position.x + 1], [self.position.x + 1, self.position.y - 2],
-        #            board[self.position.y - 2][self.position.x - 1], [self.position.x - 1, self.position.y - 2],
-        #            board[self.position.y + 1][self.position.x - 2], [self.position.x - 2, self.position.y + 1],
-        #            board[self.position.y + 1][self.position.x + 2], [self.position.x + 2, self.position.y + 1],
-        #            board[self.position.y - 1][self.position.x - 2], [self.position.x - 2, self.position.y - 1],
-        #            board[self.position.y - 1][self.position.x + 2], [self.position.x + 2, self.position.y - 1]]
-
         for i in range(0, len(to_test), 2):
             try:
                 if (to_test[i] is None) or not (to_test[i].get_color() is self.color):
                     valid_positions.append(Position(to_test[i + 1]))
             except AttributeError:
                 pass
-
-        # try:
-        #     if (board[self.position.y + 2][self.position.x + 1] is None) or not (
-        #             board[self.position.y + 2][self.position.x + 1].get_color() is self.color):
-        #         valid_positions.append(Position([self.position.x + 1, self.position.y + 2]))
-        #     if board[self.position.y + 2][self.position.x - 1] is None or not (
-        #             board[self.position.y + 2][self.position.x - 1].get_color() is self.color):
-        #         valid_positions.append(Position([self.position.x - 1, self.position.y + 2]))
-        #     if board[self.position.y - 2][self.position.x + 1] is None or not (
-        #             board[self.position.y - 2][self.position.x + 1].get_color() is self.color):
-        #         valid_positions.append(Position([self.position.x + 1, self.position.y - 2]))
-        #     if board[self.position.y - 2][self.position.x - 1] is None or not (
-        #             board[self.position.y - 2][self.position.x - 1].get_color() is self.color):
-        #         valid_positions.append(Position([self.position.x - 1, self.position.y - 2]))
-        #     if board[self.position.y + 1][self.position.x - 2] is None or not (
-        #             board[self.position.y + 1][self.position.x - 2].get_color() is self.color):
-        #         valid_positions.append(Position([self.position.x - 2, self.position.y + 1]))
-        #     if board[self.position.y + 1][self.position.x + 2] is None or not (
-        #             board[self.position.y + 1][self.position.x + 2].get_color() is self.color):
-        #         valid_positions.append(Position([self.position.x + 2, self.position.y + 1]))
-        #     if board[self.position.y - 1][self.position.x - 2] is None or not (
-        #             board[self.position.y - 1][self.position.x - 2].get_color() is self.color):
-        #         valid_positions.append(Position([self.position.x - 2, self.position.y - 1]))
-        #     if board[self.position.y - 1][self.position.x + 2] is None or not (
-        #             board[self.position.y - 1][self.position.x + 2].get_color() is self.color):
-        #         valid_positions.append(Position([self.position.x + 2, self.position.y - 1]))
-        # except AttributeError:
-        #     pass
         return valid_positions
-
-    def checks(self):
-        pass
 
 
 class Bishop(ChessPiece):
@@ -425,22 +334,14 @@ class Bishop(ChessPiece):
                     bottom_right = True
         return valid_positions
 
-    def checks(self):
-        pass
-
 
 class King(ChessPiece):
-
-    ##TODO: Fix bishop not detecting pawns for check and king not being able to move while in check
 
     def __init__(self, color, position):
         super().__init__(color, position, 'King')
         self.first_move = True
         self.ruck_pos_tower = []   ## [ [Position, Tower], [Position, Tower ]
         self.ruck_pos_king = []
-
-    def checks(self):
-        pass  ## Useless to check for check because it cannot do dat
 
     def get_valid_positions(self):
         offsets = [[1, -1], [1, 0], [1, 1], [0, 1]]
@@ -449,26 +350,22 @@ class King(ChessPiece):
         y = self.position.y
 
         try:
-            # print(self, self.first_move)
             if self.first_move:
                 self.ruck_pos_tower = []
                 self.ruck_pos_king = []
-                for i, k in zip([1, -1], [3, -4]):  ## Problem????????
+                for i, k in zip([1, -1], [3, -4]):  ## Problem????????  na we good
                     position_1off = self.board[y][x + 1 * i]
                     Position_1off = Position([x + 1 * i, y])
                     position_2off = self.board[y][x + 2 * i]
                     Position_2off = Position([x + 2 * i, y])
 
                     if position_1off is not None or position_2off is not None:
-                        # print('continue 1')
                         continue
                     if self.ruck_check_test(Position_1off, Position_2off):
-                        # print('continue2.5')
                         continue
 
                     possible_tower = self.board[y][x + k]
                     if not isinstance(possible_tower, Tower):
-                        # print('continue 3')
                         continue
 
                     if possible_tower.first_move:
@@ -526,12 +423,7 @@ class King(ChessPiece):
             for piece in [p for p in row if (not (p is None) and p.get_color() != self.get_color())]:
                 if piece.can_move_to(position):
                     checkers.append(piece)
-        if checkers:
-            # print(f"{self.get_name()} in {self.get_position(True)} is checked by:")
-            # for piece in checkers:
-            #     print(f"- {piece.get_name()} in {piece.get_position(True)}  --  {[pos.get_position() for pos in piece.get_valid_positions()]}")
-            return True
-        return False
+        return bool(checkers)
 
     def gets_checked(self, new_position):
         next_board = copy.deepcopy(self.board)
@@ -549,21 +441,13 @@ class King(ChessPiece):
 
     def move_to(self, new_position):
         if super().move_to(new_position):
-            if self.ruck_pos_tower:  # if it is != []
-                # print('list not None')
+            if self.ruck_pos_tower:
                 for i in range(len(self.ruck_pos_tower)):
-                    # print(f'new_position: {new_position.get_position()}  -  king_pos: {self.ruck_pos_king[i].get_position()}')
-                    # print(f'Tower_test={self.board[self.ruck_pos_tower[i][1].y][self.ruck_pos_tower[i][1].x]}')
-                    # print(f'Tower_position={self.ruck_pos_tower[i][0].get_position()}')
                     if new_position.get_position() == self.ruck_pos_king[i].get_position():
-                        # print('inside if condition')
                         self.board[self.ruck_pos_tower[i][1].y][self.ruck_pos_tower[i][1].x].force_move_to(self.ruck_pos_tower[i][0])
             self.first_move = False
             return True
         return False
-
-    def is_mat(self):  ##TODO: implement this
-        pass
 
 
 class Tower(ChessPiece):
@@ -613,9 +497,6 @@ class Tower(ChessPiece):
                     right = True
         return valid_positions
 
-    def checks(self):
-        pass
-
     def move_to(self, new_position):
         if super().move_to(new_position):
             self.first_move = False
@@ -628,35 +509,13 @@ class Queen(ChessPiece):
     def __init__(self, color, position):
         super().__init__(color, position, 'Queen')
 
-    def checks(self):
-        pass
-
     # noinspection PyTypeChecker
     def get_valid_positions(self):
         logic_board = copy.deepcopy(self.board)
         positions_list = []
-        for Type in [Bishop, Tower]:
+        for Type in [Bishop, Tower]:   ##A Queen's movement can be defined as the combination of a Bishop and a Tower
             piece = Type(self.color, self.position)
             logic_board[self.position.y][self.position.x] = piece
             piece.pass_new_board(logic_board)
-            # print(f'Queen-side: {{{Type}}}={[pos.get_position() for pos in piece.get_valid_positions()]}')
             positions_list += piece.get_valid_positions()
         return positions_list
-
-
-if __name__ == '__main__':
-    b = Board()
-    # for value in b.board:
-    #     print(value)
-    positions = []
-    # for a in b.board[3][2].get_valid_positions(b.board):
-    #     positions.append(a.get_position())
-    # positions.sort()
-    # for k in positions:
-    #     print(k)
-    b.pass_board_to_pieces()
-    b.print_board()
-    print(b.board[1][1])
-    # print(b.board[2][1].is_checked(b.board))
-    # print(b.board[3][2].get_valid_positions(b.board))
-    # print(b.board[3][2].can_move_to(b.board, Position([2, 2])))

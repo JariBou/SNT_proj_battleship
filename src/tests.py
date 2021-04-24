@@ -1,4 +1,5 @@
 from time import time
+import tkinter as tk
 
 from src.resources.utils.Constants import Constants as Ct
 
@@ -36,7 +37,9 @@ def g():
 
 
 if __name__ == '__main__':
-    print(5%2)
+    print(2//2)
+    w = tk.Tk('hello')
+    w.mainloop()
 
     lambda: q(), g()
 

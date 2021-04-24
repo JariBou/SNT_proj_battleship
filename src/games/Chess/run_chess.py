@@ -1,13 +1,14 @@
+## Code Cleaned Up ##
+
 import ctypes
-import threading
 import sys as system
+import threading
 from time import sleep
 from tkinter import messagebox
 
 from src import run_main
-from src.resources.utils.Constants import Constants as Ct
-from src.resources.utils.Constants import ImgLoader as Il
 from src.games.Chess.Chess import *
+from src.resources.utils.Constants import Constants as Ct, ImgLoader as Il
 
 
 #####          STATIC METHODS          ####
@@ -197,7 +198,6 @@ class ChessGui:
             self.last_color = ''
             self.last_piece = None
             self.last_button_clicked = None
-            # self.b_class.print_board()
             self.switch_players()
             if self.b_class.check_for_checks(self.player):
                 _over = self.b_class.check_over(self.player)
@@ -238,7 +238,7 @@ class ChessGui:
     def _over(self):
         for button in Ct.all_children(self.root, 'Button'):
             button['command'] = ''
-        pass
+        self.playing = False
 
 
 if __name__ == '__main__':
