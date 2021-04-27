@@ -25,7 +25,7 @@ class ChessGui:
     def __init__(self):
         ## Window creation
         self.root = tk.Tk()
-        self.root.title("Chess - Alpha V0.1")
+        self.root.title("Chess - Alpha V5.2")
         self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
         w = 800
         h = 600
@@ -36,7 +36,7 @@ class ChessGui:
         y = (hs / 2) - (h / 2)
         self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
         ## Add Icon
-        myappid = 'mjcorp.Chess.alphav0.1'  # arbitrary string
+        myappid = 'mjcorp.Chess.alphav5.2'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Chess\\taskbar.ico'))

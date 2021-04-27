@@ -4,6 +4,7 @@ import sys as system
 import threading
 import tkinter as tk
 
+from tkinter import messagebox
 from src import run_main
 from src.resources.utils.Constants import Constants as Ct, Position
 
@@ -13,6 +14,12 @@ def place(button):
     button['bg'] = 'black' if button['bg'] == 'white' else 'white'
 
 
+def about():
+    """ Used to display an about messageBox """
+    messagebox.showinfo(title="About", message="Made by: Jari\n "
+                                               "Version: Alpha V3.0")
+
+
 ####                                  ####
 
 
@@ -20,7 +27,7 @@ class GameOfLife:
 
     def __init__(self):
         self.sw = tk.Tk()
-        self.sw.title("Game Of Life - Alpha V0.1")
+        self.sw.title("Game Of Life - Alpha V3.0")
         self.sw.protocol("WM_DELETE_WINDOW", self.exit)
         self.label = tk.Label(self.sw, text='Enter the width of the grid (in number of squares)')
         self.label2 = tk.Label(self.sw, text='')
@@ -33,10 +40,12 @@ class GameOfLife:
         self.width = 0
         self.height = 0
 
+        self.sw.bind("<Return>", self.on_key_press)
+
         self.sw.mainloop()
 
         self.root = tk.Tk()
-        self.root.title("Game Of Life - Alpha V0.1")
+        self.root.title("Game Of Life - Alpha V3.0")
         self.root.protocol("WM_DELETE_WINDOW", lambda: system.exit('User Cancelation'))
         self.root.attributes("-fullscreen", True)
         w = 700
@@ -48,7 +57,7 @@ class GameOfLife:
         y = (hs / 2) - (h / 2)
         self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
         ## Add Icon
-        myappid = 'mjcorp.gameoflife.alphav0.1'  # arbitrary string
+        myappid = 'mjcorp.gameoflife.alphav3.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
 
@@ -57,7 +66,7 @@ class GameOfLife:
         self.root.config(menu=menubar)
         # diffmenu = tk.Menu(menubar, tearoff=0)
         # menubar.add_command(label="Help", command=g_help)  ##TODO: create help window with rules
-        # menubar.add_command(label="About", command=about)
+        menubar.add_command(label="About", command=about)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
         self.size = Position([self.width, self.height])  ## [X, Y]
@@ -150,12 +159,15 @@ class GameOfLife:
             self.width = int(self.entry_field.get())
             self.label.config(text='Enter the height of the grid (in number of squares)')
             self.ok_button['command'] = self.confirm2
+            self.sw.bind('<Return>', self.confirm2)
             self.label2.config(text='')
         except ValueError:
             self.label2.config(text='Enter a Valid Integer')
         self.entry_field.delete(0, len(self.entry_field.get()))
 
-    def confirm2(self):
+    def confirm2(self, args=0):
+        if args:   # otherwise error with enter keybind
+            print(args)
         try:
             self.height = int(self.entry_field.get())
             self.sw.destroy()
@@ -175,6 +187,15 @@ class GameOfLife:
         except AttributeError:
             pass
         system.exit('User Cancelation')
+
+    def on_key_press(self, event):
+        key_pressed = repr(event.char).replace("'", '', 2)
+        key_pressed = str(key_pressed)
+        if key_pressed == '\\r':  # Enter key
+            if self.width:
+                self.confirm2()
+            else:
+                self.confirm()
 
 
 if __name__ == '__main__':

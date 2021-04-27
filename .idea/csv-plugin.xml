@@ -80,6 +80,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\src\run_main.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

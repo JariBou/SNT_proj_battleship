@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter.font as ft
 from src.games import Battleship, GameOfLife, Rock_paper_scissors, pendu_gui, Last_letter_game
 from src.games.Chess import run_chess
-from src.games import run_TTT as runmorpion
+from src.games import run_TTT as Runmorpion
 
 
 class run_main:
@@ -78,7 +78,7 @@ class run_main:
 
     def morpion(self):
         self.w.destroy()
-        runmorpion.run()
+        Runmorpion.run()
 
     def battleship(self):
         self.w.destroy()
