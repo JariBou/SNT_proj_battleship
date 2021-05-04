@@ -94,6 +94,9 @@ class Game:
         letter = button['text']
         is_in_word = False
 
+        if button.cget('state') == tk.DISABLED:
+            return
+
         for n in range(self.nb_letters):
             if letter == self.letters[n]:
                 self.lines[n] = self.letters[n]
