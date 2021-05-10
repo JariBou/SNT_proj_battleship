@@ -36,7 +36,7 @@ class Game:
         self.fileName = fileName
         ## Window creation
         self.root = tk.Tk()
-        self.root.title("Pendu - Alpha V0.2")
+        self.root.title("Pendu - Alpha V1.2")
         self.root.protocol("WM_DELETE_WINDOW", system.exit)
         w = 800
         h = 600
@@ -51,7 +51,7 @@ class Game:
             self.root.bind(f"<KeyPress-{chr(65+lettre).lower()}>", self.on_key_press)
 
         ## Add Icon
-        myappid = 'mjcorp.pendu.alphav0.2'  # arbitrary string
+        myappid = 'mjcorp.pendu.alphav1.2'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Hangman\\Pendu.ico'))

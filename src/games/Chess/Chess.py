@@ -140,14 +140,14 @@ class ChessPiece(ABC):
     def get_name(self):
         return f"{self.color.capitalize()} {self.type}"
 
-    def force_move_to(self, new_position):
+    def force_move_to(self, new_position: Position):
         """Moves a piece even if normally wouldn't be able to"""
         self.board[self.position.y][self.position.x] = None
         self.position = new_position
         self.board[new_position.y][new_position.x] = self
         return True
 
-    def move_to(self, new_position):
+    def move_to(self, new_position: Position):
         """ Moves the piece to New position
         :param new_position: New position as a Position class
         :return: True if success, False if fail
@@ -175,10 +175,10 @@ class ChessPiece(ABC):
         self.board[new_position.y][new_position.x] = self
         return True
 
-    def can_move_to(self, new_position):
+    def can_move_to(self, new_position: Position):
         return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
 
-    def able_to_move(self, new_position):
+    def able_to_move(self, new_position: Position):
         """Just checks if a piece as a valip position that gets the player out of check"""
         logic_board = copy.deepcopy(self.board)
         logic_board[self.position.y][self.position.x] = None
@@ -391,7 +391,7 @@ class King(ChessPiece):
                     pass
         return valid_positions
 
-    def ruck_check_test(self, Position_1off, Position_2off):
+    def ruck_check_test(self, Position_1off: Position, Position_2off: Position):
         b_class = Board()
 
         player = 0 if self.color == 'White' else 1
@@ -411,7 +411,7 @@ class King(ChessPiece):
             except IndexError:
                 pass
 
-    def is_checked(self, next_board=None, next_position=None):
+    def is_checked(self, next_board=None, next_position: Position = None):
         ### MAYBE DO A REVERSE? LIKE, YOU CHECK FROM THE KING IF HE WERE SAID PIECE IF IT COULD GET TO HIM
         ### LIKE YOU CHECK DIAGONALLY FROM THE KING AND STUFF
         ## Na we good fam
@@ -425,7 +425,7 @@ class King(ChessPiece):
                     checkers.append(piece)
         return bool(checkers)
 
-    def gets_checked(self, new_position):
+    def gets_checked(self, new_position: Position):
         next_board = copy.deepcopy(self.board)
         next_board[self.position.y][self.position.x] = None
         next_board[new_position.y][new_position.x] = self
@@ -433,13 +433,13 @@ class King(ChessPiece):
             return False
         return True
 
-    def can_move_to(self, new_position):
+    def can_move_to(self, new_position: Position):
         if not self.gets_checked(new_position):
             return False
         else:
             return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
 
-    def move_to(self, new_position):
+    def move_to(self, new_position: Position):
         if super().move_to(new_position):
             if self.ruck_pos_tower:
                 for i in range(len(self.ruck_pos_tower)):
@@ -497,7 +497,7 @@ class Tower(ChessPiece):
                     right = True
         return valid_positions
 
-    def move_to(self, new_position):
+    def move_to(self, new_position: Position):
         if super().move_to(new_position):
             self.first_move = False
             return True
