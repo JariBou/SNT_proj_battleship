@@ -13,7 +13,7 @@ class Game:
     def __init__(self):
         w = Tk()
         w.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
-        ww = 700
+        ww = 800
         h = 500
         ## get screen width and height
         ws = w.winfo_screenwidth()
@@ -85,9 +85,12 @@ class Game:
         resetButton = Button(text="Reset Game", command=self.resetG)
         resetButton.grid(row=0, column=1)
 
-        help_img = PhotoImage(file = path.joinpath("resources\\images\\rock_paper_scissors\\lizard_spock.jpg"))
+        help_text = Label(text="Récapitulatif des coups gagnants: ")
+        help_text.grid(row = 0, column=5)
+
+        help_img = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\lizard_spock.png"))
         help = Label(image = help_img)
-        help.grid(row = 2, column = 8)
+        help.grid(row = 1, rowspan = 4, column = 5)
 
         w.mainloop()
 
