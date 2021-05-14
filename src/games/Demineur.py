@@ -19,6 +19,11 @@ def get_img(path):
     img = PhotoImage(file=path)
     return img
 
+def g_help():
+    messagebox.showinfo(title = "Help & Rules", message = "Cliquer sur une case de la grille révèle:\n\n"
+                                                        "- Une zone ne contenant aucune mine\n"
+                                                        "- Une case bordée par 1, 2, 3 ou 4 mines dans un rayon d'1\n"
+                                                        "  case (verticalement, horizontalement, diagonalement\n")
 
 def about():
     """ Used to display an about messageBox """
@@ -48,7 +53,7 @@ class Game:
         self.path = Ct.get_path()
         myappid = 'mjcorp.Demineur.alphav1.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Demineur\\demineur_taskbar.ico'))
+        self.root.iconbitmap(self.path.joinpath('resources\\images\\Demineur\\demineur_taskbar.ico'))
 
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar, bg='white')
@@ -379,7 +384,7 @@ class Game:
         colorsettings.add_command(label="Grey", command=lambda: Ct.set_color(self.root, 'grey'))
         colorsettings.add_command(label="Light blue", command=lambda: Ct.set_color(self.root, 'lightblue'))
         menubar.add_cascade(label="Color settings", menu=colorsettings)
-        # menubar.add_command(label="Help", command=g_help)  ##TODO: create help_rules window with rules
+        menubar.add_command(label="Help", command=g_help)
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Stats", command=self.stats)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])

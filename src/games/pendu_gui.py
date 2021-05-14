@@ -2,10 +2,19 @@ import ctypes
 import random
 import sys as system
 import tkinter as tk
+from tkinter import messagebox
 
 from PIL import Image, ImageTk
 from src.resources.utils.Constants import Constants as Ct
 
+def about():
+    messagebox.showinfo(title="About", message="Made by: Jari & LeTiramissou\n "
+                                               "Version: Alpha 1.2")
+
+def g_help():
+    messagebox.showinfo(title="About", message="Le but est de deviner le mot avant que le monsieur\n"
+                                               "soit ignoblement pendu\n\n"
+                                               "Vous pouvez utiliser le clavier pour tenter une lettre")
 
 def get_img(path, size=0):
     img = Image.open(path)
@@ -50,11 +59,16 @@ class Game:
         for lettre in range(26):
             self.root.bind(f"<KeyPress-{chr(65+lettre).lower()}>", self.on_key_press)
 
+        #Add a menu bar
+        menubar = tk.Menu(self.root)
+        self.root.config(menu=menubar, bg='white')
+        self.create_menu(menubar)
+
         ## Add Icon
         myappid = 'mjcorp.pendu.alphav1.2'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
-        self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Hangman\\Pendu.ico'))
+        self.root.iconbitmap(self.path.joinpath('resources\\images\\Hangman\\Pendu.ico'))
 
         self.mots = []
         with open(self.path.joinpath('resources\\txt_files\\' + (fileName if fileName.endswith(".txt") else fileName + ".txt")), "r") as f:
@@ -136,6 +150,9 @@ class Game:
     def on_key_press_repeat(self, event):
         self.on_key_press(event)
 
+    def create_menu(self, menubar: tk.Menu):
+        menubar.add_command(label="Help", command=g_help)
+        menubar.add_command(label="About", command=about)
 
 if __name__ == '__main__':
     Game("lexique")
