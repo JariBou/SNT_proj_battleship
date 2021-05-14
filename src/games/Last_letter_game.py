@@ -78,9 +78,7 @@ class Last_letter:
         ## Create a Menubar
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
-        menubar.add_command(label="Help", command=help_rules)
-        menubar.add_command(label="About", command=about)
-        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
+        self.create_menu(menubar)
 
         self.first_letter = self.alphabet[randint(0, 25)]
         self.letter_display = tk.Label(self.root, text=f"First letter: {self.first_letter}", font=customLabelFont, borderwidth=3, relief='sunken')
@@ -216,6 +214,17 @@ class Last_letter:
             except:
                 return
         return
+
+    def create_menu(self, menubar: tk.Menu):
+        colorsettings = tk.Menu(menubar, tearoff=0)
+        colorsettings.add_command(label="White (default)", command=lambda: Ct.set_color(self.root, 'white'))
+        colorsettings.add_command(label="Light grey", command=lambda: Ct.set_color(self.root, 'lightgrey'))
+        colorsettings.add_command(label="Grey", command=lambda: Ct.set_color(self.root, 'grey'))
+        colorsettings.add_command(label="Light blue", command=lambda: Ct.set_color(self.root, 'lightblue'))
+        menubar.add_cascade(label="Color settings", menu=colorsettings)
+        menubar.add_command(label="Help", command=help_rules)
+        menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
 
 if __name__ == '__main__':

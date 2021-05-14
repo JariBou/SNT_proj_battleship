@@ -46,9 +46,7 @@ class ChessGui:
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
         # diffmenu = tk.Menu(menubar, tearoff=0)
-        menubar.add_command(label="Help")  ##TODO: create help_rules window with rules
-        menubar.add_command(label="About", command=about)
-        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
+        self.create_menubar(menubar)
 
         chess_array_img = ImgLoader.load_img('resources\\images\\Chess\\ChessPiecesArray.png')
 
@@ -95,9 +93,12 @@ class ChessGui:
         # print(self.color_pattern)
         # print(len(self.color_pattern))
         self.buttons_list = Ct.regroup_list(self.buttons_list, 8)
+        self.logic_color = [1 if self.color_pattern[i] == 'black' else 0 for i in range(len(self.color_pattern))]
         self.color_pattern = Ct.regroup_list(self.color_pattern, 8)
+        self.logic_color = Ct.regroup_list(self.logic_color, 8)
+        print(self.logic_color)
 
-        self.playing = True
+        self.playing = False
         self.player = 0
         self.colors = ['White', 'Black']
 
@@ -111,11 +112,11 @@ class ChessGui:
         self.timer.grid(row=1, column=8)
 
         self.switch_player = tk.Button(self.root, text='switch', command=self.switch_players)
-        self.switch_player.grid(row=2, column=8)
+        self.switch_player.grid(row=3, column=8)
+        self.start_button = tk.Button(self.root, text='Start', command=self.start_game, relief=tk.RIDGE, border=10)
+        self.start_button.grid(row=2, column=8, sticky='nsew')
 
         self.t1 = None
-        self.t1 = threading.Thread(target=self.update_timer, args=())
-        self.t1.start()
 
         self.last_button_clicked = None
         self.last_piece = None
@@ -126,6 +127,18 @@ class ChessGui:
         self.b_class.pass_board_to_pieces()
 
         self.root.mainloop()
+
+    def start_game(self):
+        self.playing = True
+        self.t1 = threading.Thread(target=self.update_timer, args=())
+        self.t1.start()
+        self.start_button.config(text='Pause', command=self.pause_game)
+        self.update_board()
+
+    def pause_game(self):
+        self.playing = False
+        self.start_button.config(text='Resume', command=self.start_game)
+        self.hide_board()
 
     def update_timer(self):
         while self.playing:
@@ -157,6 +170,8 @@ class ChessGui:
         print('switched players\n')
 
     def clicked(self, button):
+        if not self.playing:
+            return
         print('----------------------------')
         board = self.b_class.board
         curr_pos = Position([button.grid_info()['column'], button.grid_info()['row']])
@@ -227,7 +242,7 @@ class ChessGui:
             b = button.grid_info()
             if b['column'] > 7:
                 return
-            piece = board[b['row']][b['column']]
+            piece: ChessPiece = board[b['row']][b['column']]
             button['image'] = ''
             button['bg'] = self.color_pattern[b['row']][b['column']]
             if piece is not None:
@@ -235,10 +250,38 @@ class ChessGui:
                 if isinstance(piece, King) and piece.is_checked():
                     button['bg'] = 'red'
 
+    def hide_board(self):
+        for button in Ct.all_children(self.root, 'Button'):
+            b = button.grid_info()
+            if b['column'] > 7:
+                return
+            button['image'] = ''
+
     def _over(self):
         for button in Ct.all_children(self.root, 'Button'):
             button['command'] = ''
         self.playing = False
+
+    def change_color(self, color1, color2):
+        for button in Ct.all_children(self.root, 'Button'):
+            b = button.grid_info()
+            if b['column'] > 7:
+                return
+            color = color1 if self.logic_color[b['column']][b['row']] == 1 else color2
+            button['bg'], self.color_pattern[b['row']][b['column']] = color, color
+
+    def create_menubar(self, menubar: tk.Menu):
+        colorsettings = tk.Menu(menubar, tearoff=0)
+        colorsettings.add_command(label="Black & White (default)", command=lambda: self.change_color('black', 'white'))
+        colorsettings.add_command(label="Terracota & Ivory", command=lambda: self.change_color('brown', 'ivory'))
+        colorsettings.add_command(label="Gold & Ivory", command=lambda: self.change_color('gold', 'ivory'))
+        colorsettings.add_command(label="Dark brown & Ivory", command=lambda: self.change_color('#662200', 'ivory'))
+        colorsettings.add_command(label="Dark turquoise & Light blue",
+                                  command=lambda: self.change_color('#006666', '#809fff'))
+        menubar.add_cascade(label="Board colors", menu=colorsettings)
+        menubar.add_command(label="Help")  ##TODO: create help_rules window with rules
+        menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
 
 if __name__ == '__main__':

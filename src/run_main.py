@@ -1,6 +1,6 @@
 from tkinter import *
 import tkinter.font as ft
-from src.games import Battleship, GameOfLife, Rock_paper_scissors, pendu_gui, Last_letter_game
+from src.games import Battleship, Demineur, GameOfLife, Rock_paper_scissors, pendu_gui, Last_letter_game
 from src.games.Chess import run_chess
 from src.games import run_TTT as Runmorpion
 
@@ -54,6 +54,9 @@ class run_main:
         hangman = Button(text="Hangman", command=self.hangman, font=customFont)
         buttonList.append(hangman)
 
+        demineur = Button(text="Démineur", command=self.demineur, font=customFont)
+        buttonList.append(demineur)
+
         while len(buttonList) % size != 0:
             buttonList.append('None')
 
@@ -103,6 +106,10 @@ class run_main:
     def hangman(self):
         self.w.destroy()
         pendu_gui.Game('Lexique')
+
+    def demineur(self):
+        self.w.destroy()
+        Demineur.Game()
 
 
 if __name__ == '__main__':

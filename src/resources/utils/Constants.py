@@ -1,4 +1,5 @@
 import copy
+import tkinter
 from enum import Enum
 from PIL import Image, ImageTk
 
@@ -27,7 +28,7 @@ class ImgLoader:
         return img.crop(rectangle)
 
     @classmethod
-    def get_as_TkImage(cls, img):
+    def get_as_TkImage(cls, img) -> ImageTk.PhotoImage:
         return ImageTk.PhotoImage(img)
 
 
@@ -66,7 +67,7 @@ class Constants(Enum):
             ]
 
     @classmethod
-    def all_children(cls, wid, child_type):
+    def all_children(cls, wid, child_type: str) -> list:
         """ Used to return a list of all the elements on a parent
 
         :param child_type: Type of the child to return, 'all' returns all types
@@ -77,10 +78,10 @@ class Constants(Enum):
         for item in _list:
             if item.winfo_children():
                 _list.extend(item.winfo_children())
-        return _list if child_type == "all" else [child for child in _list if str(child.winfo_class()) == child_type]
+        return _list if child_type.lower() == "all" else [child for child in _list if str(child.winfo_class()) == child_type]
 
     @classmethod
-    def remove_duplicates(cls, List):
+    def remove_duplicates(cls, List: list) -> list:
         """ Removes dupes from a given List
         :param List: List to remove dupes from
         :return: Initial list without the duplicates
@@ -94,7 +95,7 @@ class Constants(Enum):
         return value
 
     @classmethod
-    def get_img(cls, path, size=0):
+    def get_img(cls, path, size=0) -> ImageTk.PhotoImage:
         """ resources\\images\\XXX """
         img = Image.open(path)
         if size != 0:
@@ -103,7 +104,7 @@ class Constants(Enum):
         return photo
 
     @classmethod
-    def regroup_list(cls, List, size_of_sublist):
+    def regroup_list(cls, List: list, size_of_sublist: int) -> list:
         return [List[n:n + size_of_sublist] for n in range(0, len(List), size_of_sublist)]
 
     @classmethod
@@ -113,3 +114,29 @@ class Constants(Enum):
             for column in row:
                 line += column + separator
             print(line)
+
+    @classmethod
+    def center(cls, win: tkinter.Tk):
+        """
+        centers a tkinter window
+        :param win: the main window or Toplevel window to center
+        """
+        win.update_idletasks()
+        width = win.winfo_reqwidth()
+        height = win.winfo_reqheight()
+        # width = self.root.winfo_width()
+        frm_width = win.winfo_rootx() - win.winfo_x()
+        win_width = width + 2 * frm_width
+        # height = self.root.winfo_height()
+        titlebar_height = win.winfo_rooty() - win.winfo_y()
+        win_height = height + titlebar_height + frm_width
+        x = win.winfo_screenwidth() // 2 - win_width // 2
+        y = win.winfo_screenheight() // 2 - win_height // 2
+        win.geometry('{}x{}+{}+{}'.format(width, height, x, y))
+        win.deiconify()
+
+    @classmethod
+    def set_color(cls, root: tkinter.Tk, color: str, elements='All'):
+        root['bg'] = color
+        for element in cls.all_children(root, elements):
+            element['bg'] = color

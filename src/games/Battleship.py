@@ -77,10 +77,7 @@ class Battleship_1v1:
         ## Create a Menubar
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
-        # diffmenu = tk.Menu(menubar, tearoff=0)
-        menubar.add_command(label="Help", command=g_help)  ##TODO: create help_rules window with rules
-        menubar.add_command(label="About", command=about)
-        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
+        self.create_menu(menubar)
 
         ## Creation of the dictionary with all sounds
         self.sounds = {'destroy': [self.path.joinpath('resources\\sounds\\destroy\\amaterasu-sound-effect.mp3'),
@@ -661,6 +658,17 @@ class Battleship_1v1:
             print("on_key_press_repeat", repr(event.char))
         else:
             self.on_key_press(event)
+
+    def create_menu(self, menubar):
+        colorsettings = tk.Menu(menubar, tearoff=0)
+        colorsettings.add_command(label="White (default)", command=lambda: Ct.set_color(self.root, 'white', 'Label'))
+        colorsettings.add_command(label="Light grey", command=lambda: Ct.set_color(self.root, 'lightgrey', 'Label'))
+        colorsettings.add_command(label="Grey", command=lambda: Ct.set_color(self.root, 'grey', 'Label'))
+        colorsettings.add_command(label="Light blue", command=lambda: Ct.set_color(self.root, 'lightblue', 'Label'))
+        menubar.add_cascade(label="Color settings", menu=colorsettings)
+        menubar.add_command(label="Help", command=g_help)  ##TODO: create help_rules window with rules
+        menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
 
 class Boat:

@@ -25,7 +25,6 @@ def about():
     messagebox.showinfo(title="About", message="Made by: Jari \n "
                                                "Version: Alpha 0.1")
 
-
 ####                                  ####
 
 
@@ -42,20 +41,18 @@ class Game:
         ## Window creation
         self.nb_mines = 0
         self.root = tk.Tk()
-        self.root.title("Démineur - Alpha V0.1")
+        self.root.title("Démineur - Alpha V1.0")
         self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
         self.root.resizable(width=False, height=False)
 
-        myappid = 'mjcorp.Demineur.alphav0.3'  # arbitrary string
+        self.path = Ct.get_path()
+        myappid = 'mjcorp.Demineur.alphav1.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Demineur\\demineur_taskbar.ico'))
 
         menubar = tk.Menu(self.root)
-        self.root.config(menu=menubar)
-        # diffmenu = tk.Menu(menubar, tearoff=0)
-        # menubar.add_command(label="Help", command=g_help)  ##TODO: create help_rules window with rules
-        menubar.add_command(label="About", command=about)
-        menubar.add_command(label="Stats", command=self.stats)
-        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
+        self.root.config(menu=menubar, bg='white')
+        self.create_menu(menubar)
 
         self.nb_columns, self.nb_lines, self.nb_mines = 10, 10, 0
         self.square_dim, self.gap, self.nb_seen_squares = 30, 3, 0
@@ -66,11 +63,10 @@ class Game:
         self.s_round = 0
         self.time_dict = {'minutes': 0, 'seconds': 0}
 
-        self.path = Ct.get_path()
         self.images = {
             'cross': get_img(self.path.joinpath('resources\\images\\Demineur\\croixj.gif')),
             'flag': get_img(self.path.joinpath('resources\\images\\Demineur\\drapeauj.gif')),
-            'mine1': get_img(self.path.joinpath('resources\\images\\Demineur\\mine1.gif')),
+            'mine1': get_img(self.path.joinpath('resources\\images\\Demineur\\mine.png')),
             'minej': get_img(self.path.joinpath('resources\\images\\Demineur\\minej.gif'))
             }
 
@@ -92,24 +88,24 @@ class Game:
         self.difficulty = tk.IntVar()
         self.difficulty.set(1)
 
-        self.radio1 = tk.Radiobutton(self.difficulty_frame)
-        self.radio1.configure(text='Noob', command=self.start, variable=self.difficulty, value=1)
-        self.radio1.pack(anchor='nw', padx=30)
-        self.radio2 = tk.Radiobutton(self.difficulty_frame)
-        self.radio2.configure(text='Average', command=self.start, variable=self.difficulty, value=2)
-        self.radio2.pack(anchor='nw', padx=30)
-        self.radio3 = tk.Radiobutton(self.difficulty_frame)
-        self.radio3.configure(text='U good dawg', command=self.start, variable=self.difficulty, value=3)
-        self.radio3.pack(anchor='nw', padx=30)
-        self.radio4 = tk.Radiobutton(self.difficulty_frame)
-        self.radio4.configure(text='GOAT jr.', command=self.start, variable=self.difficulty, value=4)
-        self.radio4.pack(anchor='nw', padx=30)
-        self.radio5 = tk.Radiobutton(self.difficulty_frame)
-        self.radio5.configure(text='xXx_GOAT_xXx', command=self.start, variable=self.difficulty, value=5)
-        self.radio5.pack(anchor='nw', padx=30)
-        self.radio6 = tk.Radiobutton(self.difficulty_frame)
-        self.radio6.configure(text='INSANE360', command=self.start, variable=self.difficulty, value=6)
-        self.radio6.pack(anchor='nw', padx=30)
+        radio1 = tk.Radiobutton(self.difficulty_frame, text='Noob', command=self.start, variable=self.difficulty,
+                                value=1)
+        radio1.pack(anchor='nw', padx=30)
+        radio2 = tk.Radiobutton(self.difficulty_frame, text='Average', command=self.start, variable=self.difficulty,
+                                value=2)
+        radio2.pack(anchor='nw', padx=30)
+        radio3 = tk.Radiobutton(self.difficulty_frame, text='U good dawg', command=self.start, variable=self.difficulty,
+                                value=3)
+        radio3.pack(anchor='nw', padx=30)
+        radio4 = tk.Radiobutton(self.difficulty_frame, text='GOAT jr.', command=self.start, variable=self.difficulty,
+                                value=4)
+        radio4.pack(anchor='nw', padx=30)
+        radio5 = tk.Radiobutton(self.difficulty_frame, text='xXx_GOAT_xXx', command=self.start,
+                                variable=self.difficulty, value=5)
+        radio5.pack(anchor='nw', padx=30)
+        radio6 = tk.Radiobutton(self.difficulty_frame, text='INSANE360', command=self.start, variable=self.difficulty,
+                                value=6)
+        radio6.pack(anchor='nw', padx=30)
         self.difficulty_frame.pack()
 
         self.info = tk.Frame(self.root)
@@ -133,6 +129,7 @@ class Game:
         self.hidden_mines = self.nb_mines
         self.colors = ['blue', 'orange', 'red', 'green', 'cyan', 'skyblue', 'pink']
 
+        Ct.set_color(self.root, 'white')
         self.start()
 
         self.root.mainloop()
@@ -150,6 +147,7 @@ class Game:
     def init_lvl(self):
         self.land_canvas.delete(tk.ALL)
         level = self.difficulty.get()
+        self.time_dict = {'minutes': 0, 'seconds': 0}
         if level == 1:
             self.nb_columns, self.nb_lines, self.nb_mines = 10, 10, 12
         elif level == 2:
@@ -188,6 +186,7 @@ class Game:
                 self.mines[col, line] = 9
                 nb_mines += 1
         self.affiche_compteur()
+        Ct.center(self.root)
         self.t1 = Thread(target=self.update_timer)
         self.t1.start()
 
@@ -240,7 +239,7 @@ class Game:
         if not self.player_board[nCol, nLine] == "":
             return
         if self.mines[nCol, nLine] == 9:
-            self.lost()
+            self.lost(nCol, nLine)
         else:
             nb_neightbour_mines = self.get_neighbours(nCol, nLine)
             if nb_neightbour_mines >= 1:
@@ -310,7 +309,7 @@ class Game:
         self.affiche_compteur()
 
     def has_won(self) -> bool:
-        if not ((self.nb_lines * self.nb_columns) == self.nb_seen_squares) and self.hidden_mines == 0:
+        if not (((self.nb_lines * self.nb_columns) == self.nb_seen_squares) and self.hidden_mines == 0):
             return False
         for y in range(1, self.nb_lines + 1):
             for x in range(1, self.nb_columns + 1):
@@ -322,22 +321,24 @@ class Game:
         self.playing = False
         self.land_canvas.create_text(int(self.land_canvas.cget('width')) // 2,
                                      int(self.land_canvas.cget('height')) // 2, fill="green",
-                                     font="Times 30 italic bold",
-                                     text="WON")
+                                     font="Times 35 italic bold", text="WON")
         self.games_played += 1
         self.wins += 1
 
-    def lost(self):
+    def lost(self, nCol, nLine):
         for line in range(1, self.nb_lines + 1):
             for col in range(1, self.nb_columns + 1):
                 if self.mines[col, line] == 9:
                     self.land_canvas.create_image(col * self.square_dim - self.square_dim // 2 + self.gap,
                                                   line * self.square_dim - self.square_dim // 2 + self.gap,
                                                   image=self.images.get('minej'))
+        self.land_canvas.create_image(nCol * self.square_dim - self.square_dim // 2 + self.gap,
+                                      nLine * self.square_dim - self.square_dim // 2 + self.gap,
+                                      image=self.images.get('cross'))
         self.playing = False
         self.land_canvas.create_text(int(self.land_canvas.cget('width')) // 2,
-                                     int(self.land_canvas.cget('height')) // 2, fill="red", font="Times 30 italic bold",
-                                     text="LOST")
+                                     int(self.land_canvas.cget('height')) // 2, fill="red",
+                                     font="Times 35 italic bold", text="LOST")
         self.games_played += 1
         self.loses += 1
 
@@ -370,6 +371,18 @@ class Game:
         self.t1.join()
         time.sleep(0.5)
         system.exit('User cancelation')
+
+    def create_menu(self, menubar: tk.Menu):
+        colorsettings = tk.Menu(menubar, tearoff=0)
+        colorsettings.add_command(label="White (default)", command=lambda: Ct.set_color(self.root, 'white'))
+        colorsettings.add_command(label="Light grey", command=lambda: Ct.set_color(self.root, 'lightgrey'))
+        colorsettings.add_command(label="Grey", command=lambda: Ct.set_color(self.root, 'grey'))
+        colorsettings.add_command(label="Light blue", command=lambda: Ct.set_color(self.root, 'lightblue'))
+        menubar.add_cascade(label="Color settings", menu=colorsettings)
+        # menubar.add_command(label="Help", command=g_help)  ##TODO: create help_rules window with rules
+        menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Stats", command=self.stats)
+        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
 
 if __name__ == '__main__':
