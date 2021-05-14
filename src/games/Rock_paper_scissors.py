@@ -78,16 +78,17 @@ class Game:
         text = Label(text="Pour jouer appuyez sur un bouton:")
         text.grid(row=3, columnspan=3)
 
-        help_img = PhotoImage(image = lizard_spock.jpg)
-        help = Label(image = help_img)
-        help.grid(row = 2, column = 8)
-
         img3 = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\versus.gif"))
         versus = Label(image=img3)
         versus.grid(row=2, column=1)
 
         resetButton = Button(text="Reset Game", command=self.resetG)
         resetButton.grid(row=0, column=1)
+
+        help_img = PhotoImage(file = path.joinpath("resources\\images\\rock_paper_scissors\\lizard_spock.jpg"))
+        help = Label(image = help_img)
+        help.grid(row = 2, column = 8)
+
         w.mainloop()
 
     def CPU(self, player):
