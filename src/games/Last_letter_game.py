@@ -18,7 +18,7 @@ def about():
 
 
 def help_rules():
-    messagebox.showinfo(title="About", message="""Rules: You have to write a word that starts with the las letter of the previous word.
+    messagebox.showinfo(title="About", message="""Rules: You have to write a word that starts with the last letter of the previous word.
 The game reminds you of the last written word and the last letter.
 The game gives you the letter for the first word.
 You can close the game at any moment by typing 'stop' or 'exit'

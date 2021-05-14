@@ -16,7 +16,7 @@ from src.resources.utils.Constants import Constants as Ct, ImgLoader as Il
 def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: Jari\n "
-                                               "Version: Alpha V0.1")
+                                               "Version: Alpha V5.2")
 ####                                  ####
 
 
@@ -28,7 +28,7 @@ class ChessGui:
         self.root.title("Chess - Alpha V5.2")
         self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
         w = 800
-        h = 600
+        h = 800
         ## get screen width and height
         ws = self.root.winfo_screenwidth()
         hs = self.root.winfo_screenheight()
@@ -39,7 +39,7 @@ class ChessGui:
         myappid = 'mjcorp.Chess.alphav5.2'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
-        self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Chess\\taskbar.ico'))
+        self.root.iconbitmap(self.path.joinpath('resources\\images\\Chess\\taskbar.ico'))
         ImgLoader = Il()
 
         ## Create a Menubar

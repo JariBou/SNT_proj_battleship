@@ -32,8 +32,24 @@ def about():
 
 def g_help():
     """Used to display help_rules about the game"""
-    pass
-####                                  ####
+    messagebox.showinfo(title="Help & Rules", message="Commencer une partie de bataille navale \n"
+                                                      "---------------------------------------\n"
+    "Au début du jeu, chaque joueur place à sa guise tous ses bateaux sur sa grille (à gauche) avec possibilité de les faire pivoter (Rotate) , puis confirme le placement de ses bateaux.\n\n"
+    "Chaque joueur dispose de la flotte suivante: \n"
+    "-1 porte avion (5 cases)\n"
+    "-1 croiseur (4 cases, cliquer sur les 2 cases centrales)\n"
+    "-1 contre torpilleur (3 cases)\n"
+    "-1 sous-marin (3 cases)\n"
+    "-1 torpilleur (2 cases, pareil que les 4 cases)\n\n"
+    "Bien entendu, un joueur ne doit pas voir la grille de son adversaire.\n"
+    "Une fois tous les bateaux en jeu, la partie peut commencer.\n"
+    "Un à un, les joueurs se tire dessus en cliquant sur la grille de droite.\n\n"
+    "Il faut confirmer le changement de joueur lorsque l'on prend son tour (Change Player).\n"
+    "\n\n"
+    "Comment gagner une partie de bataille navale\n"
+    "---------------------------------------\n"
+    "Une partie de bataille navale se termine lorsque l’un des joueurs n’a plus de navires.")
+    ####                                  ####
 
 
 # noinspection SpellCheckingInspection
@@ -55,7 +71,7 @@ class Battleship_1v1:
         myappid = 'mjcorp.battleship.alphav1.2'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
-        self.root.iconbitmap(default=self.path.joinpath('resources\\images\\Battleship\\Battleship_taskbar.ico'))
+        self.root.iconbitmap(self.path.joinpath('resources\\images\\Battleship\\Battleship_taskbar.ico'))
 
         self.has_prev_key_release = None
         self.root.bind("<KeyRelease-r>", self.on_key_release_repeat)
@@ -104,7 +120,7 @@ class Battleship_1v1:
             ## row and column indicators
         tk.Label(self.root, bg="sandy brown", fg="white").grid(row=10, column=10, sticky='nsew')
         for row in range(0, 10):
-            tk.Label(self.root, text=str(row), bg="peach puff", fg="black").grid(row=row, column=10, sticky='nsew')
+            tk.Label(self.root, text=str(row+1), bg="peach puff", fg="black").grid(row=row, column=10, sticky='nsew')
         for column in range(0, 10):
             tk.Label(self.root, text=alpha[column], bg="peach puff", fg="black").grid(row=10, column=column, sticky='nsew')
             ## Buttons
@@ -120,7 +136,7 @@ class Battleship_1v1:
             ## row and column indicators
         tk.Label(self.root, bg="sandy brown", fg="white").grid(row=10, column=self.atk_offset - 1, sticky='nsew')
         for row in range(0, 10):
-            tk.Label(self.root, text=str(row), bg="peach puff", fg="black").grid(row=row, column=self.atk_offset - 1, sticky='nsew')
+            tk.Label(self.root, text=str(row+1), bg="peach puff", fg="black").grid(row=row, column=self.atk_offset - 1, sticky='nsew')
         for column in range(self.atk_offset, self.atk_offset+10):
             tk.Label(self.root, text=alpha[column - self.atk_offset], bg="peach puff", fg="black").grid(row=10, column=column, sticky='nsew')
             ## Buttons

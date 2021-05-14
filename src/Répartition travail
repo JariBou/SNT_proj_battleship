@@ -1,7 +1,7 @@
 Mathis:
 - Jeu de Dame
-- Menu de sélection des jeux
-- Texture sdes bateaux quand touchés et l'implémenter dans Battleship.py
+- Menu de sélection des jeux HALF DONE
+- Texture des bateaux quand touchés et l'implémenter dans Battleship.py
 - Faire des textures pour le pendu   /!\ URGENT
 - Créer la fonction help_rules de Battleship.py pour les règles et comment jouer avec le GUI
 - Faire les icones des jeux

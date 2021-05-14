@@ -13,6 +13,11 @@ from src.resources.utils.Constants import Constants as Ct, Position
 def place(button):
     button['bg'] = 'black' if button['bg'] == 'white' else 'white'
 
+def g_help():
+    messagebox.showinfo(title = "Help & Rules", message="Une cellule possède huit voisins, qui sont les cellules adjacentes horizontalement, verticalement et diagonalement.\n\n"
+    "À chaque étape, l’évolution d’une cellule est déterminée par l’état de ses huit voisines de la façon suivante :\n\n"
+    "* Une cellule morte possédant exactement trois voisines vivantes devient vivante (elle naît)\n"
+    "* une cellule vivante possédant deux ou trois voisines vivantes le reste, sinon elle meurt")
 
 def about():
     """ Used to display an about messageBox """
@@ -66,6 +71,7 @@ class GameOfLife:
         self.root.config(menu=menubar)
         # diffmenu = tk.Menu(menubar, tearoff=0)
         # menubar.add_command(label="Help", command=g_help)  ##TODO: create help_rules window with rules
+        menubar.add_command(label="Help", command=g_help)
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
