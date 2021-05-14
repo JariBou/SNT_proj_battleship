@@ -682,7 +682,7 @@ class Battleship_1v1:
         colorsettings.add_command(label="Grey", command=lambda: Ct.set_color(self.root, 'grey', 'Label'))
         colorsettings.add_command(label="Light blue", command=lambda: Ct.set_color(self.root, 'lightblue', 'Label'))
         menubar.add_cascade(label="Color settings", menu=colorsettings)
-        menubar.add_command(label="Help", command=g_help)  ##TODO: create help_rules window with rules
+        menubar.add_command(label="Help", command=g_help)
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 

@@ -70,7 +70,6 @@ class GameOfLife:
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
         # diffmenu = tk.Menu(menubar, tearoff=0)
-        # menubar.add_command(label="Help", command=g_help)  ##TODO: create help_rules window with rules
         menubar.add_command(label="Help", command=g_help)
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
