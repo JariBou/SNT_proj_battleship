@@ -15,7 +15,7 @@ from src.resources.utils.Constants import Constants as Ct
 
 
 #####          STATIC METHODS          ####
-def get_img(path):
+def get_img(path) -> ImageTk.PhotoImage:
     """ resources\\images\\XXX """
     img = Image.open(path)
     new_img = img.resize((44, 44))
@@ -31,7 +31,7 @@ def about():
 
 
 def g_help():
-    """Used to display help about the game"""
+    """Used to display help_rules about the game"""
     pass
 ####                                  ####
 
@@ -78,7 +78,7 @@ class Battleship_1v1:
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
         # diffmenu = tk.Menu(menubar, tearoff=0)
-        menubar.add_command(label="Help", command=g_help)  ##TODO: create help window with rules
+        menubar.add_command(label="Help", command=g_help)  ##TODO: create help_rules window with rules
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
@@ -390,7 +390,7 @@ class Battleship_1v1:
                 self.size_4.config(state=tk.NORMAL)
                 self.size_5.config(state=tk.NORMAL)
 
-    def can_place(self, size, button):
+    def can_place(self, size, button) -> bool:
         """ Checks if you can place a boat of a certain size in a certain orientation
         :param size: size of the boat
         :param button: button clicked
@@ -665,7 +665,7 @@ class Battleship_1v1:
 
 class Boat:
 
-    def __init__(self, coordinates, size):
+    def __init__(self, coordinates: list, size):
         ## Coordinates like this: [ [x, y], [x, y], [x, y] ]
         ## State like this:       [  1/0,    1/0,    1/0 ]
 
@@ -674,18 +674,18 @@ class Boat:
         self.state = [1] * len(coordinates)
         self.size = str(size)
 
-    def is_dead(self):
+    def is_dead(self) -> bool:
         return not self.state.__contains__(1)
 
-    def get_type(self):
+    def get_type(self) -> str:
         # 2 tiles boat is a Destroyer // 3 tiles boats are Submarine and Cruiser #
         # 4 tiles boat is a Battleship // 5 tiles boat is a Carrier #
         return ['Destroyer', 'Cruiser/Submarine', 'Battleship', 'Carrier'][int(self.size)-2]
     
-    def get_coordinates(self):
+    def get_coordinates(self) -> list:
         return self.coordinates
     
-    def set_state(self, i, val):
+    def set_state(self, i: int, val: int):
         self.state[i] = val
 
 
@@ -693,4 +693,4 @@ class Boat:
 if __name__ == '__main__':
     Battleship_1v1()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# See PyCharm help_rules at https://www.jetbrains.com/help/pycharm/

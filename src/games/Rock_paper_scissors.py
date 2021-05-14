@@ -31,7 +31,7 @@ class Game:
         ## Create a Menubar
         menubar = Menu(w)
         w.config(menu=menubar)
-        # menubar.add_command(label="Help", command=help)
+        # menubar.add_command(label="Help", command=help_rules)
         # menubar.add_command(label="About", command=about)
         menubar.add_command(label="Game Select Menu", command=lambda: [w.destroy(), run_main.run_main()])
 

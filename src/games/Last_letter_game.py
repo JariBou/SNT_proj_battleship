@@ -17,7 +17,7 @@ def about():
                                                "Version: Alpha V0.6")
 
 
-def help():
+def help_rules():
     messagebox.showinfo(title="About", message="""Rules: You have to write a word that starts with the las letter of the previous word.
 The game reminds you of the last written word and the last letter.
 The game gives you the letter for the first word.
@@ -26,7 +26,7 @@ Once you fail 3 times you lose.
 Please keep in mind that you cannot use special characters nor uppercase letters.""")
 
 
-def new_game(old_window=None):
+def new_game(old_window: tk.Tk = None):
     if old_window is not None:
         old_window.destroy()
     Last_letter()
@@ -78,7 +78,7 @@ class Last_letter:
         ## Create a Menubar
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
-        menubar.add_command(label="Help", command=help)
+        menubar.add_command(label="Help", command=help_rules)
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
@@ -161,7 +161,7 @@ class Last_letter:
         self.tries_state_button.config(text=f"Tries left: {3 - self.tries}")
         self.player_input = ''
 
-    def test_word(self, w):
+    def test_word(self, w: str) -> bool:
         lon = len(w)
         if lon == 1:
             self.console_output.config(text="Please use words longer than 1 letter, c'mon")
@@ -178,7 +178,7 @@ class Last_letter:
                 return False
         return True
 
-    def get_word_points(self, word):
+    def get_word_points(self, word: str) -> int:
         points = 0
         for letter in word:
             if letter == 'y':

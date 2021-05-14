@@ -3,6 +3,7 @@ from enum import Enum
 from PIL import Image, ImageTk
 
 from pathlib import Path
+from typing import Any
 
 
 class ImgLoader:
@@ -10,12 +11,12 @@ class ImgLoader:
     def __init__(self):
         self.path = Path(__file__).parent.parent.parent
 
-    def load_img(self, relative_path):
+    def load_img(self, relative_path) -> Image:
         img = Image.open(self.path.joinpath(relative_path))
         return img
 
     @classmethod
-    def resize_img(cls, img, size, get_as_tk=True):
+    def resize_img(cls, img, size, get_as_tk=True) -> ImageTk.PhotoImage:
         new_img = img.resize((size[0], size[1]))
         if get_as_tk:
             new_img = ImageTk.PhotoImage(new_img)
@@ -39,18 +40,18 @@ class Position:
     def __repr__(self):
         return f'{self.__class__.__name__} at ( x={self.x}, y={self.y} )'
 
-    def get_position(self):
+    def get_position(self) -> tuple[Any, Any]:
         return self.x, self.y
 
 
 class Constants(Enum):
 
     @classmethod
-    def get_path(cls):
+    def get_path(cls) -> Path:
         return Path(__file__).parent.parent.parent
 
     @classmethod
-    def new_board(cls):
+    def new_board(cls) -> list:
         return [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

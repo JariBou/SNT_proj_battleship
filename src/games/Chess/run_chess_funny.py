@@ -56,7 +56,7 @@ class Chess_Gui:
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
         # diffmenu = tk.Menu(menubar, tearoff=0)
-        menubar.add_command(label="Help")  ##TODO: create help window with rules
+        menubar.add_command(label="Help")  ##TODO: create help_rules window with rules
         menubar.add_command(label="About", command=about)
 
         self.image = {'Test_Pawn': get_img(self.path.joinpath('resources\\images\\Chess\\taskbar_img.png'))}

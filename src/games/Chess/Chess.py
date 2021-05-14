@@ -9,7 +9,7 @@ from src.resources.utils.Constants import Position
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
 
 
-def get_flattened(seq):
+def get_flattened(seq) -> list:
     se = copy.deepcopy(seq)
     flattened_list = []
     for elt in se:
@@ -46,11 +46,11 @@ class Board:
         ### Might be too hard tho....dk
         ##  Actually super easy, Barely an inconveniance, shoulda used cell class for each cell tho....
 
-    def get(self, x, y):
+    def get(self, x: int, y: int):
         print(f'getting at: {x, y}    -  element: {self.board[y][x]}')
         return self.board[y][x]
 
-    def move_piece_to(self, piece, new_position):
+    def move_piece_to(self, piece, new_position: Position) -> bool:
         """
         :param piece: ChessPiece class
         :param new_position: Position class
@@ -63,7 +63,7 @@ class Board:
             print(f'Error while moving piece: {piece} to {new_position}')
             return False
 
-    def check_for_checks(self, color):
+    def check_for_checks(self, color) -> bool:
         """returns True if king of color is check"""
         if color.__class__ != str:
             color = self.colors[color]
@@ -75,7 +75,7 @@ class Board:
             print(f'-{king.get_name()} at {king.get_position(True)}\n')
             return king.is_checked()
 
-    def check_over(self, player):
+    def check_over(self, player: int) -> bool:
         color = self.colors[player]
         piece_list = [piece for piece in [cell for cell in get_flattened(self.board) if cell is not None] if
                       piece.get_color() == color]
@@ -107,10 +107,10 @@ class Board:
     def switch_player(self):
         self.player = 1 if self.player == 0 else 0
 
-    def can_move_freely(self, player):
+    def can_move_freely(self, player) -> bool:
         return not self.check_for_checks(self.colors[player])
 
-    def return_board(self):
+    def return_board(self) -> list:
         return self.board
 
     def set_board(self, board):
@@ -119,7 +119,7 @@ class Board:
 
 class ChessPiece(ABC):
 
-    def __init__(self, color, position, Type):
+    def __init__(self, color: str, position, Type: str):
         self.color = color
         self.position = position if isinstance(position, Position) else Position(position)
         self.type = Type
@@ -131,23 +131,23 @@ class ChessPiece(ABC):
     def get_position(self, coordinates=False):
         return self.position if not coordinates else self.position.get_position()
 
-    def get_color(self):
+    def get_color(self) -> str:
         return self.color
 
-    def get_type(self):
+    def get_type(self) -> str:
         return self.type
 
-    def get_name(self):
+    def get_name(self) -> str:
         return f"{self.color.capitalize()} {self.type}"
 
-    def force_move_to(self, new_position: Position):
+    def force_move_to(self, new_position: Position) -> bool:
         """Moves a piece even if normally wouldn't be able to"""
         self.board[self.position.y][self.position.x] = None
         self.position = new_position
         self.board[new_position.y][new_position.x] = self
         return True
 
-    def move_to(self, new_position: Position):
+    def move_to(self, new_position: Position) -> bool:
         """ Moves the piece to New position
         :param new_position: New position as a Position class
         :return: True if success, False if fail
@@ -175,10 +175,10 @@ class ChessPiece(ABC):
         self.board[new_position.y][new_position.x] = self
         return True
 
-    def can_move_to(self, new_position: Position):
+    def can_move_to(self, new_position: Position) -> bool:
         return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
 
-    def able_to_move(self, new_position: Position):
+    def able_to_move(self, new_position: Position) -> bool:
         """Just checks if a piece as a valip position that gets the player out of check"""
         logic_board = copy.deepcopy(self.board)
         logic_board[self.position.y][self.position.x] = None
@@ -193,24 +193,24 @@ class ChessPiece(ABC):
             return False
         return True
 
-    def pass_new_board(self, board):
+    def pass_new_board(self, board: list):
         self.board = board
 
     @abstractmethod
-    def get_valid_positions(self):   ## Every subclass of this class will have to implement it
+    def get_valid_positions(self) -> list:   ## Every subclass of this class will have to implement it
         """Returns a list of valid positions to move the piece to"""
         pass
 
 
 class Pawn(ChessPiece):
 
-    def __init__(self, color, position):
+    def __init__(self, color: str, position):
         super().__init__(color, position, 'Pawn')
         self.first_move = True  ## When you move for the first time, set this to false pretty please
         self.over = False
         self.w = None
 
-    def get_valid_positions(self):        ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION, na its good fam, done it
+    def get_valid_positions(self) -> list:        ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION, na its good fam, done it
         side = 1 if self.color == 'White' else -1
         valid_positions = []
         if self.first_move:
@@ -237,7 +237,7 @@ class Pawn(ChessPiece):
                 valid_positions.append(Position(to_test[i + 1]))
         return valid_positions
 
-    def move_to(self, new_position):
+    def move_to(self, new_position: Position) -> bool:
         if super().move_to(new_position):
             self.first_move = False
             side_max = 7 if self.color == 'White' else 0
@@ -246,7 +246,7 @@ class Pawn(ChessPiece):
             return True
         return False
 
-    def reached_end(self):
+    def reached_end(self) -> bool:
         return self.over
 
     def transform(self):
@@ -265,10 +265,10 @@ class Pawn(ChessPiece):
 
 class Knight(ChessPiece):
 
-    def __init__(self, color, position):
+    def __init__(self, color: str, position):
         super().__init__(color, position, 'Knight')
 
-    def get_valid_positions(self):
+    def get_valid_positions(self) -> list:
         valid_positions = []                  ## THIS SHIT WORKED ON FIRST TRY
         to_test = []                          ##  print('HAPPINESS LVL MAXIMUM')
         offsets = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
@@ -289,10 +289,10 @@ class Knight(ChessPiece):
 
 class Bishop(ChessPiece):
 
-    def __init__(self, color, position):
+    def __init__(self, color: str, position):
         super().__init__(color, position, 'Bishop')
 
-    def get_valid_positions(self):
+    def get_valid_positions(self) -> list:
         valid_positions = []
         top_right = False
         top_left = False
@@ -337,13 +337,13 @@ class Bishop(ChessPiece):
 
 class King(ChessPiece):
 
-    def __init__(self, color, position):
+    def __init__(self, color: str, position):
         super().__init__(color, position, 'King')
         self.first_move = True
         self.ruck_pos_tower = []   ## [ [Position, Tower], [Position, Tower ]
         self.ruck_pos_king = []
 
-    def get_valid_positions(self):
+    def get_valid_positions(self) -> list:
         offsets = [[1, -1], [1, 0], [1, 1], [0, 1]]
         valid_positions = []
         x = self.position.x
@@ -391,7 +391,7 @@ class King(ChessPiece):
                     pass
         return valid_positions
 
-    def ruck_check_test(self, Position_1off: Position, Position_2off: Position):
+    def ruck_check_test(self, Position_1off: Position, Position_2off: Position) -> bool:
         b_class = Board()
 
         player = 0 if self.color == 'White' else 1
@@ -410,8 +410,9 @@ class King(ChessPiece):
                     return True
             except IndexError:
                 pass
+        return False
 
-    def is_checked(self, next_board=None, next_position: Position = None):
+    def is_checked(self, next_board: list = None, next_position: Position = None) -> bool:
         ### MAYBE DO A REVERSE? LIKE, YOU CHECK FROM THE KING IF HE WERE SAID PIECE IF IT COULD GET TO HIM
         ### LIKE YOU CHECK DIAGONALLY FROM THE KING AND STUFF
         ## Na we good fam
@@ -425,7 +426,7 @@ class King(ChessPiece):
                     checkers.append(piece)
         return bool(checkers)
 
-    def gets_checked(self, new_position: Position):
+    def gets_checked(self, new_position: Position) -> bool:
         next_board = copy.deepcopy(self.board)
         next_board[self.position.y][self.position.x] = None
         next_board[new_position.y][new_position.x] = self
@@ -433,13 +434,13 @@ class King(ChessPiece):
             return False
         return True
 
-    def can_move_to(self, new_position: Position):
+    def can_move_to(self, new_position: Position) -> bool:
         if not self.gets_checked(new_position):
             return False
         else:
             return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
 
-    def move_to(self, new_position: Position):
+    def move_to(self, new_position: Position) -> bool:
         if super().move_to(new_position):
             if self.ruck_pos_tower:
                 for i in range(len(self.ruck_pos_tower)):
@@ -452,11 +453,11 @@ class King(ChessPiece):
 
 class Tower(ChessPiece):
 
-    def __init__(self, color, position):
+    def __init__(self, color: str, position):
         super().__init__(color, position, 'Tower')
         self.first_move = True
 
-    def get_valid_positions(self):
+    def get_valid_positions(self) -> list:
         valid_positions = []
         top = False
         bottom = False
@@ -497,7 +498,7 @@ class Tower(ChessPiece):
                     right = True
         return valid_positions
 
-    def move_to(self, new_position: Position):
+    def move_to(self, new_position: Position) -> bool:
         if super().move_to(new_position):
             self.first_move = False
             return True
@@ -506,11 +507,11 @@ class Tower(ChessPiece):
 
 class Queen(ChessPiece):
 
-    def __init__(self, color, position):
+    def __init__(self, color: str, position):
         super().__init__(color, position, 'Queen')
 
     # noinspection PyTypeChecker
-    def get_valid_positions(self):
+    def get_valid_positions(self) -> list:
         logic_board = copy.deepcopy(self.board)
         positions_list = []
         for Type in [Bishop, Tower]:   ##A Queen's movement can be defined as the combination of a Bishop and a Tower
