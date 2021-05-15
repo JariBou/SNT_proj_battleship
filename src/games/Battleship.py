@@ -43,13 +43,14 @@ def g_help():
     "-1 torpilleur (2 cases, pareil que les 4 cases)\n\n"
     "Bien entendu, un joueur ne doit pas voir la grille de son adversaire.\n"
     "Une fois tous les bateaux en jeu, la partie peut commencer.\n"
-    "Un à un, les joueurs se tire dessus en cliquant sur la grille de droite.\n\n"
+    "Un à un, les joueurs se tirent dessus en cliquant sur la grille de droite.\n\n"
     "Il faut confirmer le changement de joueur lorsque l'on prend son tour (Change Player).\n"
     "\n\n"
     "Comment gagner une partie de bataille navale\n"
     "---------------------------------------\n"
     "Une partie de bataille navale se termine lorsque l’un des joueurs n’a plus de navires.")
-    ####                                  ####
+
+####                                  ####
 
 
 # noinspection SpellCheckingInspection

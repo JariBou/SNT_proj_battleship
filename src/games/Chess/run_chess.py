@@ -25,7 +25,7 @@ class ChessGui:
     def __init__(self):
         ## Window creation
         self.root = tk.Tk()
-        self.root.title("Chess - Alpha V5.2")
+        self.root.title("Chess - Alpha V6.0")
         self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
         w = 800
         h = 800
@@ -36,7 +36,7 @@ class ChessGui:
         y = (hs / 2) - (h / 2)
         self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
         ## Add Icon
-        myappid = 'mjcorp.Chess.alphav5.2'  # arbitrary string
+        myappid = 'mjcorp.Chess.alphav6.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.root.iconbitmap(self.path.joinpath('resources\\images\\Chess\\taskbar.ico'))
@@ -90,8 +90,6 @@ class ChessGui:
                 self.buttons_list.append(a)
                 self.color_pattern.append(a['bg'])
 
-        # print(self.color_pattern)
-        # print(len(self.color_pattern))
         self.buttons_list = Ct.regroup_list(self.buttons_list, 8)
         self.logic_color = [1 if self.color_pattern[i] == 'black' else 0 for i in range(len(self.color_pattern))]
         self.color_pattern = Ct.regroup_list(self.color_pattern, 8)
@@ -108,7 +106,7 @@ class ChessGui:
         self.time_dict = {'0': self.p1_time, '1': self.p2_time}
         self.curr_player = tk.Label(self.root, text=f'Current Player: {self.player + 1}  ({self.colors[self.player]})')
         self.curr_player.grid(row=0, column=8)
-        self.timer = tk.Label(self.root, text='hello')
+        self.timer = tk.Label(self.root, text='-timer-')
         self.timer.grid(row=1, column=8)
 
         self.switch_player = tk.Button(self.root, text='switch', command=self.switch_players)
