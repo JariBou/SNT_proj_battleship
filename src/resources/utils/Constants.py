@@ -41,7 +41,7 @@ class Position:
     def __repr__(self):
         return f'{self.__class__.__name__} at ( x={self.x}, y={self.y} )'
 
-    def get_position(self) -> tuple[Any, Any]:
+    def get_position(self) -> tuple[int, int]:
         return self.x, self.y
 
 
