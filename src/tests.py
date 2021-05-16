@@ -38,10 +38,15 @@ def g():
 
 if __name__ == '__main__':
     print(2//2)
-    w = tk.Tk('hello')
-    w.mainloop()
+    # w = tk.Tk('hello')
+    # w.mainloop()
 
     lambda: q(), g()
+
+    list_1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    print(list_1[1:len(list_1)])
+    kk = [-1]
+    print(5 + kk[0])
 
 
 #     list_1 = [a for a in range(100000)]

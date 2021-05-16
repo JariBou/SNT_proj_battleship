@@ -19,6 +19,12 @@ def get_flattened(seq):
     return flattened_list
 
 
+def remove_void_lists(List: list):
+    for e in List:
+        if not e:
+            List.remove(e)
+
+
 class Board:
 
     def __init__(self):
@@ -26,46 +32,138 @@ class Board:
         self.checks_list = {'White': False, 'Black': False}
         self.player = 0
         self.board = [
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0]
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, Piece(Position([2, 2]), 'White'), None, Piece(Position([4, 2]), 'White'), None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, Piece(Position([2, 4]), 'White'), None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, Piece(Position([2, 6]), 'White'), None, None, None, None, None],
+            [None, None, None, Piece(Position([3, 7]), 'Black', name='test piece'), None, None, None, None],
             ]
+
+    def pass_board_to_pieces(self):
+        for row in range(len(self.board)):
+            for element in [e for e in self.board[row] if e is not None]:
+                # noinspection PyUnresolvedReferences
+                element.pass_board(self.board)
 
 
 class Piece:
 
-    def __init__(self, position: Position, color):
+    def __init__(self, position: Position, color, name=''):
         self.position = position
         self.color = color
         self.board = None
+        self.visited = []
+        self.valid_paths = []
+        self.valid_positions = []
+        self.curr_path = []
+        self.name = name
+
+    def __repr__(self):
+        return f'Piece at {self.position.get_position()}, color={self.color}{f", name={self.name}" if self.name != "" else ""}, has_board={bool(self.board)}'
 
     def pass_board(self, board):
         self.board = board
 
-    def get_valid_positions(self):
-        valid_pos = []
+    def print_name(self):
+        print(self.name)
+
+    def get_color(self):
+        return self.color
+
+    def get_valid_paths(self):
+        self.valid_positions = []
         self.check_diagonals(self.position)
+        for x_off, y_off in [[1, 1], [1, -1], [-1, -1], [-1, 1]]:
+            try:
+                if self.board[self.position.y + y_off][self.position.x + x_off]:
+                    self.valid_paths.append([[self.position.x, self.position.y], [self.position.x + x_off, self.position.y + y_off]])
+            except IndexError:
+                pass
+        return self.get_longest_paths()
+
+        #USELESS# remove_void_lists(self.valid_paths)
 
     def check_diagonals(self, curr_pos: Position):
-        pos = copy.deepcopy(curr_pos)
-        pos = Position(pos)
-        side = 1 if self.color == 'black' else -1
-        visited = []
-        to_test_1 = self.board[pos.y+1*side][pos.x+1]
-        if [pos.x+1, pos.y+1*side] not in visited and (to_test_1 is not None and to_test_1.get_color() != self.color):
-            if self.board[pos.y+2*side][pos.x+2] is None:
-                visited.append([pos.x+1, pos.y+1*side])
-                visited.append([pos.x+2, pos.y+2*side])
-                self.check_diagonals(Position([pos.x+2, pos.y+2*side]))
-            pass
+        ## Bottom Right diagonal
+        print(curr_pos.y+2, '--', len(self.board))
+        if curr_pos.y+2 <= len(self.board) and curr_pos.x+2 <= len(self.board[0]):
+            print('bottom_right')
+            target1 = self.board[curr_pos.y+1][curr_pos.x+1] if [curr_pos.x+1, curr_pos.y+1] not in self.visited else None
+            if target1 is not None and target1.get_color() != self.color:
+                print('valif target1\n')
+                target2 = self.board[curr_pos.y+2][curr_pos.x+2]
+                if target2 is None and [curr_pos.x+2, curr_pos.y+2] not in self.curr_path:
+                    print('valif target2\n')
+                    self.visited.append([curr_pos.x+1, curr_pos.y+1])
+                    self.curr_path.append([[curr_pos.x+1, curr_pos.y+1], [curr_pos.x+2, curr_pos.y+2]])
+                    self.check_diagonals(Position([curr_pos.x+2, curr_pos.y+2]))
 
-        ## Recursive calling
-        pass
+        ## Top Right diagonal
+        if curr_pos.y - 2 >= 0 and curr_pos.x + 2 <= len(self.board[0]):
+            print('top_right')
+            target1 = self.board[curr_pos.y-1][curr_pos.x+1] if [curr_pos.x+1, curr_pos.y-1] not in self.visited else None
+            if target1 is not None and target1.get_color() != self.color:
+                print('valif target1\n')
+                target2 = self.board[curr_pos.y - 2][curr_pos.x + 2]
+                if target2 is None and [curr_pos.x + 2, curr_pos.y - 2] not in self.curr_path:
+                    print('valif target2\n')
+                    self.visited.append([curr_pos.x+1, curr_pos.y-1])
+                    self.curr_path.append([[curr_pos.x + 1, curr_pos.y - 1], [curr_pos.x + 2, curr_pos.y - 2]])
+                    self.check_diagonals(Position([curr_pos.x + 2, curr_pos.y - 2]))
+
+        ## Top Left diagonal
+        if curr_pos.y - 2 >= 0 and curr_pos.x - 2 >= 0:
+            print('top_left')
+            target1 = self.board[curr_pos.y-1][curr_pos.x-1] if [curr_pos.x-1, curr_pos.y-1] not in self.visited else None
+            if target1 is not None and target1.get_color() != self.color:
+                print('valif target1\n')
+                target2 = self.board[curr_pos.y - 2][curr_pos.x - 2]
+                if target2 is None and [curr_pos.x - 2, curr_pos.y - 2] not in self.curr_path:
+                    print('valif target2\n')
+                    self.visited.append([curr_pos.x-1, curr_pos.y-1])
+                    self.curr_path.append([[curr_pos.x - 1, curr_pos.y - 1], [curr_pos.x - 2, curr_pos.y - 2]])
+                    self.check_diagonals(Position([curr_pos.x - 2, curr_pos.y - 2]))
+
+        ## Bottom Left diagonal
+        if curr_pos.y + 2 <= len(self.board) and curr_pos.x - 2 >= 0:
+            print('bottom_left')
+            target1 = self.board[curr_pos.y+1][curr_pos.x-1] if [curr_pos.x-1, curr_pos.y+1] not in self.visited else None
+            if target1 is not None and target1.get_color() != self.color:
+                print('valif target1\n')
+                target2 = self.board[curr_pos.y + 2][curr_pos.x - 2]
+                if target2 is None and [curr_pos.x - 2, curr_pos.y + 2] not in self.curr_path:
+                    print('valif target2\n')
+                    self.visited.append([curr_pos.x-1, curr_pos.y+1])
+                    self.curr_path.append([[curr_pos.x - 1, curr_pos.y + 1], [curr_pos.x - 2, curr_pos.y + 2]])
+                    self.check_diagonals(Position([curr_pos.x - 2, curr_pos.y + 2]))
+
+        #print(f'non-tupled: {copy.deepcopy(self.curr_path)}\ntupled: {tuple(copy.deepcopy(self.curr_path))}')
+        if self.curr_path and self.visited:
+            self.visited.pop()
+            self.valid_paths.append(copy.deepcopy(self.curr_path))
+            self.curr_path.pop()
+
+    def get_longest_paths(self):
+        self.valid_paths.sort(key=len, reverse=True)
+        possible_paths = []
+        max_size = len(self.valid_paths[0])
+        for e in self.valid_paths:
+            if len(e) < max_size:
+                return possible_paths
+            possible_paths.append(copy.deepcopy(e))
+        return possible_paths
+
+    def move_to(self, pos: Position):
+        self.board[pos.y][pos.x] = self
+        self.board[self.position.y][self.position.x] = None
+        ## for eating stuff do smth like this:
+        ## The player moves one by one, u just check that he his taking a good path like with like a for loop to
+        ## check for position in self.valid_paths[a][nb_of_moves][1]  -> returns the position in path nb a after nb_of_moves moves
+        ## Then to eat all necessary pieces you just have to record the path taken by the player, match it with a valid one
+        ## and eat all pieces that need to be and that are defines in the path
 
 
 class Queen:
@@ -73,4 +171,12 @@ class Queen:
     def __init__(self, position: Position, color):
         self.position = position
         self.color = color
+
+
+if __name__ == '__main__':
+    board = Board()
+    board.pass_board_to_pieces()
+    print(board.board[7][3])
+    print('>>', str(board.board[7][3].get_valid_paths())[1:-1])
+
 
