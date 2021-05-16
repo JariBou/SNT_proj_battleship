@@ -85,7 +85,7 @@ class ChessGui:
                     a['image'] = self.images.get(piece.get_color()).get(piece.get_type())
                 except AttributeError:
                     pass
-                a["command"] = lambda a=a: self.clicked(a)
+                a["command"] = lambda a1=a: self.clicked(a1)
                 a.grid(row=row, column=column, sticky='nsew')
                 self.buttons_list.append(a)
                 self.color_pattern.append(a['bg'])
@@ -180,6 +180,7 @@ class ChessGui:
             self.last_button_clicked['bg'] = self.last_color
             self.last_color = ''
             self.last_button_clicked = None
+            print('last clicked')
             return
 
         if self.last_piece is None:
@@ -201,6 +202,7 @@ class ChessGui:
 
         if curr_pos.get_position() in [pos.get_position() for pos in self.last_piece.get_valid_positions()]:
             if not self.b_class.move_piece_to(self.last_piece, curr_pos):
+                print(f'unable to move piece to {curr_pos.get_position()}')
                 return
             self.last_button_clicked['bg'] = self.last_color
             if isinstance(self.last_piece, Pawn) and self.last_piece.reached_end():
@@ -221,7 +223,10 @@ class ChessGui:
                     self._over()
             return
 
+        print(curr_pos.get_position(), '--', [pos.get_position() for pos in self.last_piece.get_valid_positions()])
+
         if self.b_class.get(curr_pos.x, curr_pos.y) is None:
+            print('b_çclass.get() is None')
             return
 
         if self.b_class.get(curr_pos.x, curr_pos.y).get_color() == self.last_piece.get_color():
@@ -232,6 +237,7 @@ class ChessGui:
             button['bg'] = 'blue'
             self.last_button_clicked = button
             self.last_position = Position([curr_pos.x, curr_pos.y])
+            print('same team dude')
             return
 
     def update_board(self):
@@ -283,4 +289,4 @@ class ChessGui:
 
 
 if __name__ == '__main__':
-    a = ChessGui()
+    ChessGui()

@@ -6,7 +6,7 @@ Traceback (most recent call last):
   File "E:\Python Dev\SNT_proj_battleship\src\games\Chess\run_chess.py", line 98, in <lambda>
     a["command"] = lambda a=a: self.clicked(a)
   File "E:\Python Dev\SNT_proj_battleship\src\games\Chess\run_chess.py", line 197, in clicked
-    if curr_pos.get_position() in [pos.get_position() for pos in self.last_piece.get_valid_positions()]:
-  File "E:\Python Dev\SNT_proj_battleship\src\games\Chess\Chess.py", line 439, in get_valid_positions
+    if curr_pos.get_position() in [pos.get_position() for pos in self.last_piece.get_valid_paths()]:
+  File "E:\Python Dev\SNT_proj_battleship\src\games\Chess\Chess.py", line 439, in get_valid_paths
     position = self.board[y][x + 2 * i]
 IndexError: list index out of range

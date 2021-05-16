@@ -311,7 +311,8 @@ class Bishop(ChessPiece):
             if (not top_left) and (self.position.x - i >= 0):
                 try:
                     board_position = self.board[self.position.y + i][self.position.x - i]
-                    bottom_left = True if board_position is not None else False
+                    top_left = True if board_position is not None else False
+                    print(board_position)
                     if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x - i, self.position.y + i]))
                 except IndexError:
