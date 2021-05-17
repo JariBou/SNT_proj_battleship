@@ -134,6 +134,8 @@ class Game:
         self.hidden_mines = self.nb_mines
         self.colors = ['blue', 'orange', 'red', 'green', 'cyan', 'skyblue', 'pink']
 
+        self.ratio_value = 'N/A'
+
         Ct.set_color(self.root, 'white')
         self.start()
 
@@ -324,19 +326,32 @@ class Game:
 
     def won(self):
         self.playing = False
+        for line in range(1, self.nb_lines + 1):
+            for col in range(1, self.nb_columns + 1):
+                if self.player_board[col, line] == "d":
+                    self.land_canvas.create_image(col * self.square_dim - self.square_dim // 2 + self.gap,
+                                                  line * self.square_dim - self.square_dim // 2 + self.gap,
+                                                  image=self.images.get('cross'))
         self.land_canvas.create_text(int(self.land_canvas.cget('width')) // 2,
                                      int(self.land_canvas.cget('height')) // 2, fill="green",
                                      font="Times 35 italic bold", text="WON")
         self.games_played += 1
+        self.ratio_value = ((self.wins // self.games_played) * 100)
         self.wins += 1
 
     def lost(self, nCol, nLine):
         for line in range(1, self.nb_lines + 1):
             for col in range(1, self.nb_columns + 1):
-                if self.mines[col, line] == 9:
+                if self.mines[col, line] != 9:
+                    continue
+                if self.player_board[col, line] == "d":
                     self.land_canvas.create_image(col * self.square_dim - self.square_dim // 2 + self.gap,
                                                   line * self.square_dim - self.square_dim // 2 + self.gap,
-                                                  image=self.images.get('minej'))
+                                                  image=self.images.get('cross'))
+                    continue
+                self.land_canvas.create_image(col * self.square_dim - self.square_dim // 2 + self.gap,
+                                              line * self.square_dim - self.square_dim // 2 + self.gap,
+                                              image=self.images.get('minej'))
         self.land_canvas.create_image(nCol * self.square_dim - self.square_dim // 2 + self.gap,
                                       nLine * self.square_dim - self.square_dim // 2 + self.gap,
                                       image=self.images.get('cross'))
@@ -345,13 +360,14 @@ class Game:
                                      int(self.land_canvas.cget('height')) // 2, fill="red",
                                      font="Times 35 italic bold", text="LOST")
         self.games_played += 1
+        self.ratio_value = ((self.wins // self.games_played) * 100)
         self.loses += 1
 
     def stats(self):
         messagebox.showinfo(title="Stats", message=f"Games played: {self.games_played}\n "
                                                    f"Wins: {self.wins}\n"
                                                    f"Loses: {self.loses}\n"
-                                                   f"Win ration: {self.wins // self.games_played if self.games_played != 0 else 0}%\n")
+                                                   f"Win ration: {self.ratio_value} \n")
 
     def update_timer(self):
         while self.playing:

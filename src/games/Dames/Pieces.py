@@ -70,18 +70,13 @@ class Piece:
     def print_name(self):
         print(self.name)
 
-    def get_color(self):
+    def get_color(self) -> str:
         return self.color
 
-    def get_valid_paths(self):
+    def get_valid_paths(self) -> list:
         self.valid_positions = []
         self.check_diagonals(self.position)
-        for x_off, y_off in [[1, 1], [1, -1], [-1, -1], [-1, 1]]:
-            try:
-                if self.board[self.position.y + y_off][self.position.x + x_off]:
-                    self.valid_paths.append([[self.position.x, self.position.y], [self.position.x + x_off, self.position.y + y_off]])
-            except IndexError:
-                pass
+
         return self.get_longest_paths()
 
         #USELESS# remove_void_lists(self.valid_paths)
@@ -146,7 +141,7 @@ class Piece:
             self.valid_paths.append(copy.deepcopy(self.curr_path))
             self.curr_path.pop()
 
-    def get_longest_paths(self):
+    def get_longest_paths(self) -> list:
         self.valid_paths.sort(key=len, reverse=True)
         possible_paths = []
         max_size = len(self.valid_paths[0])
@@ -157,8 +152,23 @@ class Piece:
         return possible_paths
 
     def move_to(self, pos: Position):
-        self.board[pos.y][pos.x] = self
-        self.board[self.position.y][self.position.x] = None
+        ## Actually put this on gui side stick with an easy move_to()
+        ## Easier to track number of moves
+        possible_paths = self.get_longest_paths()
+        if not possible_paths:
+            side = -1 if self.color == 'Black' else 1
+            for x_off in [1, -1]:
+                try:
+                    if self.board[self.position.y + 1 * side][self.position.x + x_off]:
+                        self.valid_paths.append(
+                            [[self.position.x, self.position.y], [self.position.x + x_off, self.position.y + 1 * side]])
+                except IndexError:
+                    pass
+            if [pos.x, pos.y] in possible_paths:
+                self.board[pos.y][pos.x] = self
+                self.board[self.position.y][self.position.x] = None
+        else:
+            pass
         ## for eating stuff do smth like this:
         ## The player moves one by one, u just check that he his taking a good path like with like a for loop to
         ## check for position in self.valid_paths[a][nb_of_moves][1]  -> returns the position in path nb a after nb_of_moves moves

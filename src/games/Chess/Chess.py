@@ -56,6 +56,8 @@ class Board:
         :param new_position: Position class
         """
         if piece.move_to(new_position):
+            if self.board[new_position.y][new_position.x] is not None:
+                print(self.board[new_position.y][new_position.x])
             self.board[new_position.y][new_position.x] = piece
             print(f'Moved {piece.get_name()} to {piece.get_position(True)}')
             return True
