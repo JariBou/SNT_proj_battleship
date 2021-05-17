@@ -48,6 +48,12 @@ class Board:
                 # noinspection PyUnresolvedReferences
                 element.pass_board(self.board)
 
+    def move_piece_to(self, piece, pos: Position):
+        piece.move_to(pos)
+
+    def force_move_to(self, piece, pos: Position):
+        piece.force_move_to(pos)
+
 
 class Piece:
 
@@ -174,6 +180,10 @@ class Piece:
         ## check for position in self.valid_paths[a][nb_of_moves][1]  -> returns the position in path nb a after nb_of_moves moves
         ## Then to eat all necessary pieces you just have to record the path taken by the player, match it with a valid one
         ## and eat all pieces that need to be and that are defines in the path
+
+    def force_move_to(self, pos: Position):
+        self.board[pos.y][pos.x] = self
+        self.board[self.position.y][self.position.x] = None
 
 
 class Queen:

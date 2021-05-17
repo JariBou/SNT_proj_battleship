@@ -5,9 +5,10 @@ import sys as system
 import threading
 from time import sleep
 from tkinter import messagebox
+import tkinter as tk
 
 from src import run_main
-from src.games.Chess.Chess import *
+from src.games.Dames.Pieces import *
 from src.resources.utils.Constants import Constants as Ct, ImgLoader as Il
 
 
@@ -16,7 +17,7 @@ from src.resources.utils.Constants import Constants as Ct, ImgLoader as Il
 def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: Jari\n "
-                                               "Version: Alpha V5.2")
+                                               "Version: Alpha V1.0")
 ####                                  ####
 
 
@@ -58,12 +59,20 @@ class DamesGui:
 
         self.buttons_list = []
         self.color_pattern = []
+        ImgLoader = Il()
+        chess_array_img = ImgLoader.load_img('resources\\images\\Chess\\ChessPiecesArray.png')
+        self.images = {'White':ImgLoader.resize_img(chess_array_img.crop((300, 60, 360, 120)), (52, 52)),
+                       'Black':ImgLoader.resize_img(chess_array_img.crop((300, 0, 360, 60)), (52, 52))}
 
         for row in range(0, self.board_size):
             for column in range(0, self.board_size):
                 bg = 'black' if (column + row) % 2 == 0 else 'white'
                 a = tk.Button(self.root, bg=bg, activebackground='lightblue')
                 piece = board[row][column]
+                try:
+                    a['image'] = self.images.get(piece.get_color())
+                except AttributeError:
+                    pass
                 a["command"] = lambda a1=a: self.clicked(a1)
                 a.grid(row=row, column=column, sticky='nsew')
                 self.buttons_list.append(a)
@@ -146,6 +155,13 @@ class DamesGui:
         print('switched players\n')
 
     def clicked(self, button):
+        board = self.b_class.board
+        curr_pos = Position([button.grid_info()['column'], button.grid_info()['row']])
+        if self.last_piece:
+            self.b_class.move_piece_to(self.last_piece, curr_pos)
+            self.last_piece = None
+        else:
+            self.last_piece = board[curr_pos.y][curr_pos.x]
         pass
 
     def change_color(self, color1, color2):
