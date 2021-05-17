@@ -52,7 +52,7 @@ class Game:
         self.humainP = Label(text="0")
         self.humainP.grid(row=1, column=0)
 
-                        # Pierre             #Feuille           #Ciseaux           #Lezard           #Spock
+        # Pierre             #Feuille           #Ciseaux           #Lezard           #Spock
         self.list = [[0, -1, 1, 1, -1], [1, 0, -1, -1, 1], [-1, 1, 0, 1, -1], [-1, 1, -1, 0, 1], [1, -1, 1, -1, 0]]
 
         self.cpuWin = 0
@@ -72,7 +72,8 @@ class Game:
                     break
                 img = self.image_list[img_nb]
                 print(img_nb)
-                Button(w, image=img, command=lambda value=img_nb, image=img: self.choice(image, value)).grid(row=row, column=column)
+                Button(w, image=img, command=lambda value=img_nb, image=img: self.choice(image, value)).grid(row=row,
+                                                                                                             column=column)
                 img_nb += 1
 
         text = Label(text="Pour jouer appuyez sur un bouton:")
@@ -86,11 +87,11 @@ class Game:
         resetButton.grid(row=0, column=1)
 
         help_text = Label(text="Récapitulatif des coups gagnants: ")
-        help_text.grid(row = 0, column=5)
+        help_text.grid(row=0, column=5)
 
         help_img = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\lizard_spock.png"))
-        help = Label(image = help_img)
-        help.grid(row = 1, rowspan = 4, column = 5)
+        help = Label(image=help_img)
+        help.grid(row=1, rowspan=4, column=5)
 
         w.mainloop()
 
