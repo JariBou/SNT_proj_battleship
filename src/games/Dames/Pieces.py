@@ -148,6 +148,8 @@ class Piece:
             self.curr_path.pop()
 
     def get_longest_paths(self) -> list:
+        if not self.valid_paths:
+            return []
         self.valid_paths.sort(key=len, reverse=True)
         possible_paths = []
         max_size = len(self.valid_paths[0])
@@ -181,9 +183,16 @@ class Piece:
         ## Then to eat all necessary pieces you just have to record the path taken by the player, match it with a valid one
         ## and eat all pieces that need to be and that are defines in the path
 
+    def move_on_path(self, next_pos: Position, move_number: int):
+        for index, path in enumerate(self.valid_paths):
+            if next_pos.get_position() != self.valid_paths[index][move_number][1]:
+                self.valid_paths.remove(path)
+        pass
+
     def force_move_to(self, pos: Position):
-        self.board[pos.y][pos.x] = self
         self.board[self.position.y][self.position.x] = None
+        self.board[pos.y][pos.x] = self
+        self.position = Position([pos.x, pos.y])
 
 
 class Queen:

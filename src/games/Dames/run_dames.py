@@ -109,6 +109,7 @@ class DamesGui:
         self.last_position = None
         self.last_color = ''
         self.check_last_color = ''
+        self.in_path = False
 
         self.b_class.pass_board_to_pieces()
 
@@ -157,12 +158,26 @@ class DamesGui:
     def clicked(self, button):
         board = self.b_class.board
         curr_pos = Position([button.grid_info()['column'], button.grid_info()['row']])
+        print(self.last_piece)
+        if self.in_path:
+            pass
         if self.last_piece:
-            self.b_class.move_piece_to(self.last_piece, curr_pos)
+            self.b_class.force_move_to(self.last_piece, curr_pos)
             self.last_piece = None
         else:
             self.last_piece = board[curr_pos.y][curr_pos.x]
+        self.update_board()
         pass
+
+    def update_board(self):
+        for button in Ct.all_children(self.root, 'Button'):
+            b_info = button.grid_info()
+            if b_info['row'] >= self.board_size or b_info['column'] >= self.board_size:
+                return
+            button['image'] = ''
+            piece = self.b_class.board[b_info['row']][b_info['column']]
+            if piece is not None:
+                button['image'] = self.images.get(piece.get_color())
 
     def change_color(self, color1, color2):
         for button in Ct.all_children(self.root, 'Button'):
