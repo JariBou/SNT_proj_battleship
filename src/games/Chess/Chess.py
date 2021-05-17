@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 
 from src.resources.utils.Constants import Position
 
+
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
 
 
@@ -22,13 +23,9 @@ def get_flattened(seq) -> list:
     return flattened_list
 
 
-class Board:
-
-    def __init__(self):
-        self.colors = ['White', 'Black']
-        self.checks_list = {'White': False, 'Black': False}
-        self.player = 0
-        self.board = [
+def get_board(board_size: list, variant_name) -> list[list]:
+    if board_size == [8, 8]:
+        return [
             [Tower('White', [0, 0]), Knight('White', [1, 0]), Bishop('White', [2, 0]), Queen('White', [3, 0]),
              King('White', [4, 0]), Bishop('White', [5, 0]), Knight('White', [6, 0]), Tower('White', [7, 0])],
             [Pawn('White', [i, 1]) for i in range(8)],
@@ -42,6 +39,81 @@ class Board:
             [Tower('Black', [0, 7]), Knight('Black', [1, 7]), Bishop('Black', [2, 7]), Queen('Black', [3, 7]),
              King('Black', [4, 7]), Bishop('Black', [5, 7]), Knight('Black', [6, 7]), Tower('Black', [7, 7])]
             ]
+
+    elif board_size == [5, 6]:
+        return [
+            [Tower('White', [0, 0]), Knight('White', [1, 0]), Bishop('White', [2, 0]), Queen('White', [3, 0]),
+             King('White', [4, 0])],
+            [Pawn('White', [i, 1]) for i in range(5)],
+
+            [None] * 8,
+            [None] * 8,
+
+            [Pawn('Black', [i, 4]) for i in range(5)],
+            [Tower('Black', [0, 5]), Knight('Black', [1, 5]), Bishop('Black', [2, 5]), Queen('Black', [3, 5]),
+             King('Black', [4, 5])]
+            ]
+
+    elif board_size == [4, 5]:
+        if variant_name == 'Microchess':
+            return [
+                [King('White', [0, 0]), Knight('White', [1, 0]), Bishop('White', [2, 0]), Tower('White', [3, 0])],
+                [Pawn('White', [0, 1]), None, None, None],
+
+                [None] * 8,
+
+                [None, None, None, Pawn('Black', [3, 3])],
+                [Tower('Black', [0, 4]), Bishop('Black', [1, 4]), Knight('Black', [2, 4]),
+                 King('Black', [3, 4])]
+                ]
+        elif variant_name == 'Silverman 4×5':
+            return [
+                [Tower('White', [0, 0]), Queen('White', [1, 0]), King('White', [2, 0]), Tower('White', [3, 0])],
+                [Pawn('White', [i, 1]) for i in range(4)],
+
+                [None] * 8,
+
+                [Pawn('Black', [i, 3]) for i in range(4)],
+                [Tower('Black', [0, 4]), Queen('Black', [1, 4]), King('Black', [2, 4]),
+                 Tower('Black', [3, 4])]
+                ]
+
+    elif board_size == [5, 5]:
+        if variant_name == 'Baby chess':
+            return [
+                [King('White', [0, 0]), Queen('White', [1, 0]), Bishop('White', [2, 0]), Knight('White', [3, 0]), Tower('White', [4, 0])],
+                [Pawn('White', [i, 1]) for i in range(5)],
+
+                [None] * 8,
+
+                [Pawn('Black', [i, 3]) for i in range(5)],
+                [Tower('Black', [0, 4]), Knight('Black', [1, 4]), Bishop('Black', [2, 4]),
+                 Queen('Black', [3, 4]), King('Black', [4, 4])]
+                ]
+        elif variant_name == 'Jacobs–Meirovitz':
+            return [
+                [Bishop('White', [0, 0]), Knight('White', [1, 0]), Tower('White', [2, 0]), Queen('White', [3, 0]),
+                 King('White', [4, 0])],
+                [Pawn('White', [i, 1]) for i in range(5)],
+
+                [None] * 8,
+
+                [Pawn('Black', [i, 3]) for i in range(5)],
+                [King('Black', [0, 4]), Queen('Black', [1, 4]), Tower('Black', [2, 4]),
+                 Knight('Black', [3, 4]), Bishop('Black', [4, 4])]
+                ]
+
+
+class Board:
+
+    def __init__(self, board_size=None, variant_name=''):
+        if board_size is None:
+            board_size = [8, 8]
+        self.colors = ['White', 'Black']
+        self.checks_list = {'White': False, 'Black': False}
+        self.player = 0
+        self.board = get_board(board_size, variant_name)
+
         ### Do a dynamic board where instead of using a binary system to know if a piece is there just move the pieces in that list?
         ### Might be too hard tho....dk
         ##  Actually super easy, Barely an inconveniance, shoulda used cell class for each cell tho....
@@ -70,7 +142,8 @@ class Board:
         if color.__class__ != str:
             color = self.colors[color]
         print('\nchecking for checks for:')
-        kings_list = [piece for piece in get_flattened(self.board) if piece is not None and (piece.__class__ == King and piece.get_color() == color)]
+        kings_list = [piece for piece in get_flattened(self.board) if
+                      piece is not None and (piece.__class__ == King and piece.get_color() == color)]
         if not kings_list:
             print('ERROR KING LIST EMPTY')
         for king in kings_list:
@@ -199,7 +272,7 @@ class ChessPiece(ABC):
         self.board = board
 
     @abstractmethod
-    def get_valid_positions(self) -> list:   ## Every subclass of this class will have to implement it
+    def get_valid_positions(self) -> list:  ## Every subclass of this class will have to implement it
         """Returns a list of valid positions to move the piece to"""
         pass
 
@@ -212,14 +285,14 @@ class Pawn(ChessPiece):
         self.over = False
         self.w = None
 
-    def get_valid_positions(self) -> list:        ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION, na its good fam, done it
+    def get_valid_positions(self) -> list:  ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION, na its good fam, done it
         side = 1 if self.color == 'White' else -1
         valid_positions = []
         if self.first_move:
             if self.board[self.position.y + (side * 2)][self.position.x] is None:
                 valid_positions.append(Position([self.position.x, self.position.y + (side * 2)]))
 
-        side_max = 7 if self.color == 'White' else 0
+        side_max = (len(self.board) - 1) if self.color == 'White' else 0
         if self.position.y == side_max:
             return []
 
@@ -242,7 +315,7 @@ class Pawn(ChessPiece):
     def move_to(self, new_position: Position) -> bool:
         if super().move_to(new_position):
             self.first_move = False
-            side_max = 7 if self.color == 'White' else 0
+            side_max = (len(self.board) - 1) if self.color == 'White' else 0
             if self.position.y == side_max:
                 self.over = True
             return True
@@ -254,8 +327,10 @@ class Pawn(ChessPiece):
     def transform(self):
         self.w = tk.Tk(screenName='hello')
         self.w.title('Trasform into:')
-        for name, typ, index in zip(['Bishop', 'Tower', 'Queen', 'Knight'], [Bishop, Tower, Queen, Knight], list(range(4))):
-            tk.Button(self.w, text=name, command=lambda: self.t_into(typ)).grid(row=index // 2, column=index % 2)
+        for name, typ, index in zip(['Bishop', 'Tower', 'Queen', 'Knight'], [Bishop, Tower, Queen, Knight],
+                                    list(range(4))):
+            tk.Button(self.w, text=name, command=lambda typ=typ: self.t_into(typ)).grid(row=index // 2,
+                                                                                        column=index % 2)
         self.w.mainloop()
 
     def t_into(self, piece_type):
@@ -271,8 +346,8 @@ class Knight(ChessPiece):
         super().__init__(color, position, 'Knight')
 
     def get_valid_positions(self) -> list:
-        valid_positions = []                  ## THIS SHIT WORKED ON FIRST TRY
-        to_test = []                          ##  print('HAPPINESS LVL MAXIMUM')
+        valid_positions = []  ## THIS SHIT WORKED ON FIRST TRY
+        to_test = []  ##  print('HAPPINESS LVL MAXIMUM')
         offsets = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
         for offset in offsets:
             try:
@@ -343,7 +418,7 @@ class King(ChessPiece):
     def __init__(self, color: str, position):
         super().__init__(color, position, 'King')
         self.first_move = True
-        self.ruck_pos_tower = []   ## [ [Position, Tower], [Position, Tower ]
+        self.ruck_pos_tower = []  ## [ [Position, Tower], [Position, Tower ]
         self.ruck_pos_king = []
 
     def get_valid_positions(self) -> list:
@@ -378,7 +453,7 @@ class King(ChessPiece):
                         valid_positions.append(possible_position)
                         self.ruck_pos_tower.append([Position([x + 1 * i, y]), possible_tower_position])
                         self.ruck_pos_king.append(Position([x + 2 * i, y]))
-        except IndexError:   ##when getting valid positions right before rucking
+        except IndexError:  ##when getting valid positions right before rucking
             pass
 
         for i in [1, -1]:
@@ -421,7 +496,7 @@ class King(ChessPiece):
         ## Na we good fam
         ### Use this to check if a move prevents the check
         board = self.board if next_board is None else next_board
-        checkers = []   
+        checkers = []
         position = self.position if next_position is None else next_position
         for row in board:
             for piece in [p for p in row if (not (p is None) and p.get_color() != self.get_color())]:
@@ -448,7 +523,8 @@ class King(ChessPiece):
             if self.ruck_pos_tower:
                 for i in range(len(self.ruck_pos_tower)):
                     if new_position.get_position() == self.ruck_pos_king[i].get_position():
-                        self.board[self.ruck_pos_tower[i][1].y][self.ruck_pos_tower[i][1].x].force_move_to(self.ruck_pos_tower[i][0])
+                        self.board[self.ruck_pos_tower[i][1].y][self.ruck_pos_tower[i][1].x].force_move_to(
+                            self.ruck_pos_tower[i][0])
             self.first_move = False
             return True
         return False
@@ -517,7 +593,7 @@ class Queen(ChessPiece):
     def get_valid_positions(self) -> list:
         logic_board = copy.deepcopy(self.board)
         positions_list = []
-        for Type in [Bishop, Tower]:   ##A Queen's movement can be defined as the combination of a Bishop and a Tower
+        for Type in [Bishop, Tower]:  ##A Queen's movement can be defined as the combination of a Bishop and a Tower
             piece = Type(self.color, self.position)
             logic_board[self.position.y][self.position.x] = piece
             piece.pass_new_board(logic_board)

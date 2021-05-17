@@ -22,7 +22,9 @@ def about():
 
 class ChessGui:
 
-    def __init__(self):
+    def __init__(self, board_size=None, variant_name=''):
+        if board_size is None:
+            board_size = [8, 8]
         ## Window creation
         self.root = tk.Tk()
         self.root.title("Chess - Alpha V6.0")
@@ -45,8 +47,10 @@ class ChessGui:
         ## Create a Menubar
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
-        # diffmenu = tk.Menu(menubar, tearoff=0)
         self.create_menubar(menubar)
+
+        self.board_size_x = board_size[0]
+        self.board_size_y = board_size[1]
 
         chess_array_img = ImgLoader.load_img('resources\\images\\Chess\\ChessPiecesArray.png')
 
@@ -64,20 +68,21 @@ class ChessGui:
                   'Knight': ImgLoader.resize_img(chess_array_img.crop((180, 0, 240, 60)), (52, 52))}
         self.images = {'White': whites, 'Black': blacks}
 
-        for i in range(0, 8):
-            self.root.rowconfigure(i, minsize=75)
+        for i in range(0, self.board_size_x):
             self.root.columnconfigure(i, minsize=75)
+        for i in range(0, self.board_size_y):
+            self.root.rowconfigure(i, minsize=75)
 
         self.defaultbg = self.root.cget('bg')
 
-        self.b_class = Board()
+        self.b_class = Board(board_size, variant_name)
         board = self.b_class.board
 
         self.buttons_list = []
         self.color_pattern = []
 
-        for row in range(0, 8):
-            for column in range(0, 8):
+        for row in range(0, self.board_size_y):
+            for column in range(0, self.board_size_x):
                 bg = 'black' if (column + row) % 2 == 0 else 'white'
                 a = tk.Button(self.root, bg=bg, activebackground='lightblue')
                 piece = board[row][column]
@@ -90,10 +95,10 @@ class ChessGui:
                 self.buttons_list.append(a)
                 self.color_pattern.append(a['bg'])
 
-        self.buttons_list = Ct.regroup_list(self.buttons_list, 8)
+        self.buttons_list = Ct.regroup_list(self.buttons_list, self.board_size_x)
         self.logic_color = [1 if self.color_pattern[i] == 'black' else 0 for i in range(len(self.color_pattern))]
-        self.color_pattern = Ct.regroup_list(self.color_pattern, 8)
-        self.logic_color = Ct.regroup_list(self.logic_color, 8)
+        self.color_pattern = Ct.regroup_list(self.color_pattern, self.board_size_x)
+        self.logic_color = Ct.regroup_list(self.logic_color, self.board_size_x)
         print(self.logic_color)
 
         self.playing = False
@@ -105,14 +110,14 @@ class ChessGui:
         self.p2_time = {'minutes': 0, 'seconds': 0}
         self.time_dict = {'0': self.p1_time, '1': self.p2_time}
         self.curr_player = tk.Label(self.root, text=f'Current Player: {self.player + 1}  ({self.colors[self.player]})')
-        self.curr_player.grid(row=0, column=8)
+        self.curr_player.grid(row=0, column=self.board_size_x)
         self.timer = tk.Label(self.root, text='-timer-')
-        self.timer.grid(row=1, column=8)
+        self.timer.grid(row=1, column=self.board_size_x)
 
         self.switch_player = tk.Button(self.root, text='switch', command=self.switch_players)
-        self.switch_player.grid(row=3, column=8)
+        self.switch_player.grid(row=3, column=self.board_size_x)
         self.start_button = tk.Button(self.root, text='Start', command=self.start_game, relief=tk.RIDGE, border=10)
-        self.start_button.grid(row=2, column=8, sticky='nsew')
+        self.start_button.grid(row=2, column=self.board_size_x, sticky='nsew')
 
         self.t1 = None
 
@@ -158,7 +163,8 @@ class ChessGui:
 
     def exit_game(self):
         self.playing = False
-        self.t1.join()
+        if self.t1 is not None:
+            self.t1.join()
         sleep(0.5)
         system.exit('User cancelation')
 
@@ -244,7 +250,7 @@ class ChessGui:
         board = self.b_class.return_board()
         for button in Ct.all_children(self.root, 'Button'):
             b = button.grid_info()
-            if b['column'] > 7:
+            if b['column'] > self.board_size_x-1:
                 return
             piece: ChessPiece = board[b['row']][b['column']]
             button['image'] = ''
@@ -257,7 +263,7 @@ class ChessGui:
     def hide_board(self):
         for button in Ct.all_children(self.root, 'Button'):
             b = button.grid_info()
-            if b['column'] > 7:
+            if b['column'] > self.board_size_x-1:
                 return
             button['image'] = ''
 
@@ -269,7 +275,7 @@ class ChessGui:
     def change_color(self, color1, color2):
         for button in Ct.all_children(self.root, 'Button'):
             b = button.grid_info()
-            if b['column'] > 7:
+            if b['column'] > self.board_size_x-1:
                 return
             color = color1 if self.logic_color[b['column']][b['row']] == 1 else color2
             button['bg'], self.color_pattern[b['row']][b['column']] = color, color
@@ -289,4 +295,4 @@ class ChessGui:
 
 
 if __name__ == '__main__':
-    ChessGui()
+    ChessGui([5, 5], 'Baby chess')
