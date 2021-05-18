@@ -55,7 +55,7 @@ class Game:
         self.root.resizable(width=False, height=False)
 
         self.path = Ct.get_path()
-        myappid = 'mjcorp.Demineur.alphav1.0'  # arbitrary string
+        myappid = 'mjcorp.demineur.alphav1.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.root.iconbitmap(self.path.joinpath('resources\\images\\Demineur\\demineur_taskbar.ico'))
 
@@ -97,10 +97,6 @@ class Game:
         self.difficulty = tk.IntVar()
         self.difficulty.set(1)
 
-        radio = tk.Radiobutton(self.difficulty_frame, text='U big big noob', command=self.start,
-                               variable=self.difficulty,
-                               value=7)
-        radio.pack(anchor='nw', padx=30)
         radio1 = tk.Radiobutton(self.difficulty_frame, text='Noob', command=self.start, variable=self.difficulty,
                                 value=1)
         radio1.pack(anchor='nw', padx=30)
@@ -128,14 +124,16 @@ class Game:
         self.squares_left.grid(row=1, column=0, sticky='nw')  # 5
         self.info.pack()
 
-        w = tk.Scale(self.root, from_=0, to=100, orient=tk.HORIZONTAL, label="Change Volume")
+        self.volume = 0.8
+        sound_frame = tk.Frame(self.root)
+        w = tk.Scale(sound_frame, from_=0, to=100, orient=tk.HORIZONTAL, label="Change Volume")
         w['command'] = lambda w2=w: self.change_volume(w2)
         w.set(80)
-        self.volume = 0.8
-        test_sound = tk.Button(self.root, text='Test Volume',
+        test_sound = tk.Button(sound_frame, text='Test Volume',
                                command=lambda: self.play(self.path.joinpath('resources\\sounds\\fail\\ah.mp3')))
-        test_sound.pack(side=tk.RIGHT)
-        w.pack(side=tk.RIGHT)
+        w.pack()
+        test_sound.pack()
+        sound_frame.pack(side=tk.RIGHT)
 
         self.new_game_frame = tk.Frame(self.root)
         self.restart_button = tk.Button(self.new_game_frame, width=15, text='New game', font='Arial 10',
@@ -152,16 +150,16 @@ class Game:
         self.colors = ['blue', 'orange', 'red', 'green', 'cyan', 'skyblue', 'pink']
         self.empty_colors = ['green', 'red', 'orange', 'yellow', 'cyan']
         self.sounds = {'win': [self.path.joinpath('resources\\sounds\\destroy\\amaterasu-sound-effect.mp3'),
-                                   self.path.joinpath('resources\\sounds\\destroy\\yes-yes-yes-yes.mp3')],
+                               self.path.joinpath('resources\\sounds\\destroy\\yes-yes-yes-yes.mp3')],
                        'lose': [self.path.joinpath('resources\\sounds\\fail\\bruh-sound-effect.mp3'),
                                 self.path.joinpath('resources\\sounds\\fail\\oof-sound-effect.mp3'),
                                 self.path.joinpath('resources\\sounds\\fail\\plouf.mp3'),
                                 self.path.joinpath('resources\\sounds\\fail\\ah.mp3'),
                                 self.path.joinpath('resources\\sounds\\fail\\hotel-mario-non.mp3')],
                        'void': [self.path.joinpath('resources\\sounds\\touch\\ha-got-emm-sound-effect.mp3'),
-                                 self.path.joinpath('resources\\sounds\\touch\\sharingan-sound-effect.mp3'),
-                                 self.path.joinpath('resources\\sounds\\touch\\sr-pelo-boom-sound-effect.mp3'),
-                                 self.path.joinpath('resources\\sounds\\touch\\wazaaaa.mp3')]}
+                                self.path.joinpath('resources\\sounds\\touch\\sharingan-sound-effect.mp3'),
+                                self.path.joinpath('resources\\sounds\\touch\\sr-pelo-boom-sound-effect.mp3'),
+                                self.path.joinpath('resources\\sounds\\touch\\wazaaaa.mp3')]}
 
         self.ratio_value = 'N/A'
 
@@ -184,9 +182,7 @@ class Game:
         self.land_canvas.delete(tk.ALL)
         level = self.difficulty.get()
         self.time_dict = {'minutes': 0, 'seconds': 0}
-        if level == 7:
-            self.nb_columns, self.nb_lines, self.nb_mines = 10, 10, 6
-        elif level == 1:
+        if level == 1:
             self.nb_columns, self.nb_lines, self.nb_mines = 10, 10, 12
         elif level == 2:
             self.nb_columns, self.nb_lines, self.nb_mines = 15, 15, 30
@@ -249,22 +245,16 @@ class Game:
                                      text=f'{nb_mines_voisines}',
                                      fill=self.colors[nb_mines_voisines - 1], font='Arial 22')
 
-    def get_neighbours(self, col, line):
+    def get_neighbours(self, col, line) -> int:
         min_column = col - 1 if col > 1 else col
         max_column = col + 1 if col < self.nb_columns else col
 
         min_line = line - 1 if line > 1 else line
         max_line = line + 1 if line < self.nb_lines else line
 
-        nb_mines = len([key for key in self.mines.keys() if (self.mines[key] == 9)
-                        & (min_line <= key[1] <= max_line)
-                        & (min_column <= key[0] <= max_column)])
-        # nb_mines = 0
-        # for row in range(min_line, max_line+1):
-        #     for column in range(min_column, max_column+1):
-        #         if self.mines[column, row] == 9:
-        #             nb_mines += 1
-        return nb_mines
+        return len([key for key in self.mines.keys() if (self.mines[key] == 9)
+                    & (min_line <= key[1] <= max_line)
+                    & (min_column <= key[0] <= max_column)])
 
     def pointeurG(self, event):
         if not self.playing:
@@ -276,16 +266,19 @@ class Game:
         # si la cellule est vide:
         if not self.player_board[nCol, nLine] == "":
             return
+
         if self.mines[nCol, nLine] == 9:
             self.lost(nCol, nLine)
+            return
+
+        nb_neightbour_mines = self.get_neighbours(nCol, nLine)
+        if nb_neightbour_mines >= 1:
+            self.affiche_nb_mines(nb_neightbour_mines, nCol, nLine)
+            self.player_board[nCol, nLine] = "v"
         else:
-            nb_neightbour_mines = self.get_neighbours(nCol, nLine)
-            if nb_neightbour_mines >= 1:
-                self.affiche_nb_mines(nb_neightbour_mines, nCol, nLine)
-                self.player_board[nCol, nLine] = "v"
-            else:
-                self.play(self.sounds.get('void')[random.randint(0, len(self.sounds.get('void')) - 1)])
-                self.vide_plage_zero(nCol, nLine)
+            self.play(self.sounds.get('void')[random.randint(0, len(self.sounds.get('void')) - 1)])
+            self.vide_plage_zero(nCol, nLine)
+
         self.affiche_compteur()
 
         if self.has_won():
@@ -319,7 +312,7 @@ class Game:
         self.vide_plage_zero(col, line + 1)
         self.vide_plage_zero(col, line - 1)
         self.vide_plage_zero(col - 1, line)
-        #time.sleep(0.01)
+        # time.sleep(0.01)
 
         pass
 

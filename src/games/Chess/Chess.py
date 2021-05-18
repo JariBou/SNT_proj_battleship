@@ -60,7 +60,7 @@ def get_board(board_size: list, variant_name) -> list[list]:
                 [King('White', [0, 0]), Knight('White', [1, 0]), Bishop('White', [2, 0]), Tower('White', [3, 0])],
                 [Pawn('White', [0, 1]), None, None, None],
 
-                [None] * 8,
+                [None] * 4,
 
                 [None, None, None, Pawn('Black', [3, 3])],
                 [Tower('Black', [0, 4]), Bishop('Black', [1, 4]), Knight('Black', [2, 4]),
@@ -71,7 +71,7 @@ def get_board(board_size: list, variant_name) -> list[list]:
                 [Tower('White', [0, 0]), Queen('White', [1, 0]), King('White', [2, 0]), Tower('White', [3, 0])],
                 [Pawn('White', [i, 1]) for i in range(4)],
 
-                [None] * 8,
+                [None] * 4,
 
                 [Pawn('Black', [i, 3]) for i in range(4)],
                 [Tower('Black', [0, 4]), Queen('Black', [1, 4]), King('Black', [2, 4]),
@@ -289,9 +289,11 @@ class Pawn(ChessPiece):
         side = 1 if self.color == 'White' else -1
         valid_positions = []
         if self.first_move:
-            if self.board[self.position.y + (side * 2)][self.position.x] is None:
-                valid_positions.append(Position([self.position.x, self.position.y + (side * 2)]))
-
+            try:
+                if self.board[self.position.y + (side * 2)][self.position.x] is None:
+                    valid_positions.append(Position([self.position.x, self.position.y + (side * 2)]))
+            except IndexError:  ## On small boards the check check goes outside of boundaries
+                pass
         side_max = (len(self.board) - 1) if self.color == 'White' else 0
         if self.position.y == side_max:
             return []
