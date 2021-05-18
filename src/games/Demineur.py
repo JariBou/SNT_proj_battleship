@@ -4,6 +4,7 @@ import time
 import tkinter as tk
 import sys as system
 import random
+import pygame as pygame
 
 from PIL.ImageTk import PhotoImage
 from tkinter import messagebox
@@ -19,16 +20,19 @@ def get_img(path):
     img = PhotoImage(file=path)
     return img
 
+
 def g_help():
-    messagebox.showinfo(title = "Help & Rules", message = "Cliquer sur une case de la grille révèle:\n\n"
-                                                        "- Une zone ne contenant aucune mine\n"
-                                                        "- Une case bordée par 1, 2, 3 ou 4 mines dans un rayon d'1\n"
-                                                        "  case (verticalement, horizontalement, diagonalement\n")
+    messagebox.showinfo(title="Help & Rules", message="Cliquer sur une case de la grille révèle:\n\n"
+                                                      "- Une zone ne contenant aucune mine\n"
+                                                      "- Une case bordée par 1, 2, 3 ou 4 mines dans un rayon d'1\n"
+                                                      "  case (verticalement, horizontalement, diagonalement\n")
+
 
 def about():
     """ Used to display an about messageBox """
-    messagebox.showinfo(title="About", message="Made by: Jari \n "
+    messagebox.showinfo(title="About", message="Made by: Mathis & Jari \n "
                                                "Version: Alpha 0.1")
+
 
 ####                                  ####
 
@@ -93,6 +97,10 @@ class Game:
         self.difficulty = tk.IntVar()
         self.difficulty.set(1)
 
+        radio = tk.Radiobutton(self.difficulty_frame, text='U big big noob', command=self.start,
+                               variable=self.difficulty,
+                               value=7)
+        radio.pack(anchor='nw', padx=30)
         radio1 = tk.Radiobutton(self.difficulty_frame, text='Noob', command=self.start, variable=self.difficulty,
                                 value=1)
         radio1.pack(anchor='nw', padx=30)
@@ -120,6 +128,15 @@ class Game:
         self.squares_left.grid(row=1, column=0, sticky='nw')  # 5
         self.info.pack()
 
+        w = tk.Scale(self.root, from_=0, to=100, orient=tk.HORIZONTAL, label="Change Volume")
+        w['command'] = lambda w2=w: self.change_volume(w2)
+        w.set(80)
+        self.volume = 0.8
+        test_sound = tk.Button(self.root, text='Test Volume',
+                               command=lambda: self.play(self.path.joinpath('resources\\sounds\\fail\\ah.mp3')))
+        test_sound.pack(side=tk.RIGHT)
+        w.pack(side=tk.RIGHT)
+
         self.new_game_frame = tk.Frame(self.root)
         self.restart_button = tk.Button(self.new_game_frame, width=15, text='New game', font='Arial 10',
                                         command=self.start)
@@ -133,6 +150,18 @@ class Game:
 
         self.hidden_mines = self.nb_mines
         self.colors = ['blue', 'orange', 'red', 'green', 'cyan', 'skyblue', 'pink']
+        self.empty_colors = ['green', 'red', 'orange', 'yellow', 'cyan']
+        self.sounds = {'win': [self.path.joinpath('resources\\sounds\\destroy\\amaterasu-sound-effect.mp3'),
+                                   self.path.joinpath('resources\\sounds\\destroy\\yes-yes-yes-yes.mp3')],
+                       'lose': [self.path.joinpath('resources\\sounds\\fail\\bruh-sound-effect.mp3'),
+                                self.path.joinpath('resources\\sounds\\fail\\oof-sound-effect.mp3'),
+                                self.path.joinpath('resources\\sounds\\fail\\plouf.mp3'),
+                                self.path.joinpath('resources\\sounds\\fail\\ah.mp3'),
+                                self.path.joinpath('resources\\sounds\\fail\\hotel-mario-non.mp3')],
+                       'void': [self.path.joinpath('resources\\sounds\\touch\\ha-got-emm-sound-effect.mp3'),
+                                 self.path.joinpath('resources\\sounds\\touch\\sharingan-sound-effect.mp3'),
+                                 self.path.joinpath('resources\\sounds\\touch\\sr-pelo-boom-sound-effect.mp3'),
+                                 self.path.joinpath('resources\\sounds\\touch\\wazaaaa.mp3')]}
 
         self.ratio_value = 'N/A'
 
@@ -155,7 +184,9 @@ class Game:
         self.land_canvas.delete(tk.ALL)
         level = self.difficulty.get()
         self.time_dict = {'minutes': 0, 'seconds': 0}
-        if level == 1:
+        if level == 7:
+            self.nb_columns, self.nb_lines, self.nb_mines = 10, 10, 6
+        elif level == 1:
             self.nb_columns, self.nb_lines, self.nb_mines = 10, 10, 12
         elif level == 2:
             self.nb_columns, self.nb_lines, self.nb_mines = 15, 15, 30
@@ -251,7 +282,9 @@ class Game:
             nb_neightbour_mines = self.get_neighbours(nCol, nLine)
             if nb_neightbour_mines >= 1:
                 self.affiche_nb_mines(nb_neightbour_mines, nCol, nLine)
+                self.player_board[nCol, nLine] = "v"
             else:
+                self.play(self.sounds.get('void')[random.randint(0, len(self.sounds.get('void')) - 1)])
                 self.vide_plage_zero(nCol, nLine)
         self.affiche_compteur()
 
@@ -266,13 +299,19 @@ class Game:
         if self.player_board[col, line] == 'v':
             return
         if not nb_neightbour_mines:
+            # self.land_canvas.create_rectangle((col - 1) * self.square_dim + self.gap + 3,
+            #                                   (line - 1) * self.square_dim + self.gap + 3,
+            #                                   col * self.square_dim + self.gap - 3,
+            #                                   line * self.square_dim + self.gap - 3,
+            #                                   width=0, fill="ivory")
             self.land_canvas.create_rectangle((col - 1) * self.square_dim + self.gap + 3,
                                               (line - 1) * self.square_dim + self.gap + 3,
                                               col * self.square_dim + self.gap - 3,
                                               line * self.square_dim + self.gap - 3,
-                                              width=0, fill="ivory")
+                                              width=0, fill=self.colors[random.randint(0, len(self.empty_colors) - 1)])
             self.nb_seen_squares += 1
             self.player_board[col, line] = 'v'
+            self.land_canvas.update_idletasks()
             self.vide_plage_zero(col + 1, line)
         else:
             self.affiche_nb_mines(nb_neightbour_mines, col, line)
@@ -280,6 +319,7 @@ class Game:
         self.vide_plage_zero(col, line + 1)
         self.vide_plage_zero(col, line - 1)
         self.vide_plage_zero(col - 1, line)
+        #time.sleep(0.01)
 
         pass
 
@@ -340,6 +380,7 @@ class Game:
         self.wins += 1
 
     def lost(self, nCol, nLine):
+        self.play(self.sounds.get('lose')[random.randint(0, len(self.sounds.get('lose')) - 1)])
         for line in range(1, self.nb_lines + 1):
             for col in range(1, self.nb_columns + 1):
                 if self.mines[col, line] != 9:
@@ -389,7 +430,8 @@ class Game:
 
     def exit_game(self):
         self.playing = False
-        self.t1.join()
+        if self.t1 is not None:
+            self.t1.join()
         time.sleep(0.5)
         system.exit('User cancelation')
 
@@ -404,6 +446,21 @@ class Game:
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Stats", command=self.stats)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
+
+    def play(self, path):
+        """ Plays a sound
+        :param path: Path to sound
+        """
+        pygame.init()
+        pygame.mixer.music.load(path)  # Loading File Into Mixer
+        pygame.mixer.music.set_volume(self.volume)
+        pygame.mixer.music.play()
+
+    def change_volume(self, w):
+        """ Changes the volume at which sounds are played
+        :param w: slider value
+        """
+        self.volume = int(w) / 100
 
 
 if __name__ == '__main__':

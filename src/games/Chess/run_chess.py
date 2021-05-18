@@ -29,14 +29,6 @@ class ChessGui:
         self.root = tk.Tk()
         self.root.title("Chess - Alpha V6.0")
         self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
-        w = 800
-        h = 800
-        ## get screen width and height
-        ws = self.root.winfo_screenwidth()
-        hs = self.root.winfo_screenheight()
-        x = (ws / 2) - (w / 2)
-        y = (hs / 2) - (h / 2)
-        self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
         ## Add Icon
         myappid = 'mjcorp.Chess.alphav6.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -128,6 +120,8 @@ class ChessGui:
         self.check_last_color = ''
 
         self.b_class.pass_board_to_pieces()
+
+        Ct.center(self.root)
 
         self.root.mainloop()
 
@@ -295,4 +289,4 @@ class ChessGui:
 
 
 if __name__ == '__main__':
-    ChessGui([5, 5], 'Baby chess')
+    ChessGui([4, 5], 'Microchess')

@@ -514,6 +514,7 @@ class Battleship_1v1:
                     if boat_state[part] == 1:
                         child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
                     else:
+                        #child.config(image=self.images_touched_root.get(orientation).get('last'), bg=self.defaultbg)
                         pass  # Draw touched texture
                     break
                 else:
