@@ -1,11 +1,8 @@
-import copy
 import ctypes
 from threading import Thread
 import time
 import tkinter as tk
 import sys as system
-import random
-import pygame as pygame
 
 from PIL.ImageTk import PhotoImage
 from tkinter import messagebox
@@ -316,7 +313,6 @@ class Game:
         system.exit('User cancelation')
 
     def create_menu(self, menubar: tk.Menu):
-        menubar.add_command(label="Start", command=lambda: self.start())
         menubar.add_command(label="Help", command=g_help)
         menubar.add_command(label="About", command=about)
         # menubar.add_command(label="Stats", command=self.stats)

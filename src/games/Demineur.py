@@ -162,6 +162,8 @@ class Game:
                                 self.path.joinpath('resources\\sounds\\touch\\wazaaaa.mp3')]}
 
         self.ratio_value = 'N/A'
+        self.void_color = 'white'
+        self.random_color = False
 
         Ct.set_color(self.root, 'white')
         self.start()
@@ -289,21 +291,18 @@ class Game:
         if not (1 <= col <= self.nb_columns and 1 <= line <= self.nb_lines):
             return
         nb_neightbour_mines = self.get_neighbours(col, line)
-        if self.player_board[col, line] == 'v':
+        if self.player_board[col, line] in ['v', 'vn']:
             return
         if not nb_neightbour_mines:
-            # self.land_canvas.create_rectangle((col - 1) * self.square_dim + self.gap + 3,
-            #                                   (line - 1) * self.square_dim + self.gap + 3,
-            #                                   col * self.square_dim + self.gap - 3,
-            #                                   line * self.square_dim + self.gap - 3,
-            #                                   width=0, fill="ivory")
             self.land_canvas.create_rectangle((col - 1) * self.square_dim + self.gap + 3,
                                               (line - 1) * self.square_dim + self.gap + 3,
                                               col * self.square_dim + self.gap - 3,
                                               line * self.square_dim + self.gap - 3,
-                                              width=0, fill=self.colors[random.randint(0, len(self.empty_colors) - 1)])
+                                              width=0, fill=
+                    self.colors[
+                        random.randint(0, len(self.empty_colors) - 1)] if self.random_color else self.void_color)
             self.nb_seen_squares += 1
-            self.player_board[col, line] = 'v'
+            self.player_board[col, line] = 'vn'
             self.land_canvas.update_idletasks()
             self.vide_plage_zero(col + 1, line)
         else:
@@ -315,6 +314,19 @@ class Game:
         # time.sleep(0.01)
 
         pass
+
+    def change_colors(self, color):
+        self.void_color = color
+        self.random_color = True if color == 'random' else False
+        for y in range(1, self.nb_lines + 1):
+            for x in range(1, self.nb_columns + 1):
+                if self.player_board[x, y] == 'vn':
+                    self.land_canvas.create_rectangle((x - 1) * self.square_dim + self.gap + 3,
+                                                      (y - 1) * self.square_dim + self.gap + 3,
+                                                      x * self.square_dim + self.gap - 3,
+                                                      y * self.square_dim + self.gap - 3,
+                                                      width=0, fill=self.colors[
+                        random.randint(0, len(self.empty_colors) - 1)] if self.random_color else self.void_color)
 
     def pointeurD(self, event):
         if not self.playing:
@@ -435,6 +447,16 @@ class Game:
         colorsettings.add_command(label="Grey", command=lambda: Ct.set_color(self.root, 'grey'))
         colorsettings.add_command(label="Light blue", command=lambda: Ct.set_color(self.root, 'lightblue'))
         menubar.add_cascade(label="Color settings", menu=colorsettings)
+        void_color_settings = tk.Menu(menubar, tearoff=0)
+        void_color_settings.add_command(label="White", command=lambda: self.change_colors('white'))
+        void_color_settings.add_command(label="Blue", command=lambda: self.change_colors('blue'))
+        void_color_settings.add_command(label="Cyan", command=lambda: self.change_colors('cyan'))
+        void_color_settings.add_command(label="Gold", command=lambda: self.change_colors('gold'))
+        void_color_settings.add_command(label="Brown", command=lambda: self.change_colors('brown'))
+        void_color_settings.add_command(label="Green", command=lambda: self.change_colors('green'))
+        void_color_settings.add_command(label="Red", command=lambda: self.change_colors('red'))
+        void_color_settings.add_command(label="Random", command=lambda: self.change_colors('random'))
+        menubar.add_cascade(label="Empty cells colors", menu=void_color_settings)
         menubar.add_command(label="Help", command=g_help)
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Stats", command=self.stats)

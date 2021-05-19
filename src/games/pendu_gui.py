@@ -5,6 +5,8 @@ import tkinter as tk
 from tkinter import messagebox
 
 from PIL import Image, ImageTk
+
+from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 
 def about():
@@ -153,6 +155,8 @@ class Game:
     def create_menu(self, menubar: tk.Menu):
         menubar.add_command(label="Help", command=g_help)
         menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
+
 
 if __name__ == '__main__':
     Game("lexique")
