@@ -40,29 +40,35 @@ def create_menu(menubar: tk.Menu):
 class Game:
 
     def __init__(self):
-        self.nb_columns = 70
-        self.nb_lines = 70
-        self.square_dim = 8
+        self.alive = {}
+        self.GREY = pg.Color(100, 100, 100)
+
+        self.nb_columns = 20
+        self.nb_lines = 20
+        self.square_dim = 10
         self.square_size = (self.square_dim, self.square_dim)
         self.square_surface = pg.Surface(self.square_size)
-        pg.init()
-        self.root = pg.Surface((self.nb_columns*self.square_dim, self.nb_lines*self.square_dim))
-        self.screen = pg.display.set_mode((self.nb_columns*self.square_dim, self.nb_lines*self.square_dim))
+        self.root = pg.Surface((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
+        self.screen = pg.display.set_mode((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
         pg.display.set_caption('Game Of Life V3 - idle')
         pg.display.flip()
+        root = tk.Tk()
+        root.title('Select size')
+        self.change_size_menu(root, True)
+        Ct.center(root)
+        root.mainloop()
+        pg.init()
 
         self.t1 = None
         self.playing = False
         self.placing = False
 
         self.WHITE = pg.Color(255, 255, 255)
-        self.GREY = pg.Color(100, 100, 100)
         self.RED = pg.Color(255, 0, 0)
         self.pos: list[int, int] = [20, 20]
 
         self.logic_board = {}
         self.test_dict = {}
-        self.alive = {}
         self.to_kill = {}
         self.to_born = {}
 
@@ -233,19 +239,28 @@ class Game:
         pg.display.flip()
         self.init_lvl()
 
-    def change_size_menu(self, window):
+    def change_size_menu(self, window, start=False):
         tk.Label(window, text="Enter new dimensions as nColxnLine+squareSide").pack()
         tk.Label(window, text=f"Current size: {self.nb_columns}x{self.nb_lines}+{self.square_dim}").pack()
         entry = tk.Entry(window)
         entry.pack()
-        tk.Button(window, text="Confirm", command=lambda: self.change_size_val(entry)).pack()
+        if not start:
+            tk.Button(window, text="Confirm", command=lambda: self.change_size_val(entry)).pack()
+        else:
+            tk.Button(window, text="Confirm", command=lambda: self.change_size_val(entry, window)).pack()
 
-    def change_size_val(self, entry: tk.Entry):
-        string = entry.get()
-        vals = string.split('+')
-        squareDim = int(vals.pop())
-        nCol, nLine = vals[0].split('x')
-        self.change_sizes(int(nCol), int(nLine), squareDim)
+    def change_size_val(self, entry: tk.Entry, window=None):
+        #try:
+            string = entry.get()
+            vals = string.split('+')
+            squareDim = int(vals.pop())
+            nCol, nLine = vals[0].split('x')
+            self.change_sizes(int(nCol), int(nLine), squareDim)
+            if window is not None:
+                window.destroy()
+        # except:
+        #     entry.delete(0, len(entry.get()))
+        #     entry.insert(0, 'Wrong input')
 
 
 if __name__ == '__main__':
