@@ -40,7 +40,7 @@ def create_menu(menubar: tk.Menu):
 class Game:
 
     def __init__(self):
-        self.alive = {}
+        self.alive: dict = {}
         self.GREY = pg.Color(100, 100, 100)
 
         self.nb_columns = 20
@@ -67,10 +67,9 @@ class Game:
         self.RED = pg.Color(255, 0, 0)
         self.pos: list[int, int] = [20, 20]
 
-        self.logic_board = {}
-        self.test_dict = {}
-        self.to_kill = {}
-        self.to_born = {}
+        self.test_dict: dict = {}
+        self.to_kill: dict = {}
+        self.to_born: dict = {}
 
         running = True
         self.time = 0.05
