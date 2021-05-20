@@ -19,7 +19,7 @@ def g_help():
     messagebox.showinfo(title="Help & Rules", message="Cliquer sur une case de la grille révèle:\n\n"
                                                       "- Une zone ne contenant aucune mine\n"
                                                       "- Une case bordée par 1, 2, 3 ou 4 mines dans un rayon d'1\n"
-                                                      "  case (verticalement, horizontalement, diagonalement\n")
+                                                      "  case (verticalement, horizontalement, diagonalement\n")  ##TODO: change help func
 
 
 def about():
@@ -61,7 +61,6 @@ class Game:
 
         self.t1 = None
         self.playing = False
-        self.placing = False
 
         self.WHITE = pg.Color(255, 255, 255)
         self.RED = pg.Color(255, 0, 0)
@@ -99,14 +98,7 @@ class Game:
                     if event.key == pg.K_q:
                         self.time = 0.1
                     if event.key == pg.K_h:
-                        root = tk.Tk()
-                        root.title('Help')
-                        tk.Button(root, text='change speed', command=lambda: self.set_time(0.5)).pack()
-                        self.change_rand_menu(root)
-                        self.change_size_menu(root)
-                        tk.Button(root, text='Done', command=lambda: root.destroy()).pack()
-                        Ct.center(root)
-                        root.mainloop()
+                        self.settings()
                 elif event.type == pg.MOUSEBUTTONUP:
                     self.place(pg.mouse.get_pos())
             if self.playing:
@@ -213,9 +205,9 @@ class Game:
         tk.Label(window, text=f"Enter a percentage between 1 and 99 included: (curr: {self.percentage})").pack()
         entry = tk.Entry(window)
         entry.pack()
-        tk.Button(window, text="Confirm", command=lambda: self.change_rand_val(entry)).pack()
+        tk.Button(window, text="Confirm", command=lambda: self.change_rand_val(entry, window)).pack()
 
-    def change_rand_val(self, entry: tk.Entry):
+    def change_rand_val(self, entry: tk.Entry, w: tk.Tk):
         val = entry.get()
         entry.delete(0, len(val))
         if not (0 < int(val) < 100):
@@ -223,6 +215,8 @@ class Game:
             return
         entry.insert(0, f'Updated to: {val}')
         self.percentage = int(val)
+        w.destroy()
+        self.settings()
 
     def change_sizes(self, nCol: int, nLine: int, square_dim: int):
         self.clear_board()
@@ -245,20 +239,26 @@ class Game:
         if not start:
             tk.Button(window, text="Confirm", command=lambda: self.change_size_val(entry)).pack()
         else:
-            tk.Button(window, text="Confirm", command=lambda: self.change_size_val(entry, window)).pack()
+            tk.Button(window, text="Confirm", command=lambda: self.change_size_val(entry, window, True)).pack()
 
-    def change_size_val(self, entry: tk.Entry, window=None):
-        #try:
-            string = entry.get()
-            vals = string.split('+')
-            squareDim = int(vals.pop())
-            nCol, nLine = vals[0].split('x')
-            self.change_sizes(int(nCol), int(nLine), squareDim)
-            if window is not None:
-                window.destroy()
-        # except:
-        #     entry.delete(0, len(entry.get()))
-        #     entry.insert(0, 'Wrong input')
+    def change_size_val(self, entry: tk.Entry, window=None, first=False):
+        string = entry.get()
+        vals = string.split('+')
+        squareDim = int(vals.pop())
+        nCol, nLine = vals[0].split('x')
+        self.change_sizes(int(nCol), int(nLine), squareDim)
+        window.destroy()
+        if not first:
+            self.settings()
+
+    def settings(self):
+        root = tk.Tk()
+        root.title('Help')
+        self.change_rand_menu(root)
+        self.change_size_menu(root)
+        tk.Button(root, text='Done', command=lambda: root.destroy()).pack()
+        Ct.center(root)
+        root.mainloop()
 
 
 if __name__ == '__main__':
