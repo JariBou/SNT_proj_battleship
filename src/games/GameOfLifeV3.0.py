@@ -3,6 +3,8 @@ import threading
 import time
 import tkinter as tk
 import sys as system
+from random import randint, random
+
 import pygame as pg
 
 from src import run_main
@@ -31,9 +33,14 @@ def about():
 class Game:
 
     def __init__(self):
+        self.nb_columns = 70
+        self.nb_lines = 70
+        self.square_dim = 8
+        self.square_size = (self.square_dim, self.square_dim)
+        self.square_surface = pg.Surface(self.square_size)
         pg.init()
-        self.root = pg.Surface((300, 300))
-        self.screen = pg.display.set_mode((300, 300))
+        self.root = pg.Surface((self.nb_columns*self.square_dim, self.nb_lines*self.square_dim))
+        self.screen = pg.display.set_mode((self.nb_columns*self.square_dim, self.nb_lines*self.square_dim))
         pg.display.set_caption('Game Of Life V3')
         pg.display.flip()
 
@@ -41,19 +48,10 @@ class Game:
         self.playing = False
         self.placing = False
 
-        self.square_dim = 10
-        self.square_size = (10, 10)
-        self.square_surface = pg.Surface(self.square_size)
-
-        size = (50, 50)
-
         self.WHITE = pg.Color(255, 255, 255)
         self.GREY = pg.Color(100, 100, 100)
         self.RED = pg.Color(255, 0, 0)
         self.pos: list[int, int] = [20, 20]
-
-        self.nb_columns = 50
-        self.nb_lines = 50
 
         self.logic_board = {}
         self.test_dict = {}
@@ -62,6 +60,7 @@ class Game:
         self.to_born = {}
 
         running = True
+        self.time = 0.05
 
         self.init_lvl()
 
@@ -80,12 +79,24 @@ class Game:
                     #     self.pos[1] += 5
                     if event.key == pg.K_RETURN:
                         self.playing = True if not self.playing else False
-                        print('playing now enabled')
+                        print('playing now enabled' if self.playing else 'playing now disabled')
+                    if event.key == pg.K_r:
+                        self.randomize()
+                    if event.key == pg.K_c:
+                        self.clear_board()
+                    if event.key == pg.K_a:
+                        self.time = 0
+                    if event.key == pg.K_z:
+                        self.time = 0.025
+                    if event.key == pg.K_e:
+                        self.time = 0.05
+                    if event.key == pg.K_q:
+                        self.time = 0.1
                     # self.draw_rect(tuple(self.pos), self.WHITE)
                 elif event.type == pg.MOUSEBUTTONUP:
                     self.place(pg.mouse.get_pos())
-                if self.playing:
-                    self.round()
+            if self.playing:
+                self.round()
             #self.round()
             pg.display.update()
 
@@ -95,7 +106,7 @@ class Game:
         self.alive = {}
 
         surface = pg.Surface((self.nb_columns*self.square_dim, self.nb_lines*self.square_dim))
-        pg.draw.rect(surface, self.RED, surface.get_rect())
+        pg.draw.rect(surface, self.GREY, surface.get_rect())
         self.screen.blit(surface, (0, 0))
 
         for y in range(1, self.nb_lines + 1):
@@ -115,6 +126,25 @@ class Game:
             self.alive[nCol, nLine] = 0
             self.draw_rect((col, line), self.GREY)
 
+    def randomize(self):
+        print('randomizing')
+        for x in range(1, self.nb_columns+1):
+            for y in range(1, self.nb_lines+1):
+                rand = randint(0, 3)
+                if rand == 1:
+                    self.alive[x, y] = 1
+                    self.draw_rect(((x - 1) * self.square_dim, (y - 1) * self.square_dim), self.WHITE)
+        print('done')
+
+    def clear_board(self):
+        print('playing now disabled - clearing...')
+        self.playing = False
+        for x in range(1, self.nb_columns+1):
+            for y in range(1, self.nb_lines+1):
+                self.alive[x, y] = 0
+                self.draw_rect(((x - 1) * self.square_dim, (y - 1) * self.square_dim), self.GREY)
+        print('>done')
+
     def get_neighbours(self, col, line) -> int:
         min_column = col - 1 if col > 1 else col
         max_column = col + 1 if col < self.nb_columns else col
@@ -122,44 +152,37 @@ class Game:
         min_line = line - 1 if line > 1 else line
         max_line = line + 1 if line < self.nb_lines else line
 
-        ans = len([key for key in self.alive.keys() if ((self.alive[key] == 1)
-                    & (min_line <= key[1] <= max_line)
-                    & (min_column <= key[0] <= max_column))])
-
-        if self.alive[col, line] == 1:
-            ans -= 1
-
+        ans = -1 if self.alive[col, line] == 1 else 0
+        for col in range(min_column, max_column + 1):
+            for line in range(min_line, max_line + 1):
+                if self.alive[col, line] == 1:
+                    ans += 1
+        #
+        # ans = len([key for key in self.alive.keys() if ((self.alive[key] == 1)
+        #             & (min_line <= key[1] <= max_line)
+        #             & (min_column <= key[0] <= max_column))])
+        #
+        # if self.alive[col, line] == 1:
+        #     ans -= 1
         return ans
 
     def update_dicts(self):
         for key in self.test_dict.keys():
             is_born = True if (self.test_dict.get(key) == 3 and (self.alive[key] == 0)) else False
             keeps_alive = True if ((self.test_dict.get(key) in [2, 3]) and self.alive[key] == 1) else False
-            self.alive[key] = 1 if (is_born or keeps_alive) else 0
             if is_born:
-                self.to_born[key] = 1
-            dies = False if self.test_dict.get(key) in [2, 3] else True
+                self.draw_rect(((key[0] - 1) * self.square_dim, (key[1] - 1) * self.square_dim), self.WHITE)
+            dies = False if (self.test_dict.get(key) in [2, 3]) or (self.alive[key] == 0) else True
+            self.alive[key] = 1 if (is_born or keeps_alive) else 0
             if dies:
-                self.to_kill[key] = 1
+                self.draw_rect(((key[0] - 1) * self.square_dim, (key[1] - 1) * self.square_dim), self.GREY)
 
     def round(self):
-        self.to_born = {}
-        self.to_kill = {}
-        t1 = threading.Thread(target=self.half_t)
-        t1.start()
-        t2 = threading.Thread(target=self.half_t2)
-        t2.start()
-        t3 = threading.Thread(target=self.half_t3)
-        t3.start()
-        for y in range(1, self.nb_lines//4):
+        for y in range(1, self.nb_lines + 1):
             for x in range(1, self.nb_columns + 1):
                 self.test_dict[x, y] = self.get_neighbours(x, y)
-        t1.join()
-        t2.join()
-        t3.join()
         self.update_dicts()
-        self.update_gui()
-            #time.sleep(self.time)
+        time.sleep(self.time)
 
     def half_t(self):
         for y in range(self.nb_lines//4, self.nb_lines//4*2+1):

@@ -206,7 +206,7 @@ class Game:
         for key in self.test_dict.keys():
             is_born = True if (self.test_dict.get(key) == 3 and (self.alive[key] == 0)) else False
             keeps_alive = True if ((self.test_dict.get(key) in [2, 3]) and self.alive[key] == 1) else False
-            dies = False if self.test_dict.get(key) in [2, 3] else True
+            dies = False if (self.test_dict.get(key) in [2, 3]) or self.alive[key] == 0 else True
             self.alive[key] = 1 if (is_born or keeps_alive) else 0
             if dies:
                 self.to_kill[key] = 1
@@ -242,6 +242,9 @@ class Game:
             time.sleep(self.time)
 
     def update_gui(self):
+        blist = list(self.to_kill.keys()) + list(self.to_born.keys())
+        for key in blist:
+            pass
         for y in range(1, self.nb_lines + 1):
             for x in range(1, self.nb_columns + 1):
                 self.land_canvas.create_rectangle((x - 1) * self.square_dim + self.gap + self.gap / 2,
