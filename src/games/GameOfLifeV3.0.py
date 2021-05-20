@@ -130,7 +130,6 @@ class Game:
                 self.alive[x, y] = 0
 
     def place(self, pos):
-        print(pos)
         nCol = (pos[0]+1) // self.square_dim + 1
         nLine = (pos[1]+1) // self.square_dim + 1
         col = (nCol - 1) * self.square_dim
