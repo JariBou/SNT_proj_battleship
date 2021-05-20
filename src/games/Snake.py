@@ -71,7 +71,10 @@ class Game:
         running = True
         self.time = 0.2
         self.down = False
+        self.up = False
+        self.left = False
         self.right = True
+        self.has_apple = False
 
         self.init_lvl()
 
@@ -85,15 +88,21 @@ class Game:
                     if event.key == pg.K_SPACE:
                         self.playing = True if not self.playing else False
                         print('playing now enabled' if self.playing else 'playing now disabled')
+                        if self.playing:
+                            threading.Thread(target=self.round).start()
                     if event.key == pg.K_h:
                         self.settings()
                     if event.key == pg.K_DOWN:
-                        self.down = True
-                        # self.switch_direction('down')
-                elif event.type == pg.MOUSEBUTTONUP:
-                    self.place(pg.mouse.get_pos())
-            if self.playing:
-                self.round()   # Put in a separated thread do avoid problems with reaction speed
+                        self.switch_direction('down')
+                    if event.key == pg.K_UP:
+                        self.switch_direction('up')
+                    if event.key == pg.K_RIGHT:
+                        self.switch_direction('right')
+                    if event.key == pg.K_LEFT:
+                        self.switch_direction('left')
+            #if self.playing:
+            #    threading.Thread(target=self.round).start()
+                #self.round()   # Put in a separated thread do avoid problems with reaction speed
             pg.display.update()
 
     def set_time(self, x: float):
@@ -106,26 +115,26 @@ class Game:
         pg.draw.rect(surface, self.GREY, surface.get_rect())
         self.screen.blit(surface, (0, 0))
 
-    def place(self, pos):
-        nCol = (pos[0]+1) // self.square_dim + 1
-        nLine = (pos[1]+1) // self.square_dim + 1
-        col = (nCol - 1) * self.square_dim
-        line = (nLine - 1) * self.square_dim
-        if self.alive[nCol, nLine] == 0:
-            self.alive[nCol, nLine] = 1
-            self.draw_rect((col, line), self.WHITE)
-        else:
-            self.alive[nCol, nLine] = 0
-            self.draw_rect((col, line), self.GREY)
+    def switch_direction(self, direction):
+        if direction == 'right' and not self.left:
+            self.up, self.down, self.left, self.right = False, False, False, True
+        elif direction == 'left' and not self.right:
+            self.up, self.down, self.left, self.right = False, False, True, False
+        elif direction == 'up' and not self.down:
+            self.up, self.down, self.left, self.right = True, False, False, False
+        elif direction == 'down' and not self.up:
+            self.up, self.down, self.left, self.right = False, True, False, False
 
     def place_apple(self):
         x = randint(1, self.nb_columns)
         y = randint(1, self.nb_columns)
         if [x, y] in self.snake:
             self.place_apple()
+        self.apple = [x, y]
         col = (x - 1) * self.square_dim
         line = (y - 1) * self.square_dim
         self.draw_rect((col, line), self.RED)
+        self.has_apple = True
 
     def draw_snake(self):
         for position in self.snake:
@@ -134,15 +143,18 @@ class Game:
             self.draw_rect((col, line), self.WHITE)
 
     def draw_next_snake(self, next_pos):
-        print(self.snake)
-        old = self.snake.pop()
-        col = (old[0] - 1) * self.square_dim
-        line = (old[1] - 1) * self.square_dim
-        self.draw_rect((col, line), self.GREY)
+        print(self.apple)
+        print(next_pos)
+        if next_pos == self.apple:
+            print('apple eaten')
+            self.has_apple = False
+        if next_pos != self.apple:
+            old = self.snake.pop()
+            col = (old[0] - 1) * self.square_dim
+            line = (old[1] - 1) * self.square_dim
+            self.draw_rect((col, line), self.GREY)
         self.snake.insert(0, next_pos)
-        print(self.snake)
         for position in self.snake:
-            print(position)
             col = (position[0] - 1) * self.square_dim
             line = (position[1] - 1) * self.square_dim
             self.draw_rect((col, line), self.WHITE)
@@ -153,11 +165,13 @@ class Game:
                 self.draw_rect(((x - 1) * self.square_dim, (y - 1) * self.square_dim), self.GREY)
 
     def round(self):
-        self.place_apple()
-        if self.down:
-            self.right = False
-        self.draw_next_snake([self.snake[0][0] + (1 if self.right else 0), self.snake[0][1] + (1 if self.down else 0)])
-        time.sleep(self.time)
+        while self.playing:
+            if not self.has_apple:
+                self.place_apple()
+            x_off = 1 if self.right else (-1 if self.left else 0)
+            y_off = -1 if self.up else (1 if self.down else 0)
+            self.draw_next_snake([self.snake[0][0] + x_off, self.snake[0][1] + y_off])
+            time.sleep(self.time)
 
     def exit_game(self):
         self.playing = False
