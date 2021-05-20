@@ -161,7 +161,7 @@ class Game:
                 self.draw_rect(((x - 1) * self.square_dim, (y - 1) * self.square_dim), self.GREY)
         print('>done')
 
-    def get_neighbours(self, col, line) -> int:
+    def get_neighbours(self, col: int, line: int) -> int:
         min_column = col - 1 if col > 1 else col
         max_column = col + 1 if col < self.nb_columns else col
 
@@ -209,7 +209,7 @@ class Game:
         pg.draw.rect(self.square_surface, color, self.square_surface.get_rect())
         self.screen.blit(self.square_surface, position)
 
-    def change_rand_menu(self, window):
+    def change_rand_menu(self, window: tk.Tk):
         tk.Label(window, text=f"Enter a percentage between 1 and 99 included: (curr: {self.percentage})").pack()
         entry = tk.Entry(window)
         entry.pack()
@@ -224,7 +224,7 @@ class Game:
         entry.insert(0, f'Updated to: {val}')
         self.percentage = int(val)
 
-    def change_sizes(self, nCol, nLine, square_dim):
+    def change_sizes(self, nCol: int, nLine: int, square_dim: int):
         self.clear_board()
         self.nb_columns = nCol
         self.nb_lines = nLine
