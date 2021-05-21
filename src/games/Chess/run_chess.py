@@ -289,4 +289,4 @@ class ChessGui:
 
 
 if __name__ == '__main__':
-    ChessGui([4, 5], 'Microchess')
+    ChessGui([8, 8], '')

@@ -380,6 +380,7 @@ class Game:
         self.land_canvas.create_text(int(self.land_canvas.cget('width')) // 2,
                                      int(self.land_canvas.cget('height')) // 2, fill="green",
                                      font="Times 35 italic bold", text="WON")
+        self.play(self.sounds.get('win')[random.randint(0, len(self.sounds.get('win'))-1)])
         self.games_played += 1
         self.ratio_value = ((self.wins // self.games_played) * 100)
         self.wins += 1

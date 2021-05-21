@@ -42,6 +42,7 @@ class Game:
     def __init__(self):
         self.GREY = pg.Color(100, 100, 100)
 
+        self.cpt = 0
         self.nb_columns = 20
         self.nb_lines = 20
         self.square_dim = 10
@@ -63,18 +64,22 @@ class Game:
 
         self.WHITE = pg.Color(255, 255, 255)
         self.RED = pg.Color(255, 0, 0)
+        self.BCOL = pg.Color(255, 0, 255)
         self.pos: list[int, int] = [20, 20]
 
         self.apple: list[int, int] = [0, 0]
-        self.snake: list[list[int, int]] = [[7, 5], [6, 5], [5, 5], [4, 5]]
+        self.bapple: list[int, int] = [0, 0]
+        self.snake: list[list[int, int]] = [[9, 5], [8, 5], [7, 5], [6, 5], [5, 5], [4, 5]]
 
         running = True
-        self.time = 0.2
+        self.time = 0.075
         self.down = False
         self.up = False
         self.left = False
         self.right = True
         self.has_apple = False
+        self.has_bapple = False
+        self.walls: dict = {}
 
         self.init_lvl()
 
@@ -130,11 +135,24 @@ class Game:
         y = randint(1, self.nb_columns)
         if [x, y] in self.snake:
             self.place_apple()
-        self.apple = [x, y]
-        col = (x - 1) * self.square_dim
-        line = (y - 1) * self.square_dim
-        self.draw_rect((col, line), self.RED)
-        self.has_apple = True
+        else:
+            self.apple = [x, y]
+            line = (y - 1) * self.square_dim
+            col = (x - 1) * self.square_dim
+            self.draw_rect((col, line), self.RED)
+            self.has_apple = True
+
+    def place_bad_apple(self):
+        x = randint(1, self.nb_columns)
+        y = randint(1, self.nb_columns)
+        if [x, y] in self.snake:
+            self.place_bad_apple()
+        else:
+            self.bapple = [x, y]
+            line = (y - 1) * self.square_dim
+            col = (x - 1) * self.square_dim
+            self.draw_rect((col, line), self.BCOL)
+            self.has_bapple = True
 
     def draw_snake(self):
         for position in self.snake:
@@ -143,11 +161,24 @@ class Game:
             self.draw_rect((col, line), self.WHITE)
 
     def draw_next_snake(self, next_pos):
-        print(self.apple)
-        print(next_pos)
+        if next_pos in self.snake:
+            self.playing = False
+            return
+        if next_pos == self.bapple:
+            old = self.snake.pop()
+            self.has_bapple = False
+            col = (old[0] - 1) * self.square_dim
+            line = (old[1] - 1) * self.square_dim
+            self.draw_rect((col, line), self.GREY)
         if next_pos == self.apple:
-            print('apple eaten')
+            self.cpt += 1
+            if self.cpt == 1:
+                print(f'{self.cpt} apple eaten')
+            else:
+                print(f'{self.cpt} apples grallées')
             self.has_apple = False
+            if self.time >= 0.0075:
+                self.time -= 0.0075
         if next_pos != self.apple:
             old = self.snake.pop()
             col = (old[0] - 1) * self.square_dim
@@ -164,13 +195,40 @@ class Game:
             for y in range(1, self.nb_lines+1):
                 self.draw_rect(((x - 1) * self.square_dim, (y - 1) * self.square_dim), self.GREY)
 
+    def place_wall(self):
+        size = randint(1, 7)
+        #          east    north    west    south
+        facing = [[1, 0], [0, 1], [-1, 0], [0, -1]][randint(0, 5)]
+        for i in range(size):
+            x = randint(1, self.nb_columns+1)
+            y = randint(1, self.nb_lines+1)
+        #self.walls
+
     def round(self):
         while self.playing:
             if not self.has_apple:
                 self.place_apple()
+            if not self.has_bapple:
+                self.place_bad_apple()
             x_off = 1 if self.right else (-1 if self.left else 0)
             y_off = -1 if self.up else (1 if self.down else 0)
-            self.draw_next_snake([self.snake[0][0] + x_off, self.snake[0][1] + y_off])
+            x = self.snake[0][0] + x_off
+            y = self.snake[0][1] + y_off
+            # if x == 0:
+            #     x = self.nb_columns
+            # elif x == self.nb_columns+1:
+            #     x = 1
+            #
+            # if y == 0:
+            #     y = self.nb_lines
+            # elif y == self.nb_lines+1:
+            #     y = 1
+
+            if x == 0 or x == self.nb_columns + 1:
+                x = (self.nb_columns if x == 0 else 1)
+            if y == 0 or y == self.nb_lines + 1:
+                y = (self.nb_lines if y == 0 else 1)
+            self.draw_next_snake([x, y])
             time.sleep(self.time)
 
     def exit_game(self):
@@ -193,7 +251,7 @@ class Game:
         self.square_surface = pg.Surface(self.square_size)
         self.root = pg.Surface((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
         self.screen = pg.display.set_mode((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
-        pg.display.set_caption('Game Of Life V3')
+        pg.display.set_caption('Snake')
         pg.display.flip()
         self.init_lvl()
 
