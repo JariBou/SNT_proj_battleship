@@ -290,7 +290,7 @@ class Pawn(ChessPiece):
         valid_positions = []
         if self.first_move:
             try:
-                if self.board[self.position.y + (side * 2)][self.position.x] is None:
+                if self.board[self.position.y + (side * 2)][self.position.x] is None and self.board[self.position.y + side][self.position.x] is None:
                     valid_positions.append(Position([self.position.x, self.position.y + (side * 2)]))
             except IndexError:  ## On small boards the check check goes outside of boundaries
                 pass
