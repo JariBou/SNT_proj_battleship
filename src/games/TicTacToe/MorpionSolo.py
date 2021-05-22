@@ -543,7 +543,7 @@ class MorpionSolo:
     def switch(self):
         """ Switches to 2 Players mode """
         self.w.destroy()
-        from src.games.MorpionMulti import MorpionMulti
+        from src.games.TicTacToe.MorpionMulti import MorpionMulti
         MorpionMulti()
 
     def _won(self, winner):

@@ -349,7 +349,7 @@ class MorpionMulti:
     def switch(self):
         """ Switches to SOLO mode (Player vs CPU) """
         self.w.destroy()
-        from src.games.MorpionSolo import MorpionSolo
+        from src.games.TicTacToe.MorpionSolo import MorpionSolo
         MorpionSolo()
 
     def _won(self, winner):

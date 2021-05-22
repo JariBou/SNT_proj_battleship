@@ -1,10 +1,8 @@
-import copy
 import tkinter
 from enum import Enum
 from PIL import Image, ImageTk
 
 from pathlib import Path
-from typing import Any
 
 
 class ImgLoader:
@@ -43,6 +41,21 @@ class Position:
 
     def get_position(self) -> tuple[int, int]:
         return self.x, self.y
+
+    def add(self, args):
+        args = args.split('+')
+        for arg in args:
+            value = 0
+            try:
+                name, value = arg.split('=')
+            except ValueError:
+                name = arg
+            if name == 'x':
+                self.x += int(value)
+            elif name == 'y':
+                self.y += int(value)
+            else:
+                raise AttributeError(f'unknows attribute {name} for class {self.__class__}')
 
 
 class Constants(Enum):
@@ -140,3 +153,4 @@ class Constants(Enum):
         root['bg'] = color
         for element in cls.all_children(root, elements):
             element['bg'] = color
+

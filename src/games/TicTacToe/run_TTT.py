@@ -4,8 +4,8 @@ from tkinter import *
 import tkinter.font as ft
 
 from src import run_main
-from src.games.MorpionSolo import MorpionSolo
-from src.games.MorpionMulti import MorpionMulti
+from src.games.TicTacToe.MorpionSolo import MorpionSolo
+from src.games.TicTacToe.MorpionMulti import MorpionMulti
 
 
 class run:

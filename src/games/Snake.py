@@ -464,13 +464,15 @@ class Game:
                 name, value = arg.split('=')
             except ValueError:
                 name = arg
-            if value is not None:
+            try:
                 if name == 'accelerato':
                     self.acceleration = float(value)
                 elif name == 'speed':
                     self.time = float(value)
                 elif name == 'bapple':
                     self.nb_bapples = int(value)
+            except ValueError:
+                raise ValueError(f"wrong value for {name}: '{value}'")
             self.args[name] = True
         entry.delete(0, len(entry.get()))
 
