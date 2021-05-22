@@ -260,11 +260,12 @@ class Game:
         if next_pos in self.snake:
             self.playing = False
             return
-        if self.args.get('bapple') and next_pos == self.bapple:
+        if self.args.get('bapple') and next_pos in self.bapple:
             old = self.snake.pop()
             self.has_bapple = False
             col = (old[0] - 1) * self.square_dim
             line = (old[1] - 1) * self.square_dim
+            self.bapple.remove(next_pos)
             self.draw_rect((col, line), self.bg_color)
         if next_pos == self.apple:
             self.cpt += 1
@@ -366,7 +367,7 @@ class Game:
             if not self.has_apple:
                 self.place_apple()
             if self.args.get('bapple') and not self.has_bapple:
-                while len(self.bapple) < self.nb_bapples:
+                while len(self.bapple) <= self.nb_bapples:
                     self.place_bad_apple()
             x_off = 1 if self.right else (-1 if self.left else 0)
             y_off = -1 if self.up else (1 if self.down else 0)
