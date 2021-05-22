@@ -44,6 +44,9 @@ class Game:
         self.BLACK = pg.Color(0, 0, 0)
         self.GREY = pg.Color(100, 100, 100)
         self.WHITE = pg.Color(255, 255, 255)
+        self.BROWN = pg.Color(153, 76, 0)
+        self.DARK_BROWN = pg.Color(51, 25, 0)
+        self.ORANGE = pg.Color(255, 111, 0)
         self.RED = pg.Color(255, 0, 0)
         self.DARK_RED = pg.Color(153, 0, 0)
         self.GREEN = pg.Color(0, 153, 0)
@@ -53,9 +56,10 @@ class Game:
         self.DARK_BLUE = pg.Color(0, 0, 102)
 
         #######
-        self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False}
+        self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False}
         self.nb_walls = 5
         self.acceleration = 0.0075
+        self.color_types = ['modern', 'vintage', 'floorislava']
         #######
 
         self.cpt = 0
@@ -139,7 +143,7 @@ class Game:
                     if event.key == pg.K_r:
                         self.restart()
                     if event.key == pg.K_c:
-                        self.change_colors('vintage' if self.color == 'modern' else 'modern')
+                        self.change_colors(self.get_color())
             # if self.playing:
             #    threading.Thread(target=self.round).start()
             # self.round()   # Put in a separated thread do avoid problems with reaction speed
@@ -147,6 +151,9 @@ class Game:
 
     def set_time(self, x: float):
         self.time = x
+
+    def get_color(self):
+        return 'vintage' if self.color == 'modern' else ('floorislava' if self.color == 'vintage' else 'modern')
 
     def init_lvl(self):
         self.apple = [randint(0, self.nb_columns), randint(0, self.nb_lines)]
@@ -266,6 +273,8 @@ class Game:
             #     print(f'{self.cpt} apple eaten')
             # else:
             #     print(f'{self.cpt} apples grallées')
+            if self.args.get('colormania'):
+                self.change_colors(self.get_color())
             if self.args.get('accelerato') and self.time >= self.acceleration:
                 self.time -= self.acceleration
         else:
@@ -493,10 +502,35 @@ class Game:
             self.head_color = self.DARK_GREEN
             self.wall_color = self.DARK_BLUE
             self.bg_color = self.BLACK
+        elif color == 'floorislava':
+            self.color = 'floorislava'
+            self.apple_color = self.GREY
+            self.bapple_color = self.BLUE
+            self.snake_color = self.BROWN
+            self.head_color = self.DARK_BROWN
+            self.wall_color = self.BLACK
+            self.bg_color = self.ORANGE
         self.screen.fill(self.bg_color)
+        self.draw_all()
+        pass
+
+    def draw_walls(self):
+        for pos in self.walls:
+            col = (pos[0] - 1) * self.square_dim
+            line = (pos[1] - 1) * self.square_dim
+            self.draw_rect((col, line), self.wall_color)
+
+    def draw_bapples(self):
+        for pos in self.bapple:
+            col = (pos[0] - 1) * self.square_dim
+            line = (pos[1] - 1) * self.square_dim
+            self.draw_rect((col, line), self.bapple_color)
+
+    def draw_all(self):
         self.draw_snake()
         self.draw_apple()
-        pass
+        self.draw_bapples()
+        self.draw_walls()
 
 
 if __name__ == '__main__':
