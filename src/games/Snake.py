@@ -56,10 +56,11 @@ class Game:
         self.DARK_BLUE = pg.Color(0, 0, 102)
 
         #######
-        self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False}
+        self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False, 'randomania': False}
         self.nb_walls = 5
         self.acceleration = 0.0075
         self.color_types = ['modern', 'vintage', 'floorislava']
+        self.redo_bapples = True
         #######
 
         self.cpt = 0
@@ -93,6 +94,9 @@ class Game:
         self.nb_bapples = 3
         self.walls: list = []
         self.wall_nb = 0
+        self.add_lenght = 0
+        self.random_range = [-3, 5]
+        self.apple_cpt = 0
 
         self.apple_color = self.RED
         self.bapple_color = self.PEACH
@@ -111,6 +115,9 @@ class Game:
         root.mainloop()
 
         self.init_lvl()
+        self.clear_board()
+        self.draw_snake()
+        self.draw_text('Press <space> to start!', 'center')
 
         while running:
             for event in pg.event.get():
@@ -120,6 +127,9 @@ class Game:
                     if event.key == pg.K_SPACE:
                         self.playing = True if not self.playing else False
                         print('playing now enabled' if self.playing else 'playing now disabled')
+                        self.clear_board()
+                        if not self.playing:
+                            self.draw_text('Press <space> to resume', 'center')
                         if self.playing:
                             threading.Thread(target=self.round).start()
                     if event.key == pg.K_h:
@@ -132,6 +142,7 @@ class Game:
                     if event.key == pg.K_i:
                         print(self.args)
                         print(self.acceleration)
+                        print(self.bapple)
                     if event.key == pg.K_DOWN:
                         self.switch_direction('down')
                     elif event.key == pg.K_UP:
@@ -156,8 +167,6 @@ class Game:
         return 'vintage' if self.color == 'modern' else ('floorislava' if self.color == 'vintage' else 'modern')
 
     def init_lvl(self):
-        self.apple = [randint(0, self.nb_columns), randint(0, self.nb_lines)]
-
         self.apple: list[int, int] = [0, 0]
         self.bapple: list[list[int, int]] = []
         self.snake: list[list[int, int]] = [[9, 5], [8, 5], [7, 5], [6, 5], [5, 5], [4, 5]]
@@ -180,6 +189,9 @@ class Game:
         self.has_bapple = False
         self.walls: list = []
         self.wall_nb = 0
+        self.add_lenght = 0
+        self.random_range = [-3, 5]
+        self.apple_cpt = 0
 
         surface = pg.Surface((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
         pg.draw.rect(surface, self.GREY, surface.get_rect())
@@ -226,14 +238,25 @@ class Game:
     def place_bad_apple(self):
         x = randint(1, self.nb_columns)
         y = randint(1, self.nb_columns)
-        if [x, y] in self.snake or [x, y] in self.walls:
+        if [x, y] in self.snake or [x, y] in self.walls or self.get_snake_distance((x, y), 'min') < 6 or [x, y] == self.apple:
             self.place_bad_apple()
         else:
             self.bapple.append([x, y])
-            line = (y - 1) * self.square_dim
             col = (x - 1) * self.square_dim
+            line = (y - 1) * self.square_dim
             self.draw_rect((col, line), self.bapple_color)
             self.has_bapple = True
+
+    def change_bapples(self):
+        self.redo_bapples = False
+        for pos in self.bapple:
+            col = (pos[0] - 1) * self.square_dim
+            line = (pos[1] - 1) * self.square_dim
+            self.draw_rect((col, line), self.bg_color)
+        self.bapple = []
+        while len(self.bapple) < self.nb_bapples:
+            self.place_bad_apple()
+        self.draw_bapples()
 
     def draw_snake(self):
         col = (self.snake[0][0] - 1) * self.square_dim
@@ -251,22 +274,19 @@ class Game:
             col = (next_pos[0] - 1) * self.square_dim
             line = (next_pos[1] - 1) * self.square_dim
             self.draw_rect((col, line), self.bg_color)
-            old = self.snake.pop()
-            col = (old[0] - 1) * self.square_dim
-            line = (old[1] - 1) * self.square_dim
-            self.draw_rect((col, line), self.bg_color)
+            self.pop_snake()
+            self.cpt -= 1
             return
 
         if next_pos in self.snake:
             self.playing = False
             return
         if self.args.get('bapple') and next_pos in self.bapple:
-            old = self.snake.pop()
-            self.has_bapple = False
-            col = (old[0] - 1) * self.square_dim
-            line = (old[1] - 1) * self.square_dim
+            self.apple_cpt += 1
+            self.pop_snake()
             self.bapple.remove(next_pos)
-            self.draw_rect((col, line), self.bg_color)
+            self.has_bapple = False
+            self.cpt -= 1
         if next_pos == self.apple:
             self.cpt += 1
             self.has_apple = False
@@ -274,15 +294,23 @@ class Game:
             #     print(f'{self.cpt} apple eaten')
             # else:
             #     print(f'{self.cpt} apples grallées')
+            if self.args.get('randomania'):
+                a, b = self.random_range
+                self.add_lenght = randint(a, b)
             if self.args.get('colormania'):
                 self.change_colors(self.get_color())
             if self.args.get('accelerato') and self.time >= self.acceleration:
                 self.time -= self.acceleration
         else:
-            old = self.snake.pop()
-            col = (old[0] - 1) * self.square_dim
-            line = (old[1] - 1) * self.square_dim
-            self.draw_rect((col, line), self.bg_color)
+            if self.add_lenght != 0:
+                if self.add_lenght < 0:
+                    self.pop_snake()
+                    self.pop_snake()
+                    self.cpt -= 2
+                self.cpt += 1
+                self.add_lenght += 1 if self.add_lenght < 0 else -1
+            else:
+                self.pop_snake()
 
         self.snake.insert(0, next_pos)
         col = (next_pos[0] - 1) * self.square_dim
@@ -292,6 +320,12 @@ class Game:
             col = (position[0] - 1) * self.square_dim
             line = (position[1] - 1) * self.square_dim
             self.draw_rect((col, line), self.snake_color)
+
+    def pop_snake(self):
+        old = self.snake.pop()
+        col = (old[0] - 1) * self.square_dim
+        line = (old[1] - 1) * self.square_dim
+        self.draw_rect((col, line), self.bg_color)
 
     def clear_board(self):
         self.screen.fill(self.bg_color)
@@ -363,12 +397,20 @@ class Game:
         return True
 
     def round(self):
+        self.draw_all()
         while self.playing:
             if not self.has_apple:
                 self.place_apple()
-            if self.args.get('bapple') and not self.has_bapple:
-                while len(self.bapple) <= self.nb_bapples:
-                    self.place_bad_apple()
+            if self.args.get('bapple'):
+                if (self.apple_cpt+1) % 5 == 0 and self.redo_bapples:
+                    self.change_bapples()
+                elif (self.apple_cpt+1) % 5 != 0:
+                    self.redo_bapples = True
+                if not self.has_bapple:
+                    while len(self.bapple) < self.nb_bapples:
+                        self.place_bad_apple()
+            if not self.snake:
+                pass
             x_off = 1 if self.right else (-1 if self.left else 0)
             y_off = -1 if self.up else (1 if self.down else 0)
             x = self.snake[0][0] + x_off
@@ -386,17 +428,19 @@ class Game:
                 x = (self.nb_columns if x == 0 else 1)
             if y == 0 or y == self.nb_lines + 1:
                 y = (self.nb_lines if y == 0 else 1)
-            self.draw_points()
+            self.draw_text(f'  {self.cpt}  ', 'top_right')
             self.draw_next_snake([x, y])
             time.sleep(self.time)
 
-    def draw_points(self):
+    def draw_text(self, text: str, position: str):
         font = pg.font.Font('freesansbold.ttf', 32)
-        text = font.render(str(self.cpt), True, self.text_color, self.bg_color)
+        text = font.render(text, True, self.text_color, self.bg_color)
         textRect = text.get_rect()
-        textRect.topright = (self.nb_columns * self.square_dim, 0)
+        if position == 'top_right':
+            textRect.topright = (self.nb_columns * self.square_dim, 0)
+        elif position == 'center':
+            textRect.center = (self.nb_columns * self.square_dim // 2, self.nb_lines * self.square_dim // 2)
         self.screen.blit(text, textRect)
-        pass
 
     def exit_game(self):
         self.playing = False
@@ -464,7 +508,8 @@ class Game:
     def pass_args(self, entry: tk.Entry):
         string = entry.get()
         if string[0] != "\\":
-            self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False}
+            self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False,
+                               'randomania': False}
         else:
             string = string[1:len(string)]
         args = string.split('+')
@@ -476,13 +521,32 @@ class Game:
                 name = arg
             try:
                 if name == 'accelerato':
-                    self.acceleration = float(value)
+                    val = float(value)
+                    self.acceleration = val
                 elif name == 'speed':
-                    self.time = float(value)
+                    val = float(value)
+                    self.time = val
                 elif name == 'bapple':
-                    self.nb_bapples = int(value)
+                    val = int(value)
+                    self.nb_bapples = val
+                elif name == 'randomania':
+                    val = value.split(',')
+                    val = int(val[0]), int(val[1])
+                    self.random_range = val
+                else:
+                    self.args[name] = True
+                    continue
+                self.args[name + '_vals'] = val
+
             except ValueError:
                 raise ValueError(f"wrong value for {name}: '{value}'")
+            except TypeError:
+                if name == 'accelerato':
+                    self.acceleration, self.args[name + '_vals'] = 0.005, 0.005
+                elif name == 'bapple':
+                    self.nb_bapples, self.args[name + '_vals'] = 3, 3
+                elif name == 'randomania':
+                    self.random_range, self.args[name + '_vals'] = [-3, 5], [-3, 5]
             self.args[name] = True
         entry.delete(0, len(entry.get()))
 
