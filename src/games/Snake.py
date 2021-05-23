@@ -514,10 +514,14 @@ class Game:
             string = string[1:len(string)]
         args = string.split('+')
         for arg in args:
-            value = None
+            value = ''
             try:
+                value: str
                 name, value = arg.split('=')
-            except ValueError:
+                if value is not None and value.capitalize() == 'False':
+                    self.args[name] = False
+                    continue
+            except (ValueError, AttributeError):
                 name = arg
             try:
                 if name == 'accelerato':
@@ -531,14 +535,16 @@ class Game:
                     self.nb_bapples = val
                 elif name == 'randomania':
                     val = value.split(',')
+                    if val == ['']:
+                        raise TypeError
                     val = int(val[0]), int(val[1])
                     self.random_range = val
                 else:
                     self.args[name] = True
                     continue
                 self.args[name + '_vals'] = val
-
-            except ValueError:
+            except ValueError as e:
+                print(e)
                 raise ValueError(f"wrong value for {name}: '{value}'")
             except TypeError:
                 if name == 'accelerato':
