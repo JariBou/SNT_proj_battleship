@@ -399,6 +399,7 @@ class Game:
     def round(self):
         self.draw_all()
         while self.playing:
+            self.draw_text(f'  {self.cpt}  ', 'top_right')
             if not self.has_apple:
                 self.place_apple()
             if self.args.get('bapple'):
@@ -428,7 +429,6 @@ class Game:
                 x = (self.nb_columns if x == 0 else 1)
             if y == 0 or y == self.nb_lines + 1:
                 y = (self.nb_lines if y == 0 else 1)
-            self.draw_text(f'  {self.cpt}  ', 'top_right')
             self.draw_next_snake([x, y])
             time.sleep(self.time)
 
