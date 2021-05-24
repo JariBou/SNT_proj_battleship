@@ -115,12 +115,13 @@ class Game:
         self.text_color = self.WHITE
         self.color = 'modern'
 
-        root = tk.Tk()
-        root.title('Select size')
-        self.change_size_menu(root, True)
-        self.args_menu(root)
-        Ct.center(root)
-        root.mainloop()
+        self.settings(True)
+        # root = tk.Tk()
+        # root.title('Select size')
+        # self.change_size_menu(root, True)
+        # self.args_menu(root)
+        # Ct.center(root)
+        # root.mainloop()
 
         self.init_lvl()
         self.clear_board()
@@ -169,9 +170,6 @@ class Game:
                     if event.key == pg.K_c:
                         self.change_colors(self.get_color())
             pg.display.update()
-
-    def set_time(self, x: float):
-        self.time = x
 
     def get_color(self, get_random: bool = False):
         color_list = ['modern', 'vintage', 'floorislava', 'ocean', 'outerworld']
@@ -300,23 +298,25 @@ class Game:
             line = (position[1] - 1) * self.square_dim
             self.draw_rect((col, line), self.snake_color)
 
-    def draw_next_snake(self, next_pos):
+    def draw_next_snake(self, next_pos: list[int, int], snake=None):
+        if snake is None:
+            snake = self.snake
         self.updated = True
         if next_pos in self.walls:
             self.walls.remove(next_pos)
             col = (next_pos[0] - 1) * self.square_dim
             line = (next_pos[1] - 1) * self.square_dim
             self.draw_rect((col, line), self.bg_color)
-            self.pop_snake()
+            self.pop_snake(snake)
             self.cpt -= 1
             return
 
-        if next_pos in self.snake:
+        if next_pos in snake:
             self.playing = False
             return
         if self.args.get('bapple') and next_pos in self.bapple:
             self.apple_cpt += 1
-            self.pop_snake()
+            self.pop_snake(snake)
             self.bapple.remove(next_pos)
             self.has_bapple = False
             self.cpt -= 1
@@ -337,25 +337,25 @@ class Game:
         else:
             if self.add_lenght != 0:
                 if self.add_lenght < 0:
-                    self.pop_snake()
-                    self.pop_snake()
+                    self.pop_snake(snake)
+                    self.pop_snake(snake)
                     self.cpt -= 2
                 self.cpt += 1
                 self.add_lenght += 1 if self.add_lenght < 0 else -1
             else:
-                self.pop_snake()
+                self.pop_snake(snake)
 
-        self.snake.insert(0, next_pos)
+        snake.insert(0, next_pos)
         col = (next_pos[0] - 1) * self.square_dim
         line = (next_pos[1] - 1) * self.square_dim
         self.draw_rect((col, line), self.head_color)
-        for position in self.snake[1:len(self.snake)]:
+        for position in self.snake[1:len(snake)]:
             col = (position[0] - 1) * self.square_dim
             line = (position[1] - 1) * self.square_dim
             self.draw_rect((col, line), self.snake_color)
 
-    def pop_snake(self):
-        old = self.snake.pop()
+    def pop_snake(self, snake: list[list[int, int]]):
+        old = snake.pop()
         col = (old[0] - 1) * self.square_dim
         line = (old[1] - 1) * self.square_dim
         self.draw_rect((col, line), self.bg_color)
@@ -535,19 +535,34 @@ class Game:
         if window is not None:
             window.destroy()
 
-    def settings(self):
+    def settings(self, start=False):
         if self.playing:
             self.playing = False
             print('playing set to false')
             self.draw_text('press <space> to resume', 'top', self.nb_columns * self.square_dim // 20)
         root = tk.Tk()
         root.title('Help')
-        self.change_size_menu(root)
+        root.resizable(width=False, height=False)
+        root.protocol("WM_DELETE_WINDOW", self.exit_game)
+        self.change_size_menu(root, start)
         self.args_menu(root)
         tk.Button(root, text='Done', command=lambda: root.destroy()).pack()
         Ct.center(root)
         root.mainloop()
+        pg.display.set_caption(f'Snake - current args: {self.get_curr_args()}')
         threading.Thread(target=self.round).start()
+
+    def get_curr_args(self) -> str:
+        active = [arg for arg in self.args.keys() if self.args[arg] and not arg.endswith('_vals')]
+        if not active:
+            return 'None'
+        strbuilder = ''
+        for arg in active:
+            if strbuilder != '':
+                strbuilder += ' & ' + arg
+            else:
+                strbuilder += arg
+        return strbuilder
 
     def restart(self):
         self.clear_board()

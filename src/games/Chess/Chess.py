@@ -501,10 +501,11 @@ class King(ChessPiece):
         checkers = []
         position = self.position if next_position is None else next_position
         for row in board:
-            for piece in [p for p in row if (not (p is None) and p.get_color() != self.get_color())]:
+            for piece in [p for p in row if ((p is not None) and p.get_color() != self.get_color())]:
                 if piece.can_move_to(position):
                     checkers.append(piece)
-        return bool(checkers)
+                    return True
+        return False
 
     def gets_checked(self, new_position: Position) -> bool:
         next_board = copy.deepcopy(self.board)

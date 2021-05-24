@@ -59,16 +59,20 @@ class Spaceship:
     def update_bullets(self):
         while True:
             obstacles = [ob for ob in self.board.values() if isinstance(ob, Obstacle)]
-            bullets = [bullet for bullet in self.board.values() if isinstance(bullet, Bullet)]
 
             for obstacle in obstacles:
                 obstacle.pass_board(self.board)
-                if not obstacle.move():
-                    self.board[obstacle.position.x, obstacle.position.y] = ''
+                obstacle.move()
 
+            bullets = [bullet for bullet in self.board.values() if isinstance(bullet, Bullet)]
+            obstacles_pos = [ob.position.get_position() for ob in self.board.values() if isinstance(ob, Obstacle)]
             for bullet in bullets:
                 bullet.pass_board(self.board)
-                if not bullet.move():
+                if bullet.position.get_position() in obstacles_pos:
+                    self.board[bullet.position.x, bullet.position.y] = ''
+                    continue
+                elif not bullet.move():
+                    self.board[bullet.position.x, bullet.position.y - 1] = ''
                     self.board[bullet.position.x, bullet.position.y] = ''
 
             pg.display.update()
@@ -130,10 +134,11 @@ class Bullet:
         if self.position.y == 1:
             self.remove_bullet()
             return False
-        if isinstance(self.board[self.position.x, self.position.y], Obstacle):
+        if isinstance(self.board[self.position.x, self.position.y-1], Obstacle):
             print('hit wall')
             self.remove_bullet()
             self.board[self.position.x, self.position.y-1] = ''
+            self.board[self.position.x, self.position.y] = ''
             self.Gh.draw_rect((self.position.x, self.position.y-1), pg.Color(0, 0, 0))
             return False
         self.old_pos = copy.deepcopy(self.position)
@@ -195,14 +200,14 @@ class Obstacle:
 class Game:
 
     def __init__(self):
-        self.nb_columns = 20
-        self.nb_lines = 20
-        self.square_dim = 10
+        self.nb_columns = 40
+        self.nb_lines = 40
+        self.square_dim = 6
         self.square_size = (self.square_dim, self.square_dim)
         self.square_surface = pg.Surface(self.square_size)
         self.root = pg.Surface((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
         self.screen = pg.display.set_mode((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
-        pg.display.set_caption('Game Of Life V3 - idle')
+        pg.display.set_caption('Space Invaders pre-alpha')
         pg.display.flip()
         self.board = {}
         for x in range(1, self.nb_columns + 1):
@@ -223,18 +228,30 @@ class Game:
         while running:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_DOWN:
-                        spaceship.move_ship('down')
-                    elif event.key == pg.K_UP:
-                        spaceship.move_ship('up')
-                    elif event.key == pg.K_RIGHT:
-                        spaceship.move_ship('right')
-                    elif event.key == pg.K_LEFT:
-                        spaceship.move_ship('left')
-                    elif event.key == pg.K_SPACE:
+                    # if event.key == pg.K_DOWN:
+                    #     spaceship.move_ship('down')
+                    # elif event.key == pg.K_UP:
+                    #     spaceship.move_ship('up')
+                    # elif event.key == pg.K_RIGHT:
+                    #     spaceship.move_ship('right')
+                    # elif event.key == pg.K_LEFT:
+                    #     spaceship.move_ship('left')
+                    if event.key == pg.K_SPACE:
                         spaceship.shot()
                     elif event.key == pg.K_c:
                         spaceship.create_obstacle()
+
+            keys = pg.key.get_pressed()
+            if keys[pg.K_DOWN]:
+                spaceship.move_ship('down')
+            elif keys[pg.K_UP]:
+                spaceship.move_ship('up')
+            elif keys[pg.K_RIGHT]:
+                spaceship.move_ship('right')
+            elif keys[pg.K_LEFT]:
+                spaceship.move_ship('left')
+            time.sleep(0.05)
+
             pg.display.update()
 
     def draw_walls(self):
