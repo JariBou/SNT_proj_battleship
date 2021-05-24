@@ -43,6 +43,8 @@ class Game:
     def __init__(self):
         self.BLACK = pg.Color(0, 0, 0)
         self.GREY = pg.Color(100, 100, 100)
+        self.DARK_GREY = pg.Color(32, 32, 32)
+        self.YELLOW = pg.Color(204, 204, 0)
         self.WHITE = pg.Color(255, 255, 255)
         self.BROWN = pg.Color(153, 76, 0)
         self.DARK_BROWN = pg.Color(51, 25, 0)
@@ -54,6 +56,12 @@ class Game:
         self.PEACH = pg.Color(255, 0, 255)
         self.BLUE = pg.Color(0, 102, 204)
         self.DARK_BLUE = pg.Color(0, 0, 102)
+        self.YELLOW = pg.Color(204, 204, 0)
+        self.WEIRD_ORANGE = pg.Color(102, 51, 0)
+        self.VIOLET = pg.Color(51, 0, 102)
+        self.FADE_GREEN = pg.Color(0, 204, 102)
+        self.CYAN = pg.Color(0, 204, 204)
+        self.PINK = pg.Color(255, 0, 255)
 
         #######
         self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False, 'randomania': False}
@@ -125,13 +133,17 @@ class Game:
                     running = False
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_SPACE:
-                        self.playing = True if not self.playing else False
-                        print('playing now enabled' if self.playing else 'playing now disabled')
-                        self.clear_board()
                         if not self.playing:
-                            self.draw_text('Press <space> to resume', 'center')
-                        if self.playing:
-                            threading.Thread(target=self.round).start()
+                            self.resume_screen()
+                        elif self.playing:
+                            self.pause_screen()
+                        # self.playing = True if not self.playing else False
+                        # print('playing now enabled' if self.playing else 'playing now disabled')
+                        # self.clear_board()
+                        # if not self.playing:
+                        #     self.draw_text('Press <space> to resume', 'center')
+                        # if self.playing:
+                        #     threading.Thread(target=self.round).start()
                     if event.key == pg.K_h:
                         self.settings()
                     if event.key == pg.K_w:
@@ -142,6 +154,7 @@ class Game:
                     if event.key == pg.K_i:
                         print(self.args)
                         print(self.acceleration)
+                        print(self.random_range)
                         print(self.bapple)
                     if event.key == pg.K_DOWN:
                         self.switch_direction('down')
@@ -155,16 +168,33 @@ class Game:
                         self.restart()
                     if event.key == pg.K_c:
                         self.change_colors(self.get_color())
-            # if self.playing:
-            #    threading.Thread(target=self.round).start()
-            # self.round()   # Put in a separated thread do avoid problems with reaction speed
             pg.display.update()
 
     def set_time(self, x: float):
         self.time = x
 
-    def get_color(self):
-        return 'vintage' if self.color == 'modern' else ('floorislava' if self.color == 'vintage' else 'modern')
+    def get_color(self, get_random: bool = False):
+        color_list = ['modern', 'vintage', 'floorislava', 'ocean', 'outerworld']
+        if get_random:
+            color_list.remove(self.color)
+            next_color = color_list[randint(0, len(color_list)-1)]
+            return next_color
+        pos = color_list.index(self.color)
+        next_color = color_list[pos+1 if pos+1 < len(color_list) else 0]
+        # return 'vintage' if self.color == 'modern' else ('floorislava' if self.color == 'vintage' else 'modern')
+        return next_color
+
+    def pause_screen(self):
+        self.playing = False
+        self.clear_board()
+        self.draw_text('Press <space> to resume', 'center')
+        print('playing now disabled')
+
+    def resume_screen(self):
+        self.clear_board()
+        self.playing = True
+        threading.Thread(target=self.round).start()
+        print('playing now enabled')
 
     def init_lvl(self):
         self.apple: list[int, int] = [0, 0]
@@ -204,10 +234,13 @@ class Game:
             for i in range(10):
                 self.place_walls()
                 self.wall_nb += 1
+        self.clear_board()
+        if not self.playing:
+            self.draw_text('Press <space> to start!', 'center')
         self.draw_snake()
 
     def switch_direction(self, direction):
-        if not self.updated:
+        if not self.updated or not self.playing:
             return
         if direction == 'right' and not self.left:
             self.up, self.down, self.left, self.right = False, False, False, True
@@ -358,7 +391,7 @@ class Game:
             if self.get_snake_distance((x + facing[0] * i, y + facing[1] * i)) > 5:
                 col = (x + facing[0] * i - 1) * self.square_dim
                 line = (y + facing[1] * i - 1) * self.square_dim
-                self.draw_rect((col, line), self.DARK_BLUE)
+                self.draw_rect((col, line), self.wall_color)
                 self.walls.append([x + facing[0] * i, y + facing[1] * i])
                 i += 1
             else:
@@ -432,14 +465,26 @@ class Game:
             self.draw_next_snake([x, y])
             time.sleep(self.time)
 
-    def draw_text(self, text: str, position: str):
-        font = pg.font.Font('freesansbold.ttf', 32)
+    def draw_text(self, text: str, position: str, size: int = -1):
+        font = pg.font.Font('freesansbold.ttf', self.nb_columns*self.square_dim//16 if size == -1 else size)
         text = font.render(text, True, self.text_color, self.bg_color)
         textRect = text.get_rect()
         if position == 'top_right':
             textRect.topright = (self.nb_columns * self.square_dim, 0)
         elif position == 'center':
             textRect.center = (self.nb_columns * self.square_dim // 2, self.nb_lines * self.square_dim // 2)
+        elif position == 'top_left':
+            textRect.topleft = (0, 0)
+        elif position == 'bottom_left':
+            textRect.bottomleft = (0, self.nb_lines * self.square_dim)
+        elif position == 'bottom_right':
+            textRect.bottomright = (self.nb_columns * self.square_dim, self.nb_lines * self.square_dim)
+        elif position == 'top':
+            textRect.topleft = ((self.nb_columns * self.square_dim // 2) - textRect.width // 2, 0)
+        elif position == 'bottom':
+            textRect.bottomleft = ((self.nb_columns * self.square_dim // 2) - textRect.width // 2, self.nb_lines * self.square_dim)
+        else:
+            raise Exception(f"Invalid argument '{position}'")
         self.screen.blit(text, textRect)
 
     def exit_game(self):
@@ -474,19 +519,27 @@ class Game:
         if not start:
             tk.Button(window, text="Confirm", command=lambda: self.change_size_val(entry)).pack()
         else:
-            tk.Button(window, text="Confirm", command=lambda: self.change_size_val(entry, window, True)).pack()
+            tk.Button(window, text="Confirm", command=lambda: self.change_size_val(entry, window)).pack()
 
-    def change_size_val(self, entry: tk.Entry, window=None, first=False):
+    def change_size_val(self, entry: tk.Entry, window=None):
         string = entry.get()
+        if string == '':
+            self.change_sizes(self.nb_columns, self.nb_lines, self.square_dim)
+            if window is not None:
+                window.destroy()
+            return
         vals = string.split('+')
         squareDim = int(vals.pop())
         nCol, nLine = vals[0].split('x')
         self.change_sizes(int(nCol), int(nLine), squareDim)
-        window.destroy()
-        if not first:
-            self.settings()
+        if window is not None:
+            window.destroy()
 
     def settings(self):
+        if self.playing:
+            self.playing = False
+            print('playing set to false')
+            self.draw_text('press <space> to resume', 'top', self.nb_columns * self.square_dim // 20)
         root = tk.Tk()
         root.title('Help')
         self.change_size_menu(root)
@@ -494,6 +547,7 @@ class Game:
         tk.Button(root, text='Done', command=lambda: root.destroy()).pack()
         Ct.center(root)
         root.mainloop()
+        threading.Thread(target=self.round).start()
 
     def restart(self):
         self.clear_board()
@@ -503,7 +557,7 @@ class Game:
         tk.Label(window, text="Enter args (dev_only)").pack()
         entry = tk.Entry(window)
         entry.pack()
-        tk.Button(window, text="Confirm", command=lambda: self.pass_args(entry)).pack()
+        tk.Button(window, text="Confirm", command=lambda: self.pass_argsV2(entry)).pack()
 
     def pass_args(self, entry: tk.Entry):
         string = entry.get()
@@ -556,6 +610,50 @@ class Game:
             self.args[name] = True
         entry.delete(0, len(entry.get()))
 
+    def pass_argsV2(self, entry: tk.Entry):
+        string = entry.get()
+        if string[0] == '+' or string[0] == '\\':
+            string = string[1:len(string)]
+            print('keeping args')
+        else:
+            self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False,
+                               'randomania': False}
+            print('reseting args')
+        args: list[str] = string.split('+')
+        for arg in args:
+
+            if arg.__contains__('='):
+                name, value = arg.split('=')
+                if name not in self.args.keys():
+                    raise ValueError(f"wrong input: {name} is not a valid argument")
+                if name == 'accelerato':
+                    val = float(value)
+                    self.acceleration = val
+                elif name == 'speed':
+                    val = float(value)
+                    self.time = val
+                elif name == 'bapple':
+                    val = int(value)
+                    self.nb_bapples = val
+                elif name == 'randomania':
+                    val = value.split(',')
+                    val = [int(val[0]), int(val[1])]
+                    self.random_range = val
+                else:
+                    raise AttributeError(f"wrong input: {name} doesn't support value assignement")
+            else:
+                name = arg
+                if name not in self.args.keys():
+                    raise ValueError(f"wrong input: {name} is not a valid argument")
+                if name == 'accelerato':
+                    self.acceleration, self.args[name + '_vals'] = 0.005, 0.005
+                elif name == 'bapple':
+                    self.nb_bapples, self.args[name + '_vals'] = 3, 3
+                elif name == 'randomania':
+                    self.random_range, self.args[name + '_vals'] = [-3, 5], [-3, 5]
+            self.args[name] = True
+        entry.delete(0, len(entry.get()))
+
     def change_colors(self, color):
         if color == 'modern':
             self.color = 'modern'
@@ -581,6 +679,22 @@ class Game:
             self.head_color = self.DARK_BROWN
             self.wall_color = self.BLACK
             self.bg_color = self.ORANGE
+        elif color == 'ocean':
+            self.color = 'ocean'
+            self.apple_color = self.GREEN
+            self.bapple_color = self.YELLOW
+            self.snake_color = self.DARK_GREY
+            self.head_color = self.BLACK
+            self.wall_color = self.WEIRD_ORANGE
+            self.bg_color = self.BLUE
+        elif color == 'outerworld':
+            self.color = 'outerworld'
+            self.apple_color = self.DARK_GREEN
+            self.bapple_color = self.YELLOW
+            self.snake_color = self.CYAN
+            self.head_color = self.FADE_GREEN
+            self.wall_color = self.WEIRD_ORANGE
+            self.bg_color = self.VIOLET
         self.screen.fill(self.bg_color)
         self.draw_all()
         pass
