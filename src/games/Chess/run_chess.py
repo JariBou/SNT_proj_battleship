@@ -5,6 +5,7 @@ import sys as system
 import threading
 from time import sleep
 from tkinter import messagebox
+from typing import Optional
 
 from src import run_main
 from src.games.Chess.Chess import *
@@ -89,15 +90,16 @@ class ChessGui:
                 self.buttons_list.append(a)
                 self.color_pattern.append(a['bg'])
 
-        self.buttons_list = Ct.regroup_list(self.buttons_list, self.board_size_x)
-        self.logic_color = [1 if self.color_pattern[i] == 'black' else 0 for i in range(len(self.color_pattern))]
-        self.color_pattern = Ct.regroup_list(self.color_pattern, self.board_size_x)
-        self.logic_color = Ct.regroup_list(self.logic_color, self.board_size_x)
+        self.buttons_list: list[list[tk.Button]] = Ct.regroup_list(self.buttons_list, self.board_size_x)
+        self.logic_color: list[int] = [1 if self.color_pattern[i] == 'black' else 0 for i in range(len(self.color_pattern))]
+        self.color_pattern: list[list[str]] = Ct.regroup_list(self.color_pattern, self.board_size_x)
+        self.logic_color: list[list[int]] = Ct.regroup_list(self.logic_color, self.board_size_x)
         print(self.logic_color)
 
         self.playing = False
         self.player = 0
         self.colors = ['White', 'Black']
+        self.checkers = []
 
         self.s_round = 0
         self.p1_time = {'minutes': 0, 'seconds': 0}
@@ -113,13 +115,8 @@ class ChessGui:
         self.start_button = tk.Button(self.root, text='Start', command=self.start_game, relief=tk.RIDGE, border=10)
         self.start_button.grid(row=2, column=self.board_size_x, sticky='nsew')
 
-        self.t1 = None
-
-        self.last_button_clicked = None
-        self.last_piece = None
-        self.last_position = None
-        self.last_color = ''
-        self.check_last_color = ''
+        self.last_button_clicked = self.t1 = self.last_piece = self.last_position = None
+        self.last_color = self.check_last_color = ''
 
         self.b_class.pass_board_to_pieces()
 
@@ -173,28 +170,23 @@ class ChessGui:
         if not self.playing:
             return
         print('----------------------------')
-        board = self.b_class.board
-        curr_pos = Position([button.grid_info()['column'], button.grid_info()['row']])
-        piece_clicked_on = board[curr_pos.y][curr_pos.x]
+        board: list[list[Optional[ChessPiece]]] = self.b_class.board
+        curr_pos: Position = Position([button.grid_info()['column'], button.grid_info()['row']])
+        piece_clicked_on: ChessPiece = board[curr_pos.y][curr_pos.x]
 
         if button == self.last_button_clicked:
-            self.last_piece = None
             self.last_button_clicked['bg'] = self.last_color
             self.last_color = ''
-            self.last_button_clicked = None
+            self.last_button_clicked = self.last_piece = None
             print('last clicked')
             return
 
         if self.last_piece is None:
             if piece_clicked_on is None:
                 return
-            for p, color in zip([0, 1], ['Black', 'White']):
-                try:
-                    if self.player == p and piece_clicked_on.get_color() == color:
-                        print(f'Wrong color: player{self.player} clicked on {color} piece')
-                        return
-                except AttributeError:
-                    pass
+            if piece_clicked_on.get_color() == ['Black', 'White'][self.player]:
+                print(f'Wrong color: player{self.player} clicked on {["Black", "White"][self.player]} piece')
+                return
             self.last_piece = piece_clicked_on
             self.last_color = button['bg']
             button['bg'] = 'blue'
@@ -207,33 +199,33 @@ class ChessGui:
                 print(f'unable to move piece to {curr_pos.get_position()}')
                 return
             self.last_button_clicked['bg'] = self.last_color
-            if isinstance(self.last_piece, Pawn) and self.last_piece.reached_end():
+            if isinstance(self.last_piece, Pawn) and self.last_piece.reached_end():  ## Not doing it from the pawn so that the board may be updated
                 self.update_board()
                 self.last_piece.transform()
             self.b_class.pass_board_to_pieces()
             self.update_board()
+            self.last_piece = self.last_button_clicked = None
             self.last_color = ''
-            self.last_piece = None
-            self.last_button_clicked = None
             self.switch_players()
             if self.b_class.check_for_checks(self.player):
                 _over = self.b_class.check_over(self.player)
                 print(f'over: {_over}')
                 if _over:
+                    button['bg'] = 'green'
                     self.switch_players()
                     print(f'Player {self.player+1} won!')
+                    tk.Label(self.root, text=f'Player {self.player+1} won!').grid(row=4, column=self.board_size_x)
                     self._over()
+                    return
             return
 
-        print(curr_pos.get_position(), '--', [pos.get_position() for pos in self.last_piece.get_valid_positions()])
-
-        if self.b_class.get(curr_pos.x, curr_pos.y) is None:
-            print('b_çclass.get() is None')
+        target: Optional[ChessPiece] = self.b_class.get(curr_pos.x, curr_pos.y)
+        if target is None:
+            print('b_class.get() is None')
             return
 
-        if self.b_class.get(curr_pos.x, curr_pos.y).get_color() == self.last_piece.get_color():
+        if target.get_color() == self.last_piece.get_color():
             self.last_button_clicked['bg'] = self.last_color
-
             self.last_piece = piece_clicked_on
             self.last_color = button['bg']
             button['bg'] = 'blue'
@@ -243,12 +235,12 @@ class ChessGui:
             return
 
     def update_board(self):
-        board = self.b_class.return_board()
+        board: list[list[Optional[ChessPiece]]] = self.b_class.return_board()
         for button in Ct.all_children(self.root, 'Button'):
             b = button.grid_info()
             if b['column'] > self.board_size_x-1:
                 return
-            piece: ChessPiece = board[b['row']][b['column']]
+            piece: Optional[ChessPiece] = board[b['row']][b['column']]
             button['image'] = ''
             button['bg'] = self.color_pattern[b['row']][b['column']]
             if piece is not None:
@@ -274,7 +266,9 @@ class ChessGui:
             if b['column'] > self.board_size_x-1:
                 return
             color = color1 if self.logic_color[b['column']][b['row']] == 1 else color2
-            button['bg'], self.color_pattern[b['row']][b['column']] = color, color
+            self.color_pattern[b['row']][b['column']] = color
+            if button['bg'] not in ['red', 'green']:
+                button['bg'] = color
 
     def create_menubar(self, menubar: tk.Menu):
         colorsettings = tk.Menu(menubar, tearoff=0)
@@ -285,7 +279,7 @@ class ChessGui:
         colorsettings.add_command(label="Dark turquoise & Light blue",
                                   command=lambda: self.change_color('#006666', '#809fff'))
         menubar.add_cascade(label="Board colors", menu=colorsettings)
-        menubar.add_command(label="Help")  ##TODO: create help_rules window with rules
+        menubar.add_command(label="Help")  ##TODO: create help menu and menu to change gamemode
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Play again", command=lambda: (self.root.destroy(), ChessGui(self.board_size, self.variant_name)))
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])

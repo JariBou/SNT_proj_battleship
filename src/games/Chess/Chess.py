@@ -3,6 +3,7 @@
 import copy
 import tkinter as tk
 from abc import ABC, abstractmethod
+from typing import Optional, Union
 
 from src.resources.utils.Constants import Position
 
@@ -10,20 +11,21 @@ from src.resources.utils.Constants import Position
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
 
 
-def get_flattened(seq) -> list:
+#####          STATIC METHODS          ####
+def get_flattened(seq) -> list[Optional['ChessPiece']]:
     se = copy.deepcopy(seq)
     flattened_list = []
-    for elt in se:
-        t = type(elt)
+    for sub in se:
+        t = type(sub)
         if t is tuple or t is list:
-            for elt2 in get_flattened(elt):
-                flattened_list.append(elt2)
+            for sub2 in get_flattened(sub):
+                flattened_list.append(sub2)
         else:
-            flattened_list.append(elt)
+            flattened_list.append(sub)
     return flattened_list
 
 
-def get_board(board_size: list, variant_name) -> list[list]:
+def get_board(board_size: list[int, int], variant_name: str) -> list[list[Optional['ChessPiece']]]:
     if board_size == [8, 8]:
         return [
             [Tower('White', [0, 0]), Knight('White', [1, 0]), Bishop('White', [2, 0]), Queen('White', [3, 0]),
@@ -81,7 +83,8 @@ def get_board(board_size: list, variant_name) -> list[list]:
     elif board_size == [5, 5]:
         if variant_name == 'Baby chess':
             return [
-                [King('White', [0, 0]), Queen('White', [1, 0]), Bishop('White', [2, 0]), Knight('White', [3, 0]), Tower('White', [4, 0])],
+                [King('White', [0, 0]), Queen('White', [1, 0]), Bishop('White', [2, 0]), Knight('White', [3, 0]),
+                 Tower('White', [4, 0])],
                 [Pawn('White', [i, 1]) for i in range(5)],
 
                 [None] * 8,
@@ -102,6 +105,7 @@ def get_board(board_size: list, variant_name) -> list[list]:
                 [King('Black', [0, 4]), Queen('Black', [1, 4]), Tower('Black', [2, 4]),
                  Knight('Black', [3, 4]), Bishop('Black', [4, 4])]
                 ]
+####                                  ####
 
 
 class Board:
@@ -112,24 +116,21 @@ class Board:
         self.colors = ['White', 'Black']
         self.checks_list = {'White': False, 'Black': False}
         self.player = 0
-        self.board = get_board(board_size, variant_name)
-
+        self.board: list[list[Optional[ChessPiece]]] = get_board(board_size, variant_name)
         ### Do a dynamic board where instead of using a binary system to know if a piece is there just move the pieces in that list?
         ### Might be too hard tho....dk
         ##  Actually super easy, Barely an inconveniance, shoulda used cell class for each cell tho....
 
-    def get(self, x: int, y: int):
+    def get(self, x: int, y: int) -> Optional['ChessPiece']:
         print(f'getting at: {x, y}    -  element: {self.board[y][x]}')
         return self.board[y][x]
 
-    def move_piece_to(self, piece, new_position: Position) -> bool:
+    def move_piece_to(self, piece: 'ChessPiece', new_position: Position) -> bool:
         """
         :param piece: ChessPiece class
         :param new_position: Position class
         """
         if piece.move_to(new_position):
-            if self.board[new_position.y][new_position.x] is not None:
-                print(self.board[new_position.y][new_position.x])
             self.board[new_position.y][new_position.x] = piece
             print(f'Moved {piece.get_name()} to {piece.get_position(True)}')
             return True
@@ -137,20 +138,25 @@ class Board:
             print(f'Error while moving piece: {piece} to {new_position}')
             return False
 
+    def get_king(self, color) -> 'King':
+        piece: King    ## Just so that Pycharm gives me a break, it isn't actually True, in the end it is but actually not
+        kings_list: list[King] = [piece for piece in get_flattened(self.board) if
+                                  piece.__class__ == King and piece.get_color() == color]
+        if not kings_list:  ##Should never be an error since you should always have a king
+            print('ERROR KING LIST EMPTY')
+        return kings_list[0]
+
     def check_for_checks(self, color) -> bool:
         """returns True if king of color is check"""
         if color.__class__ != str:
             color = self.colors[color]
         print('\nchecking for checks for:')
-        kings_list = [piece for piece in get_flattened(self.board) if
-                      piece is not None and (piece.__class__ == King and piece.get_color() == color)]
-        if not kings_list:
-            print('ERROR KING LIST EMPTY')
-        for king in kings_list:
-            print(f'-{king.get_name()} at {king.get_position(True)}\n')
-            return king.is_checked()
+        king = self.get_king(color)
+        print(f'-{king.get_name()} at {king.get_position(True)}\n')
+        return king.is_checked()
 
     def check_over(self, player: int) -> bool:
+        """Checks if game is over"""
         color = self.colors[player]
         piece_list = [piece for piece in [cell for cell in get_flattened(self.board) if cell is not None] if
                       piece.get_color() == color]
@@ -188,7 +194,7 @@ class Board:
     def return_board(self) -> list:
         return self.board
 
-    def set_board(self, board):
+    def set_board(self, board: list[list[Optional['ChessPiece']]]):
         self.board = board
 
 
@@ -198,12 +204,12 @@ class ChessPiece(ABC):
         self.color = color
         self.position = position if isinstance(position, Position) else Position(position)
         self.type = Type
-        self.board = None
+        self.board: Optional[list[list[Optional['ChessPiece']]]] = None
 
     def __repr__(self):
         return f'{self.__class__.__name__}(name={self.get_name()}, position={self.position.get_position()}'
 
-    def get_position(self, coordinates=False):
+    def get_position(self, coordinates=False) -> Union[Position, list[int, int]]:
         return self.position if not coordinates else self.position.get_position()
 
     def get_color(self) -> str:
@@ -229,9 +235,9 @@ class ChessPiece(ABC):
         """
         if not self.can_move_to(new_position):
             return False
-        logic_board = copy.deepcopy(self.board)
+        logic_board: list[list[Optional[ChessPiece]]] = copy.deepcopy(self.board)
         logic_board[self.position.y][self.position.x] = None
-        logic_piece = copy.deepcopy(self)
+        logic_piece: ChessPiece = copy.deepcopy(self)
         logic_piece.position = new_position
         logic_board[new_position.y][new_position.x] = logic_piece
         b_class = Board()
@@ -240,11 +246,11 @@ class ChessPiece(ABC):
         b_class.pass_board_to_pieces()
 
         player = 0 if self.color == 'White' else 1
-
         if not b_class.can_move_freely(player):
             print('cannot_move_freely')
             return False
-
+        if self.board[new_position.y][new_position.x] is not None:
+            print(f'{self} eats {self.board[new_position.y][new_position.x]}')
         self.board[self.position.y][self.position.x] = None
         self.position = new_position
         self.board[new_position.y][new_position.x] = self
@@ -254,10 +260,10 @@ class ChessPiece(ABC):
         return new_position.get_position() in [pos.get_position() for pos in self.get_valid_positions()]
 
     def able_to_move(self, new_position: Position) -> bool:
-        """Just checks if a piece as a valip position that gets the player out of check"""
-        logic_board = copy.deepcopy(self.board)
+        """Just checks if a piece as a valid position that gets the player out of check"""
+        logic_board: list[list[Optional[ChessPiece]]] = copy.deepcopy(self.board)
         logic_board[self.position.y][self.position.x] = None
-        logic_piece = copy.deepcopy(self)
+        logic_piece: ChessPiece = copy.deepcopy(self)
         logic_piece.position = new_position
         logic_board[new_position.y][new_position.x] = logic_piece
         b_class = Board()
@@ -283,14 +289,15 @@ class Pawn(ChessPiece):
         super().__init__(color, position, 'Pawn')
         self.first_move = True  ## When you move for the first time, set this to false pretty please
         self.over = False
-        self.w = None
+        self.w: Optional[tk.Tk] = None
 
     def get_valid_positions(self) -> list:  ## HOL' UP PAWNS CAN ONLY MOVE IN ONE DIRECTION, na its good fam, done it
         side = 1 if self.color == 'White' else -1
-        valid_positions = []
+        valid_positions: list[Position] = []
         if self.first_move:
             try:
-                if self.board[self.position.y + (side * 2)][self.position.x] is None and self.board[self.position.y + side][self.position.x] is None:
+                if self.board[self.position.y + (side * 2)][self.position.x] is None and \
+                        self.board[self.position.y + side][self.position.x] is None:
                     valid_positions.append(Position([self.position.x, self.position.y + (side * 2)]))
             except IndexError:  ## On small boards the check check goes outside of boundaries
                 pass
@@ -301,17 +308,14 @@ class Pawn(ChessPiece):
         if self.board[self.position.y + side][self.position.x] is None:
             valid_positions.append(Position([self.position.x, self.position.y + side]))
 
-        to_test = []
         offsets = (1, -1)
         for offset in offsets:
             try:
-                to_test.append(self.board[self.position.y + side][self.position.x + offset])
-                to_test.append([self.position.x + offset, self.position.y + side])
+                target: Optional[ChessPiece] = self.board[self.position.y + side][self.position.x + offset]
+                if not (target is None) and not (target.get_color() is self.color):
+                    valid_positions.append(Position([self.position.x + offset, self.position.y + side]))
             except IndexError:
                 pass
-        for i in range(0, len(to_test), 2):
-            if not (to_test[i] is None) and not (to_test[i].get_color() is self.color):
-                valid_positions.append(Position(to_test[i + 1]))
         return valid_positions
 
     def move_to(self, new_position: Position) -> bool:
@@ -331,8 +335,8 @@ class Pawn(ChessPiece):
         self.w.title('Trasform into:')
         for name, typ, index in zip(['Bishop', 'Tower', 'Queen', 'Knight'], [Bishop, Tower, Queen, Knight],
                                     list(range(4))):
-            tk.Button(self.w, text=name, command=lambda typ=typ: self.t_into(typ)).grid(row=index // 2,
-                                                                                        column=index % 2)
+            tk.Button(self.w, text=name, command=lambda t=typ: self.t_into(t)).grid(row=index // 2,
+                                                                                    column=index % 2)
         self.w.mainloop()
 
     def t_into(self, piece_type):
@@ -348,20 +352,15 @@ class Knight(ChessPiece):
         super().__init__(color, position, 'Knight')
 
     def get_valid_positions(self) -> list:
-        valid_positions = []  ## THIS SHIT WORKED ON FIRST TRY
-        to_test = []  ##  print('HAPPINESS LVL MAXIMUM')
-        offsets = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, -2], [1, 2], [-1, -2], [-1, 2]]
+        valid_positions: list[Position] = []  ## THIS SHIT WORKED ON FIRST TRY
+        offsets = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, -2], [1, 2], [-1, -2],
+                   [-1, 2]]  ##  print('HAPPINESS LVL MAXIMUM')
         for offset in offsets:
             try:
-                to_test.append(self.board[self.position.y + offset[0]][self.position.x + offset[1]])
-                to_test.append([self.position.x + offset[1], self.position.y + offset[0]])
+                target: Optional[ChessPiece] = self.board[self.position.y + offset[0]][self.position.x + offset[1]]
+                if (target is None) or not (target.get_color() is self.color):
+                    valid_positions.append(Position([self.position.x + offset[1], self.position.y + offset[0]]))
             except IndexError:
-                pass
-        for i in range(0, len(to_test), 2):
-            try:
-                if (to_test[i] is None) or not (to_test[i].get_color() is self.color):
-                    valid_positions.append(Position(to_test[i + 1]))
-            except AttributeError:
                 pass
         return valid_positions
 
@@ -372,11 +371,8 @@ class Bishop(ChessPiece):
         super().__init__(color, position, 'Bishop')
 
     def get_valid_positions(self) -> list:
-        valid_positions = []
-        top_right = False
-        top_left = False
-        bottom_right = False
-        bottom_left = False
+        valid_positions: list[Position] = []
+        top_right = top_left = bottom_right = bottom_left = False
 
         for i in range(1, len(self.board)):
             if not top_right:
@@ -391,7 +387,6 @@ class Bishop(ChessPiece):
                 try:
                     board_position = self.board[self.position.y + i][self.position.x - i]
                     top_left = True if board_position is not None else False
-                    print(board_position)
                     if (board_position is None) or not (board_position.get_color() is self.color):
                         valid_positions.append(Position([self.position.x - i, self.position.y + i]))
                 except IndexError:
@@ -420,12 +415,12 @@ class King(ChessPiece):
     def __init__(self, color: str, position):
         super().__init__(color, position, 'King')
         self.first_move = True
-        self.ruck_pos_tower = []  ## [ [Position, Tower], [Position, Tower ]
-        self.ruck_pos_king = []
+        self.ruck_pos_tower: list[list[Position, 'Tower']] = []  ## [ [Position, Tower], [Position, Tower ]
+        self.ruck_pos_king: list[Position] = []
 
     def get_valid_positions(self) -> list:
         offsets = [[1, -1], [1, 0], [1, 1], [0, 1]]
-        valid_positions = []
+        valid_positions: list[Position] = []
         x = self.position.x
         y = self.position.y
 
@@ -451,7 +446,6 @@ class King(ChessPiece):
                     if possible_tower.first_move:
                         possible_tower_position = Position([x + k, y])
                         possible_position = Position([x + 2 * i, y])
-                        print(possible_position.get_position())
                         valid_positions.append(possible_position)
                         self.ruck_pos_tower.append([Position([x + 1 * i, y]), possible_tower_position])
                         self.ruck_pos_king.append(Position([x + 2 * i, y]))
@@ -497,13 +491,11 @@ class King(ChessPiece):
         ### LIKE YOU CHECK DIAGONALLY FROM THE KING AND STUFF
         ## Na we good fam
         ### Use this to check if a move prevents the check
-        board = self.board if next_board is None else next_board
-        checkers = []
-        position = self.position if next_position is None else next_position
+        board: list[list[Optional[ChessPiece]]] = self.board if next_board is None else next_board
+        position: Position = self.position if next_position is None else next_position
         for row in board:
             for piece in [p for p in row if ((p is not None) and p.get_color() != self.get_color())]:
                 if piece.can_move_to(position):
-                    checkers.append(piece)
                     return True
         return False
 
@@ -540,11 +532,8 @@ class Tower(ChessPiece):
         self.first_move = True
 
     def get_valid_positions(self) -> list:
-        valid_positions = []
-        top = False
-        bottom = False
-        left = False
-        right = False
+        valid_positions: list[Position] = []
+        top = bottom = left = right = False
         for i in range(1, len(self.board)):
             if not top:
                 try:
@@ -594,10 +583,10 @@ class Queen(ChessPiece):
 
     # noinspection PyTypeChecker
     def get_valid_positions(self) -> list:
-        logic_board = copy.deepcopy(self.board)
-        positions_list = []
+        logic_board: list[list[Optional[ChessPiece]]] = copy.deepcopy(self.board)
+        positions_list: list[Position] = []
         for Type in [Bishop, Tower]:  ##A Queen's movement can be defined as the combination of a Bishop and a Tower
-            piece = Type(self.color, self.position)
+            piece: ChessPiece = Type(self.color, self.position)
             logic_board[self.position.y][self.position.x] = piece
             piece.pass_new_board(logic_board)
             positions_list += piece.get_valid_positions()
