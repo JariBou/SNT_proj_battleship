@@ -61,7 +61,8 @@ class Game:
         self.PINK = pg.Color(255, 0, 255)
 
         #######
-        self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False, 'randomania': False}
+        self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False,
+                           'randomania': False, 'speed': True}
         self.nb_walls = 5
         self.acceleration = 0.0075
         self.color_types = ['modern', 'vintage', 'floorislava']
@@ -249,7 +250,7 @@ class Game:
 
     def place_apple(self):
         x = randint(1, self.nb_columns)
-        y = randint(1, self.nb_columns)
+        y = randint(1, self.nb_lines)
         if [x, y] in self.snake or [x, y] in self.walls:
             self.place_apple()
         else:
@@ -430,6 +431,7 @@ class Game:
         self.draw_all()
         while self.playing:
             self.draw_text(f'  {self.cpt}  ', 'top_right')
+            self.draw_apple()
             if not self.has_apple:
                 self.place_apple()
             if self.args.get('bapple'):
@@ -629,7 +631,7 @@ class Game:
             print('keeping args')
         else:
             self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False,
-                               'randomania': False}
+                               'randomania': False, 'speed': True}
             print('reseting args')
         args: list[str] = string.split('+')
         for arg in args:
@@ -658,17 +660,17 @@ class Game:
                 if name not in self.args.keys():
                     raise ValueError(f"wrong input: {name} is not a valid argument")
                 if name == 'accelerato':
-                    self.acceleration, self.args[name + '_vals'] = 0.005, 0.005
+                    self.acceleration = self.args[name + '_vals'] = 0.005
                 elif name == 'bapple':
-                    self.nb_bapples, self.args[name + '_vals'] = 3, 3
+                    self.nb_bapples = self.args[name + '_vals'] = 3
                 elif name == 'randomania':
-                    self.random_range, self.args[name + '_vals'] = [-3, 5], [-3, 5]
+                    self.random_range = self.args[name + '_vals'] = [-3, 5]
             self.args[name] = True
         entry.delete(0, len(entry.get()))
 
     def change_colors(self, color):
+        self.color = color
         if color == 'modern':
-            self.color = 'modern'
             self.apple_color = self.RED
             self.bapple_color = self.PEACH
             self.snake_color = self.WHITE
@@ -676,7 +678,6 @@ class Game:
             self.wall_color = self.DARK_BLUE
             self.bg_color = self.GREY
         elif color == 'vintage':
-            self.color = 'vintage'
             self.apple_color = self.DARK_RED
             self.bapple_color = self.PEACH
             self.snake_color = self.GREEN
@@ -684,7 +685,6 @@ class Game:
             self.wall_color = self.DARK_BLUE
             self.bg_color = self.BLACK
         elif color == 'floorislava':
-            self.color = 'floorislava'
             self.apple_color = self.GREY
             self.bapple_color = self.BLUE
             self.snake_color = self.BROWN
@@ -692,7 +692,6 @@ class Game:
             self.wall_color = self.BLACK
             self.bg_color = self.ORANGE
         elif color == 'ocean':
-            self.color = 'ocean'
             self.apple_color = self.GREEN
             self.bapple_color = self.YELLOW
             self.snake_color = self.DARK_GREY
@@ -700,7 +699,6 @@ class Game:
             self.wall_color = self.WEIRD_ORANGE
             self.bg_color = self.BLUE
         elif color == 'outerworld':
-            self.color = 'outerworld'
             self.apple_color = self.DARK_GREEN
             self.bapple_color = self.YELLOW
             self.snake_color = self.CYAN
@@ -709,7 +707,6 @@ class Game:
             self.bg_color = self.VIOLET
         self.screen.fill(self.bg_color)
         self.draw_all()
-        pass
 
     def draw_walls(self):
         for pos in self.walls:
