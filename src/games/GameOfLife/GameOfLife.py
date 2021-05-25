@@ -13,18 +13,18 @@ from src.resources.utils.Constants import Constants as Ct, Position
 def place(button):
     button['bg'] = 'black' if button['bg'] == 'white' else 'white'
 
+
 def g_help():
     messagebox.showinfo(title = "Help & Rules", message="Une cellule possède huit voisins, qui sont les cellules adjacentes horizontalement, verticalement et diagonalement.\n\n"
     "À chaque étape, l’évolution d’une cellule est déterminée par l’état de ses huit voisines de la façon suivante :\n\n"
     "* Une cellule morte possédant exactement trois voisines vivantes devient vivante (elle naît)\n"
     "* une cellule vivante possédant deux ou trois voisines vivantes le reste, sinon elle meurt")
 
+
 def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: Jari\n "
                                                "Version: Alpha V3.0")
-
-
 ####                                  ####
 
 

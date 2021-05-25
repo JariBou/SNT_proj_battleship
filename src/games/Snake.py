@@ -14,8 +14,6 @@ from tkinter import messagebox
 
 
 #####          STATIC METHODS          ####
-
-
 def g_help():
     messagebox.showinfo(title="Help & Rules", message="Cliquer sur une case de la grille révèle:\n\n"
                                                       "- Une zone ne contenant aucune mine\n"
@@ -29,13 +27,12 @@ def about():
                                                "Version: Alpha 1.0")
 
 
-####                                  ####
-
 def create_menu(menubar: tk.Menu):
     menubar.add_command(label="Help", command=g_help)
     menubar.add_command(label="About", command=about)
     # menubar.add_command(label="Stats", command=self.stats)
     # menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
+####                                  ####
 
 
 class Game:
@@ -541,7 +538,7 @@ class Game:
             print('playing set to false')
             self.draw_text('press <space> to resume', 'top', self.nb_columns * self.square_dim // 20)
         root = tk.Tk()
-        root.title('Help')
+        root.title('Settings')
         root.resizable(width=False, height=False)
         root.protocol("WM_DELETE_WINDOW", self.exit_game)
         self.change_size_menu(root, start)

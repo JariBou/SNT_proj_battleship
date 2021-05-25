@@ -117,7 +117,7 @@ class Constants(Enum):
         return photo
 
     @classmethod
-    def regroup_list(cls, List: list, size_of_sublist: int) -> list:
+    def regroup_list(cls, List: list, size_of_sublist: int) -> list[list]:
         return [List[n:n + size_of_sublist] for n in range(0, len(List), size_of_sublist)]
 
     @classmethod

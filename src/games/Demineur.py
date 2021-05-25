@@ -255,8 +255,8 @@ class Game:
         max_line = line + 1 if line < self.nb_lines else line
 
         return len([key for key in self.mines.keys() if (self.mines[key] == 9)
-                    & (min_line <= key[1] <= max_line)
-                    & (min_column <= key[0] <= max_column)])
+                    and (min_line <= key[1] <= max_line)
+                    and (min_column <= key[0] <= max_column)])
 
     def pointeurG(self, event):
         if not self.playing:

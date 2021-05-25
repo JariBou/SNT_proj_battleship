@@ -8,7 +8,7 @@ from tkinter import messagebox
 import tkinter as tk
 
 from src import run_main
-from src.games.Dames.Pieces import *
+from src.games.NotImplemented.Dames.Pieces import *
 from src.resources.utils.Constants import Constants as Ct, ImgLoader as Il
 
 
