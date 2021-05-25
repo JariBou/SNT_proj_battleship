@@ -3,6 +3,7 @@ from enum import Enum
 from PIL import Image, ImageTk
 
 from pathlib import Path
+from typing import Union
 
 
 class ImgLoader:
@@ -119,6 +120,20 @@ class Constants(Enum):
     @classmethod
     def regroup_list(cls, List: list, size_of_sublist: int) -> list[list]:
         return [List[n:n + size_of_sublist] for n in range(0, len(List), size_of_sublist)]
+
+    @classmethod
+    def convert_str_to_list(cls, str_list: str) -> list[Union[float, str]]:
+        str_list.strip()
+        if not (str_list[0] == '[' and str_list[len(str_list) - 1] == ']'):
+            raise ValueError(f'Cannot convert {str_list} to list')
+        values = str_list[1:-1].split(',')
+        L = []
+        for val in values:
+            try:
+                L.append(float(val))
+            except ValueError:
+                L.append(val.strip())
+        return L
 
     @classmethod
     def print_matrice(cls, matrice, separator=', '):

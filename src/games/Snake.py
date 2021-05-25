@@ -36,8 +36,9 @@ def create_menu(menubar: tk.Menu):
 
 
 class Game:
+    args: dict = {}
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.BLACK = pg.Color(0, 0, 0)
         self.GREY = pg.Color(100, 100, 100)
         self.DARK_GREY = pg.Color(32, 32, 32)
@@ -61,18 +62,26 @@ class Game:
         self.PINK = pg.Color(255, 0, 255)
 
         #######
-        self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False,
-                           'randomania': False, 'speed': True}
-        self.nb_walls = 5
-        self.acceleration = 0.0075
-        self.color_types = ['modern', 'vintage', 'floorislava']
+        print(kwargs)
+        self.color = kwargs.get('color', 'modern')
+        for arg in ['bapple', 'accelerato', 'walls', 'colormania', 'randomania', 'speed']:
+            self.args[arg] = kwargs.get(arg, False)
+        # self.args = {'bapple': kwargs.get('bapple', False), 'accelerato': False, 'walls': False, 'colormania': False,
+        #                    'randomania': False, 'speed': True}
+        print(self.args)
+        # self.nb_walls = 5
+        # self.acceleration = 0.0075
+        self.nb_walls = kwargs.get('nb_walls', 5)
+        self.acceleration = kwargs.get('acceleration', 0.0075)
+        self.time = kwargs.get('speed', 0.075)
+        self.color_types = ['modern', 'vintage', 'floorislava', 'ocean', 'outerworld']
         self.redo_bapples = True
-        #######
 
+        self.nb_columns = kwargs.get('nb_columns', 20)
+        self.nb_lines = kwargs.get('nb_lines', 20)
+        self.square_dim = kwargs.get('square_dim', 10)
+        #######
         self.cpt = 0
-        self.nb_columns = 20
-        self.nb_lines = 20
-        self.square_dim = 10
         self.square_size = (self.square_dim, self.square_dim)
         self.square_surface = pg.Surface(self.square_size)
         self.root = pg.Surface((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
@@ -89,13 +98,9 @@ class Game:
         self.snake: list[list[int, int]] = [[9, 5], [8, 5], [7, 5], [6, 5], [5, 5], [4, 5]]
 
         running = True
-        self.time = 0.075
-        self.down = False
-        self.up = False
-        self.left = False
+        self.down = self.up = self.left = False
         self.right = True
-        self.has_apple = False
-        self.has_bapple = False
+        self.has_apple = self.has_bapple = False
         self.updated = True
         self.nb_bapples = 3
         self.walls: list = []
@@ -111,7 +116,6 @@ class Game:
         self.wall_color = self.DARK_BLUE
         self.bg_color = self.GREY
         self.text_color = self.WHITE
-        self.color = 'modern'
 
         self.settings(True)
         # root = tk.Tk()
@@ -122,6 +126,7 @@ class Game:
         # root.mainloop()
 
         self.init_lvl()
+        self.draw_all()
         self.clear_board()
         self.draw_snake()
         self.draw_text('Press <space> to start!', 'center')
@@ -204,7 +209,8 @@ class Game:
         self.wall_color = self.DARK_BLUE
         self.bg_color = self.GREY
         self.text_color = self.WHITE
-        self.color = 'modern'
+
+        self.change_colors(self.color)
 
         self.time = 0.075
         self.down = False
@@ -367,7 +373,7 @@ class Game:
         facing = directions[randint(0, len(directions)-1)]
         x = randint(1, self.nb_columns + 1)
         y = randint(1, self.nb_lines + 1)
-        if self.get_snake_distance((x, y)) > 5 and self.is_far_from_wall((x, y), 7):
+        if self.get_snake_distance((x, y)) > 5 and self.is_far_from_wall((x, y), 7) and not (x > self.nb_columns - 8 and y < 8):
             x, y, last_facing = self.place_wall_at((x, y), facing)
             directions.remove(last_facing)
             facing = directions[randint(0, len(directions)-1)]
@@ -432,6 +438,7 @@ class Game:
         while self.playing:
             self.draw_text(f'  {self.cpt}  ', 'top_right')
             self.draw_apple()
+            self.draw_bapples()
             if not self.has_apple:
                 self.place_apple()
             if self.args.get('bapple'):
