@@ -84,8 +84,8 @@ class Game:
         self.cpt = 0
         self.square_size = (self.square_dim, self.square_dim)
         self.square_surface = pg.Surface(self.square_size)
-        self.root = pg.Surface((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
-        self.screen = pg.display.set_mode((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
+        self.root = pg.Surface(((self.nb_columns+2) * self.square_dim, (self.nb_lines+2) * self.square_dim))
+        self.screen = pg.display.set_mode(((self.nb_columns+2) * self.square_dim, (self.nb_lines+2) * self.square_dim))
         pg.display.set_caption('Snake')
         pg.display.flip()
         pg.init()
@@ -116,13 +116,6 @@ class Game:
         self.wall_color = self.DARK_BLUE
         self.bg_color = self.GREY
         self.text_color = self.WHITE
-
-        # root = tk.Tk()
-        # root.title('Select size')
-        # self.change_size_menu(root, True)
-        # self.args_menu(root)
-        # Ct.center(root)
-        # root.mainloop()
 
         self.init_lvl()
         self.draw_all()
@@ -272,6 +265,7 @@ class Game:
             directions.remove(last_facing)
             facing = directions[randint(0, len(directions)-1)]
             x, y, last_facing = self.place_wall_at((x, y), facing)
+            directions = [[1, 0], [0, 1], [-1, 0], [0, -1]]
             directions.remove(last_facing)
             facing = directions[randint(0, len(directions)-1)]
             self.place_wall_at((x, y), facing)
@@ -287,7 +281,9 @@ class Game:
             # if not self.is_far_from_wall((x + facing[0] * i, y + facing[1] * i), 3):
             #     return x + facing[0] * (i-1) - 1, y + facing[1] * (i-1) - 1, facing
             if [x + facing[0] * i, y + facing[1] * i] in self.walls:
-                return x + facing[0] * (i) , y + facing[1] * (i) , facing
+                return x + facing[0] * (i-1), y + facing[1] * (i-1), facing
+            if not (1 < x + facing[0] * i < self.nb_columns+1) or not (1 < y + facing[1] * i < self.nb_lines+1):
+                return x + facing[0] * (i-1), y + facing[1] * (i-1), facing
             if self.get_snake_distance((x + facing[0] * i, y + facing[1] * i)) > self.snake_distance:
                 col = (x + facing[0] * i - 1) * self.square_dim
                 line = (y + facing[1] * i - 1) * self.square_dim
