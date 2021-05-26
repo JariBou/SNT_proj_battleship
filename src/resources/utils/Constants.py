@@ -11,19 +11,19 @@ class ImgLoader:
     def __init__(self):
         self.path = Path(__file__).parent.parent.parent
 
-    def load_img(self, relative_path) -> Image:
+    def load_img(self, relative_path: str) -> Image:
         img = Image.open(self.path.joinpath(relative_path))
         return img
 
     @classmethod
-    def resize_img(cls, img, size, get_as_tk=True) -> ImageTk.PhotoImage:
+    def resize_img(cls, img, size: list[int, int], get_as_tk=True) -> ImageTk.PhotoImage:
         new_img = img.resize((size[0], size[1]))
         if get_as_tk:
             new_img = ImageTk.PhotoImage(new_img)
         return new_img
 
     @classmethod
-    def crop(cls, img, rectangle):
+    def crop(cls, img, rectangle: tuple[int, int, int, int]):
         return img.crop(rectangle)
 
     @classmethod
@@ -33,7 +33,7 @@ class ImgLoader:
 
 class Position:
 
-    def __init__(self, coordinates):
+    def __init__(self, coordinates: list[int, int]):
         self.x = coordinates[0]
         self.y = coordinates[1]
 
@@ -43,7 +43,7 @@ class Position:
     def get_position(self) -> tuple[int, int]:
         return self.x, self.y
 
-    def add(self, args):
+    def add(self, args: str):
         args = args.split('+')
         for arg in args:
             value = 0
@@ -59,7 +59,7 @@ class Position:
                 raise AttributeError(f'unknows attribute {name} for class {self.__class__}')
 
 
-class Constants(Enum):
+class Constants:
 
     @classmethod
     def get_path(cls) -> Path:
@@ -81,7 +81,7 @@ class Constants(Enum):
             ]
 
     @classmethod
-    def all_children(cls, wid, child_type: str) -> list:
+    def all_children(cls, wid: tkinter.Tk, child_type: str) -> list:
         """ Used to return a list of all the elements on a parent
 
         :param child_type: Type of the child to return, 'all' returns all types
@@ -109,7 +109,7 @@ class Constants(Enum):
         return value
 
     @classmethod
-    def get_img(cls, path, size=0) -> ImageTk.PhotoImage:
+    def get_img(cls, path: Path, size=0) -> ImageTk.PhotoImage:
         """ resources\\images\\XXX """
         img = Image.open(path)
         if size != 0:
@@ -136,11 +136,11 @@ class Constants(Enum):
         return L
 
     @classmethod
-    def print_matrice(cls, matrice, separator=', '):
+    def print_matrice(cls, matrice: list[list[any, any]], separator=', '):
         for row in matrice:
             line = ''
             for column in row:
-                line += column + separator
+                line += str(column) + separator
             print(line)
 
     @classmethod

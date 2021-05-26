@@ -10,6 +10,7 @@ import pygame as pg
 
 from src import run_main
 from src.resources.utils.Constants import Constants as Ct
+from src.resources.utils.Constants import ImgLoader
 from tkinter import messagebox
 
 
@@ -69,26 +70,26 @@ class Game:
         # self.args = {'bapple': kwargs.get('bapple', False), 'accelerato': False, 'walls': False, 'colormania': False,
         #                    'randomania': False, 'speed': True}
         print(self.args)
-        # self.nb_walls = 5
-        # self.acceleration = 0.0075
         self.wall_nb = kwargs.get('nb_walls', 5)
-        self.acceleration = kwargs.get('acceleration', 0.0075)
+        self.acceleration = kwargs.get('acceleration', 0.0055)
         self.time = kwargs.get('speed', 0.075)
+        self.max_speed = kwargs.get('max_speed', 0.01)
         self.color_types = ['modern', 'vintage', 'floorislava', 'ocean', 'outerworld']
         self.redo_bapples = True
         self.nb_bapples = kwargs.get('nb_bapple', 3)
         self.random_range = kwargs.get('rando_range', 3)
 
-        self.nb_columns = kwargs.get('nb_columns', 20)
-        self.nb_lines = kwargs.get('nb_lines', 20)
+        self.nb_columns = kwargs.get('nb_columns', 30)
+        self.nb_lines = kwargs.get('nb_lines', 30)
         self.square_dim = kwargs.get('square_dim', 10)
         #######
         self.cpt = 0
         self.square_size = (self.square_dim, self.square_dim)
         self.square_surface = pg.Surface(self.square_size)
         self.root = pg.Surface((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
+        self.path = Ct.get_path()
+        pg.display.set_caption(f'Snake - current args: {self.get_curr_args()}')
         self.screen = pg.display.set_mode((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
-        pg.display.set_caption('Snake')
         pg.display.flip()
         pg.init()
 
@@ -128,6 +129,8 @@ class Game:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
+                    pg.quit()
+                    quit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_SPACE:
                         if not self.playing:
@@ -309,7 +312,10 @@ class Game:
             if self.args.get('colormania'):
                 self.change_colors(self.get_color())
             if self.args.get('accelerato') and self.time >= self.acceleration:
-                self.time -= self.acceleration
+                if self.time >= self.acceleration:
+                    self.time -= self.acceleration
+                elif self.time != self.max_speed:
+                    self.time = self.max_speed
         else:
             if self.add_lenght != 0:
                 if self.add_lenght < 0:
@@ -536,6 +542,8 @@ class Game:
             return 'None'
         strbuilder = ''
         for arg in active:
+            if arg == 'speed':
+                continue
             if strbuilder != '':
                 strbuilder += ' & ' + arg
             else:
@@ -551,57 +559,6 @@ class Game:
         entry = tk.Entry(window)
         entry.pack()
         tk.Button(window, text="Confirm", command=lambda: self.pass_argsV2(entry)).pack()
-
-    def pass_args(self, entry: tk.Entry):
-        string = entry.get()
-        if string[0] != "\\":
-            self.args: dict = {'bapple': False, 'accelerato': False, 'walls': False, 'colormania': False,
-                               'randomania': False}
-        else:
-            string = string[1:len(string)]
-        args = string.split('+')
-        for arg in args:
-            value = ''
-            try:
-                value: str
-                name, value = arg.split('=')
-                if value is not None and value.capitalize() == 'False':
-                    self.args[name] = False
-                    continue
-            except (ValueError, AttributeError):
-                name = arg
-            try:
-                if name == 'accelerato':
-                    val = float(value)
-                    self.acceleration = val
-                elif name == 'speed':
-                    val = float(value)
-                    self.time = val
-                elif name == 'bapple':
-                    val = int(value)
-                    self.nb_bapples = val
-                elif name == 'randomania':
-                    val = value.split(',')
-                    if val == ['']:
-                        raise TypeError
-                    val = int(val[0]), int(val[1])
-                    self.random_range = val
-                else:
-                    self.args[name] = True
-                    continue
-                self.args[name + '_vals'] = val
-            except ValueError as e:
-                print(e)
-                raise ValueError(f"wrong value for {name}: '{value}'")
-            except TypeError:
-                if name == 'accelerato':
-                    self.acceleration, self.args[name + '_vals'] = 0.005, 0.005
-                elif name == 'bapple':
-                    self.nb_bapples, self.args[name + '_vals'] = 3, 3
-                elif name == 'randomania':
-                    self.random_range, self.args[name + '_vals'] = [-3, 5], [-3, 5]
-            self.args[name] = True
-        entry.delete(0, len(entry.get()))
 
     def pass_argsV2(self, entry: tk.Entry):
         string = entry.get()

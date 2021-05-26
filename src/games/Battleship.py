@@ -9,6 +9,7 @@ import sys as system
 from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 
+
 ## TODO: code cleanup
 ## TODO: add touched boats texture
 ## TODO: add key listeners for keybindings to rotate and select ship size
@@ -34,21 +35,22 @@ def g_help():
     """Used to display help_rules about the game"""
     messagebox.showinfo(title="Help & Rules", message="Commencer une partie de bataille navale \n"
                                                       "---------------------------------------\n"
-    "Au début du jeu, chaque joueur place à sa guise tous ses bateaux sur sa grille (à gauche) avec possibilité de les faire pivoter (Rotate) , puis confirme le placement de ses bateaux.\n\n"
-    "Chaque joueur dispose de la flotte suivante: \n"
-    "-1 porte avion (5 cases)\n"
-    "-1 croiseur (4 cases, cliquer sur les 2 cases centrales)\n"
-    "-1 contre torpilleur (3 cases)\n"
-    "-1 sous-marin (3 cases)\n"
-    "-1 torpilleur (2 cases, pareil que les 4 cases)\n\n"
-    "Bien entendu, un joueur ne doit pas voir la grille de son adversaire.\n"
-    "Une fois tous les bateaux en jeu, la partie peut commencer.\n"
-    "Un à un, les joueurs se tirent dessus en cliquant sur la grille de droite.\n\n"
-    "Il faut confirmer le changement de joueur lorsque l'on prend son tour (Change Player).\n"
-    "\n\n"
-    "Comment gagner une partie de bataille navale\n"
-    "---------------------------------------\n"
-    "Une partie de bataille navale se termine lorsque l’un des joueurs n’a plus de navires.")
+                                                      "Au début du jeu, chaque joueur place à sa guise tous ses bateaux sur sa grille (à gauche) avec possibilité de les faire pivoter (Rotate) , puis confirme le placement de ses bateaux.\n\n"
+                                                      "Chaque joueur dispose de la flotte suivante: \n"
+                                                      "-1 porte avion (5 cases)\n"
+                                                      "-1 croiseur (4 cases, cliquer sur les 2 cases centrales)\n"
+                                                      "-1 contre torpilleur (3 cases)\n"
+                                                      "-1 sous-marin (3 cases)\n"
+                                                      "-1 torpilleur (2 cases, pareil que les 4 cases)\n\n"
+                                                      "Bien entendu, un joueur ne doit pas voir la grille de son adversaire.\n"
+                                                      "Une fois tous les bateaux en jeu, la partie peut commencer.\n"
+                                                      "Un à un, les joueurs se tirent dessus en cliquant sur la grille de droite.\n\n"
+                                                      "Il faut confirmer le changement de joueur lorsque l'on prend son tour (Change Player).\n"
+                                                      "\n\n"
+                                                      "Comment gagner une partie de bataille navale\n"
+                                                      "---------------------------------------\n"
+                                                      "Une partie de bataille navale se termine lorsque l’un des joueurs n’a plus de navires.")
+
 
 ####                                  ####
 
@@ -88,7 +90,8 @@ class Battleship_1v1:
         w.set(80)
         w.grid(row=9, column=13)
         self.volume = 0.8
-        test_sound = tk.Button(self.root, text='Test Volume', command=lambda: self.play(self.path.joinpath('resources\\sounds\\fail\\ah.mp3')))
+        test_sound = tk.Button(self.root, text='Test Volume',
+                               command=lambda: self.play(self.path.joinpath('resources\\sounds\\fail\\ah.mp3')))
         test_sound.grid(row=10, column=13)
 
         ## Create a Menubar
@@ -118,12 +121,13 @@ class Battleship_1v1:
 
         alpha = "abcdefghijklmnopqrstuvwxyz"
         ##Boat Board--------------------------------------------------------
-            ## row and column indicators
+        ## row and column indicators
         tk.Label(self.root, bg="sandy brown", fg="white").grid(row=10, column=10, sticky='nsew')
         for row in range(0, 10):
-            tk.Label(self.root, text=str(row+1), bg="peach puff", fg="black").grid(row=row, column=10, sticky='nsew')
+            tk.Label(self.root, text=str(row + 1), bg="peach puff", fg="black").grid(row=row, column=10, sticky='nsew')
         for column in range(0, 10):
-            tk.Label(self.root, text=alpha[column], bg="peach puff", fg="black").grid(row=10, column=column, sticky='nsew')
+            tk.Label(self.root, text=alpha[column], bg="peach puff", fg="black").grid(row=10, column=column,
+                                                                                      sticky='nsew')
             ## Buttons
         for column in range(0, 10):
             for row in range(0, 10):
@@ -133,15 +137,19 @@ class Battleship_1v1:
         ## --------------------------------------------------------------------
 
         ##Attack Board--------------------------------------------------------
-        self.atk_offset = 17   # offsetr for atk_board
-            ## row and column indicators
+        self.atk_offset = 17  # offsetr for atk_board
+        ## row and column indicators
         tk.Label(self.root, bg="sandy brown", fg="white").grid(row=10, column=self.atk_offset - 1, sticky='nsew')
         for row in range(0, 10):
-            tk.Label(self.root, text=str(row+1), bg="peach puff", fg="black").grid(row=row, column=self.atk_offset - 1, sticky='nsew')
-        for column in range(self.atk_offset, self.atk_offset+10):
-            tk.Label(self.root, text=alpha[column - self.atk_offset], bg="peach puff", fg="black").grid(row=10, column=column, sticky='nsew')
+            tk.Label(self.root, text=str(row + 1), bg="peach puff", fg="black").grid(row=row,
+                                                                                     column=self.atk_offset - 1,
+                                                                                     sticky='nsew')
+        for column in range(self.atk_offset, self.atk_offset + 10):
+            tk.Label(self.root, text=alpha[column - self.atk_offset], bg="peach puff", fg="black").grid(row=10,
+                                                                                                        column=column,
+                                                                                                        sticky='nsew')
             ## Buttons
-        for column in range(self.atk_offset, self.atk_offset+10):
+        for column in range(self.atk_offset, self.atk_offset + 10):
             for row in range(0, 10):
                 a = tk.Button(self.root, state=tk.DISABLED)  ##, bg="cyan"
                 a["command"] = lambda a2=a: self.attack(a2)
@@ -192,7 +200,7 @@ class Battleship_1v1:
         self.boats = [self.p1_boats, self.p2_boats]
 
         ## Variables creation
-        self.player = 0    ## curr_player
+        self.player = 0  ## curr_player
         self.boat = ""
         self.boat_state = "horizontal"
         self.count_3 = 0
@@ -203,12 +211,14 @@ class Battleship_1v1:
         ## Creation of the dictionary with all images
         self.images_root = {'touched': get_img(self.path.joinpath('resources\\images\\Battleship\\touched.png')),
                             'missed': get_img(self.path.joinpath('resources\\images\\Battleship\\missed.png'))}
-        self.images_horizontal = {'center': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\center.png')),
-                                  'first': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\first.png')),
-                                  'last': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\last.png'))}
-        self.images_vertical = {'center': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\center.png')),
-                                'first': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\first.png')),
-                                'last': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\last.png'))}
+        self.images_horizontal = {
+            'center': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\center.png')),
+            'first': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\first.png')),
+            'last': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\last.png'))}
+        self.images_vertical = {
+            'center': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\center.png')),
+            'first': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\first.png')),
+            'last': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\last.png'))}
         self.images_root['horizontal'] = self.images_horizontal
         self.images_root['vertical'] = self.images_vertical
 
@@ -217,7 +227,8 @@ class Battleship_1v1:
     def rotate_boat(self):
         """Changes the placement orientation for odd numbers """
         self.boat_state = "horizontal" if self.boat_state == "vertical" else "vertical"
-        self.curr_rotation.config(text='Vertical') if self.curr_rotation.cget('text') == 'Horizontal' else self.curr_rotation.config(text='Horizontal')
+        self.curr_rotation.config(text='Vertical') if self.curr_rotation.cget(
+            'text') == 'Horizontal' else self.curr_rotation.config(text='Horizontal')
 
     def clicked(self, button):
         """ Function called when placing boats
@@ -383,7 +394,8 @@ class Battleship_1v1:
         if len(self.boats[self.player]) == 5:
             print("Suka")
             self.play(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'))
-            ans = messagebox.askquestion(title='Are you sure about that?', message="Dou you wish to keep this boat placement?")
+            ans = messagebox.askquestion(title='Are you sure about that?',
+                                         message="Dou you wish to keep this boat placement?")
             if ans == 'yes':
                 self.change_player.config(state=tk.NORMAL, bg='green')
                 if self.turns == 1:
@@ -514,7 +526,7 @@ class Battleship_1v1:
                     if boat_state[part] == 1:
                         child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
                     else:
-                        #child.config(image=self.images_touched_root.get(orientation).get('last'), bg=self.defaultbg)
+                        # child.config(image=self.images_touched_root.get(orientation).get('last'), bg=self.defaultbg)
                         pass  # Draw touched texture
                     break
                 else:
@@ -577,7 +589,8 @@ class Battleship_1v1:
                         button.config(image=self.images_root.get('touched'))
                         curr_player_atk_board[b['row']][b['column'] - self.atk_offset] = 1
                         if boat.is_dead():
-                            self.play(self.sounds.get('destroy')[random.randint(0, len(self.sounds.get('destroy')) - 1)])
+                            self.play(
+                                self.sounds.get('destroy')[random.randint(0, len(self.sounds.get('destroy')) - 1)])
                             tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat.get_type()} boat')
                         else:
                             self.play(self.sounds.get('touch')[random.randint(0, len(self.sounds.get('touch')) - 1)])
@@ -616,7 +629,8 @@ class Battleship_1v1:
 
     def confirm_change(self):
         """Called when the other player confirms the change"""
-        self.change_player.config(text="Change Player", command=self.switch_player, state=tk.DISABLED, bg=self.defaultbg)
+        self.change_player.config(text="Change Player", command=self.switch_player, state=tk.DISABLED,
+                                  bg=self.defaultbg)
         self.draw_attacks()
         for boat in self.boats[self.player]:
             self.draw_boat_img(boat)
@@ -706,11 +720,11 @@ class Boat:
     def get_type(self) -> str:
         # 2 tiles boat is a Destroyer // 3 tiles boats are Submarine and Cruiser #
         # 4 tiles boat is a Battleship // 5 tiles boat is a Carrier #
-        return ['Destroyer', 'Cruiser/Submarine', 'Battleship', 'Carrier'][int(self.size)-2]
-    
+        return ['Destroyer', 'Cruiser/Submarine', 'Battleship', 'Carrier'][int(self.size) - 2]
+
     def get_coordinates(self) -> list:
         return self.coordinates
-    
+
     def set_state(self, i: int, val: int):
         self.state[i] = val
 
