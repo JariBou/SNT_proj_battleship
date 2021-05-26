@@ -273,7 +273,7 @@ class Game:
     def place_bad_apple(self):
         x = randint(1, self.nb_columns)
         y = randint(1, self.nb_columns)
-        if [x, y] in self.snake or [x, y] in self.walls or self.get_snake_distance((x, y), 'min') < 6 or [x, y] == self.apple:
+        if [x, y] in self.snake or [x, y] in self.walls+self.bapple or self.get_snake_distance((x, y), 'min') < 6 or [x, y] == self.apple:
             self.place_bad_apple()
         else:
             self.bapple.append([x, y])
