@@ -1,5 +1,5 @@
 ## Code Cleaned Up ##
-
+import ctypes
 import sys as system
 import tkinter.font as font
 from random import Random
@@ -30,6 +30,7 @@ class MorpionSolo:
 
     def __init__(self, Ppoints=0, CPUpoints=0, ties=0, whooseTurn=1, level="Noob", previous=None):
         """ class Initialization """
+        self.path = Ct.get_path()
         try:
             previous.destroy()   ## Destroy previous Game just to prevent overloading of memory because of callbacks
         except AttributeError:
@@ -54,6 +55,10 @@ class MorpionSolo:
         self.w.geometry('%dx%d+%d+%d' % (w, h, x, y))
         self.w.title("Tic Tac Toe - Solo")
         self.w.config(bg="lightgray")
+
+        myappid = 'mjcorp.tictactoe.alphav2.5S'  # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        self.w.iconbitmap(self.path.joinpath('resources\\images\\TicTacToe\\icon.ico'))
 
         self.menubar = Menu(self.w)
         self.create_menu()
@@ -520,6 +525,7 @@ class MorpionSolo:
         self.wChoose.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
         self.wChoose.title("Choisissez un curseur: ")
         self.wChoose.config(bg="lightgray")
+        self.wChoose.iconbitmap(self.path.joinpath('resources\\images\\TicTacToe\\icon.ico'))
         customFont = font.Font(size=20)
         ## get screen width and height
         ws = self.wChoose.winfo_screenwidth()

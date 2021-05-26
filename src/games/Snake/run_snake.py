@@ -25,7 +25,7 @@ def about():
 ####                                  ####
 
 
-class Laucher:
+class Launcher:
 
     def __init__(self):
         self.w = tk.Tk()
@@ -33,7 +33,7 @@ class Laucher:
         menubar = tk.Menu(self.w)
         self.w.config(menu=menubar)
         self.create_menu(menubar)
-        myappid = 'mjcorp.battleship.alphav1.2'  # arbitrary string
+        myappid = 'mjcorp.snake.alphav2.1'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Constants.get_path()
         self.w.iconbitmap(self.path.joinpath('resources\\images\\snake\\snake.ico'))

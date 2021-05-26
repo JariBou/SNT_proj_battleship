@@ -1,3 +1,4 @@
+import time
 from tkinter import *
 import tkinter.font as ft
 from src.games import Battleship, Demineur, GameOfLife, Rock_paper_scissors, Pendu_gui, Last_letter_game

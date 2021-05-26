@@ -1,5 +1,5 @@
 ## Code Cleaned Up ##
-
+import ctypes
 import sys as system
 import tkinter.font as font
 from tkinter import *
@@ -39,6 +39,7 @@ class MorpionMulti:
         self.P1points, self.P2points, self.ties, self.pTurn, self.playerPlay = P1points, P2points, ties, pTurn, playerPlay
 
         self.whooseTurn = 1  ##TODO: Make possible the switch of cursors
+        self.path = Ct.get_path()
 
         self.playerPlay = "P1"
 
@@ -60,6 +61,10 @@ class MorpionMulti:
         self.menubar.add_command(label="About", command=about)
         self.menubar.add_command(label="SwitchGamemode", command=self.switch)
         self.menubar.add_command(label="Game Select Menu", command=lambda: [self.w.destroy(), run_main.run_main()])
+
+        myappid = 'mjcorp.tictactoe.alphav2.5S'  # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        self.w.iconbitmap(self.path.joinpath('resources\\images\\TicTacToe\\icon.ico'))
 
         self.has_prev_key_release = None
         self.w.bind("<KeyPress-1>", self.on_key_press_repeat)
@@ -330,6 +335,7 @@ class MorpionMulti:
         self.wChoose = Tk()
         self.wChoose.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
         self.wChoose.config(bg="lightgray")
+        self.wChoose.iconbitmap(self.path.joinpath('resources\\images\\TicTacToe\\icon.ico'))
         ## get screen width and height
         ws = self.wChoose.winfo_screenwidth()
         hs = self.wChoose.winfo_screenheight()

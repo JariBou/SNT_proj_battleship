@@ -1,5 +1,5 @@
 ## Code Cleaned Up ##
-
+import ctypes
 from tkinter import *
 import tkinter.font as ft
 
@@ -20,6 +20,11 @@ class run:
         menubar = Menu(self.w)
         self.w.config(menu=menubar)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.w.destroy(), run_main.run_main()])
+
+        myappid = 'mjcorp.tictactoe.alphav1.1'  # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        self.path = Ct.get_path()
+        self.w.iconbitmap(self.path.joinpath('resources\\images\\TicTacToe\\icon.ico'))
 
         customFont = ft.Font(size=20)
         single = Button(text="SinglePlayer", command=lambda: (self.w.destroy(), MorpionSolo()), font=customFont)
