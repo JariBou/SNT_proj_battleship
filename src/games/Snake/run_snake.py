@@ -1,9 +1,10 @@
 import threading
 import tkinter as tk
+from tkinter import font as ft
 from typing import Union
 
 
-class GuiTests:
+class Laucher:
 
     def __init__(self):
 
@@ -23,6 +24,7 @@ class GuiTests:
         self.square_size = tk.IntVar(value=10)
         self.walls_nb = tk.IntVar(value=5)
 
+        customFont = ft.Font(family='Source Sans Pro Black', size=20)
         self.running = True
 
         self.args_frame = tk.Frame(w)
@@ -140,4 +142,4 @@ if __name__ == '__main__':
         print(g)
     print(a)
     print(b)
-    GuiTests()
+    Laucher()
