@@ -12,7 +12,6 @@ from src.resources.utils.Constants import Constants as Ct
 
 ## TODO: code cleanup
 ## TODO: add touched boats texture
-## TODO: add key listeners for keybindings to rotate and select ship size
 
 
 #####          STATIC METHODS          ####

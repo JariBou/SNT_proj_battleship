@@ -196,7 +196,7 @@ class DamesGui:
         colorsettings.add_command(label="Dark turquoise & Light blue",
                                   command=lambda: self.change_color('#006666', '#809fff'))
         menubar.add_cascade(label="Board colors", menu=colorsettings)
-        menubar.add_command(label="Help")  ##TODO: create help_rules window with rules
+        menubar.add_command(label="Help")
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 

@@ -19,7 +19,7 @@ def g_help():
     messagebox.showinfo(title="Help & Rules", message="Cliquer sur une case de la grille révèle:\n\n"
                                                       "- Une zone ne contenant aucune mine\n"
                                                       "- Une case bordée par 1, 2, 3 ou 4 mines dans un rayon d'1\n"
-                                                      "  case (verticalement, horizontalement, diagonalement\n")  ##TODO: change help func
+                                                      "  case (verticalement, horizontalement, diagonalement\n")
 
 
 def about():

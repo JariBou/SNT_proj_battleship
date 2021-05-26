@@ -279,7 +279,7 @@ class ChessGui:
         colorsettings.add_command(label="Dark turquoise & Light blue",
                                   command=lambda: self.change_color('#006666', '#809fff'))
         menubar.add_cascade(label="Board colors", menu=colorsettings)
-        menubar.add_command(label="Help")  ##TODO: create help menu and menu to change gamemode
+        menubar.add_command(label="Help")
         menubar.add_command(label="About", command=about)
         menubar.add_command(label="Play again", command=lambda: (self.root.destroy(), ChessGui(self.board_size, self.variant_name)))
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])

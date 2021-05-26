@@ -13,28 +13,6 @@ from src.resources.utils.Constants import Constants as Ct
 from tkinter import messagebox
 
 
-#####          STATIC METHODS          ####
-def g_help():
-    messagebox.showinfo(title="Help & Rules", message="Cliquer sur une case de la grille révèle:\n\n"
-                                                      "- Une zone ne contenant aucune mine\n"
-                                                      "- Une case bordée par 1, 2, 3 ou 4 mines dans un rayon d'1\n"
-                                                      "  case (verticalement, horizontalement, diagonalement\n")  ##TODO: change help func
-
-
-def about():
-    """ Used to display an about messageBox """
-    messagebox.showinfo(title="About", message="Made by: Jari \n "
-                                               "Version: Alpha 1.0")
-
-
-def create_menu(menubar: tk.Menu):
-    menubar.add_command(label="Help", command=g_help)
-    menubar.add_command(label="About", command=about)
-    # menubar.add_command(label="Stats", command=self.stats)
-    # menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
-####                                  ####
-
-
 class Game:
     args: dict = {}
 

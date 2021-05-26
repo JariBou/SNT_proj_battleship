@@ -13,7 +13,7 @@ def g_help():
     messagebox.showinfo(title="Help & Rules",
                         message="Speed float is given as 1 over the number of squares it moves per second\n"
                                 "(1 / 0.075 ~ 13.33squares/sec)"
-                        )  ##TODO: change help func
+                        )
 
 
 def about():
