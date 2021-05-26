@@ -1,5 +1,4 @@
 import tkinter
-from enum import Enum
 from PIL import Image, ImageTk
 
 from pathlib import Path

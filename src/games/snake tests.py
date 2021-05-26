@@ -2,7 +2,7 @@
 # b = False
 # c = True
 # a = b = c
-a = b = c =True
+a = b = c = True
 print(b)
 b = False
 print(b)

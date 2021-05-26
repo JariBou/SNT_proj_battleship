@@ -5,7 +5,6 @@ import sys as system
 import threading
 from time import sleep
 from tkinter import messagebox
-from typing import Optional
 
 from src import run_main
 from src.games.Chess.Chess import *

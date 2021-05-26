@@ -1,16 +1,9 @@
-import ctypes
-import threading
 import time
-import tkinter as tk
 import sys as system
 from math import sqrt
 from random import randint
 
 import pygame as pg
-
-from src import run_main
-from src.resources.utils.Constants import Constants as Ct
-from tkinter import messagebox
 
 
 class Game:

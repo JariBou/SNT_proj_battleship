@@ -1,7 +1,6 @@
 import copy
 import random
 from functools import cache
-from time import sleep, time
 
 from src.resources.utils.Constants import Position
 
@@ -54,10 +53,10 @@ class MotherBoard:
                        [None, None, None],
                        [None, None, None]]
 
-        self.row_values = [[0 for i in range(9)] for k in range(9)]
-        self.row_possible_values = [[i for i in range(1, 10)] for k in range(9)]
-        self.board_values = [[0 for i in range(9)] for k in range(9)]
-        self.column_possible_values = [[i for i in range(1, 10)] for k in range(9)]
+        self.row_values = [[0 for _ in range(9)] for _ in range(9)]
+        self.row_possible_values = [[i for i in range(1, 10)] for _ in range(9)]
+        self.board_values = [[0 for _ in range(9)] for _ in range(9)]
+        self.column_possible_values = [[i for i in range(1, 10)] for _ in range(9)]
 
     def create_board(self):
         for row in range(3):
@@ -124,7 +123,6 @@ class MotherBoard:
             for e in self.board_values:
                 print(e)
             print('for loop', index)
-            good = False
             random.shuffle(row)
             if index == 0:
                 print(row)

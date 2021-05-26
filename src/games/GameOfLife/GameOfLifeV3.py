@@ -1,9 +1,7 @@
-import ctypes
-import threading
 import time
 import tkinter as tk
 import sys as system
-from random import randint, random
+from random import randint
 
 import pygame as pg
 
@@ -11,7 +9,7 @@ from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 from tkinter import messagebox
 
-
+##TODO: add settings panel to switch game
 #####          STATIC METHODS          ####
 
 

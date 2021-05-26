@@ -15,16 +15,19 @@ def place(button):
 
 
 def g_help():
-    messagebox.showinfo(title = "Help & Rules", message="Une cellule possède huit voisins, qui sont les cellules adjacentes horizontalement, verticalement et diagonalement.\n\n"
-    "À chaque étape, l’évolution d’une cellule est déterminée par l’état de ses huit voisines de la façon suivante :\n\n"
-    "* Une cellule morte possédant exactement trois voisines vivantes devient vivante (elle naît)\n"
-    "* une cellule vivante possédant deux ou trois voisines vivantes le reste, sinon elle meurt")
+    messagebox.showinfo(title="Help & Rules",
+                        message="Une cellule possède huit voisins, qui sont les cellules adjacentes horizontalement, verticalement et diagonalement.\n\n"
+                                "À chaque étape, l’évolution d’une cellule est déterminée par l’état de ses huit voisines de la façon suivante :\n\n"
+                                "* Une cellule morte possédant exactement trois voisines vivantes devient vivante (elle naît)\n"
+                                "* une cellule vivante possédant deux ou trois voisines vivantes le reste, sinon elle meurt")
 
 
 def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: Jari\n "
                                                "Version: Alpha V3.0")
+
+
 ####                                  ####
 
 
@@ -171,7 +174,7 @@ class GameOfLife:
         self.entry_field.delete(0, len(self.entry_field.get()))
 
     def confirm2(self, args=0):
-        if args:   # otherwise error with enter keybind
+        if args:  # otherwise error with enter keybind
             print(args)
         try:
             self.height = int(self.entry_field.get())

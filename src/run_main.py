@@ -1,12 +1,12 @@
-import time
-from tkinter import *
 import tkinter.font as ft
-from src.games import Battleship, Demineur, GameOfLife, Rock_paper_scissors, Pendu_gui, Last_letter_game
-from src.resources.utils.Constants import Constants as Ct
+from tkinter import *
+
+from src.games import Battleship, Demineur, Last_letter_game, Pendu_gui, Rock_paper_scissors
 from src.games.Chess import run_chess
-from src.games.Snake import run_snake
 from src.games.GameOfLife import run_gol
+from src.games.Snake import run_snake
 from src.games.TicTacToe import run_TTT as Runmorpion
+from src.resources.utils.Constants import Constants as Ct
 
 
 class run_main:

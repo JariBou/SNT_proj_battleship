@@ -1,12 +1,10 @@
 import ctypes
-import tkinter as tk
 import sys as system
+from PIL import Image, ImageTk
 from tkinter import messagebox
-from PIL import ImageTk, Image
-
-from src.resources.utils.Constants import Constants as Ct
 
 from src.games.Chess.Chess import *
+from src.resources.utils.Constants import Constants as Ct
 
 
 #####          STATIC METHODS          ####

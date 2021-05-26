@@ -183,12 +183,4 @@ def convert_str_to_list(str_list: str) -> list[Union[float, str]]:
 
 
 if __name__ == '__main__':
-    print(convert_str_to_list('[5, -5, hello,    -78, 4.5]'))
-    g = 'a'
-    a = [['a', '5'], ['b', '6'], ['c', '7']]
-    b = ['a', '5']
-    if g in a + b:
-        print(g)
-    print(a)
-    print(b)
-    Laucher()
+    Launcher()

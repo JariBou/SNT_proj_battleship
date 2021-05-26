@@ -48,10 +48,12 @@ class Board:
                 # noinspection PyUnresolvedReferences
                 element.pass_board(self.board)
 
-    def move_piece_to(self, piece, pos: Position):
+    @staticmethod
+    def move_piece_to(piece, pos: Position):
         piece.move_to(pos)
 
-    def force_move_to(self, piece, pos: Position):
+    @staticmethod
+    def force_move_to(piece, pos: Position):
         piece.force_move_to(pos)
 
 
@@ -206,6 +208,3 @@ if __name__ == '__main__':
     board = Board()
     board.pass_board_to_pieces()
     print(board.board[7][3])
-    print('>>', str(board.board[7][3].get_valid_paths())[1:-1])
-
-

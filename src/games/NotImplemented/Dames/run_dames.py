@@ -18,6 +18,8 @@ def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: Jari\n "
                                                "Version: Alpha V1.0")
+
+
 ####                                  ####
 
 
@@ -61,8 +63,8 @@ class DamesGui:
         self.color_pattern = []
         ImgLoader = Il()
         chess_array_img = ImgLoader.load_img('resources\\images\\Chess\\ChessPiecesArray.png')
-        self.images = {'White':ImgLoader.resize_img(chess_array_img.crop((300, 60, 360, 120)), (52, 52)),
-                       'Black':ImgLoader.resize_img(chess_array_img.crop((300, 0, 360, 60)), (52, 52))}
+        self.images = {'White': ImgLoader.resize_img(chess_array_img.crop((300, 60, 360, 120)), (52, 52)),
+                       'Black': ImgLoader.resize_img(chess_array_img.crop((300, 0, 360, 60)), (52, 52))}
 
         for row in range(0, self.board_size):
             for column in range(0, self.board_size):
@@ -120,12 +122,12 @@ class DamesGui:
         self.t1 = threading.Thread(target=self.update_timer, args=())
         self.t1.start()
         self.start_button.config(text='Pause', command=self.pause_game)
-        #self.update_board()
+        # self.update_board()
 
     def pause_game(self):
         self.playing = False
         self.start_button.config(text='Resume', command=self.start_game)
-        #self.hide_board()
+        # self.hide_board()
 
     def update_timer(self):
         while self.playing:
@@ -182,7 +184,7 @@ class DamesGui:
     def change_color(self, color1, color2):
         for button in Ct.all_children(self.root, 'Button'):
             b = button.grid_info()
-            if b['column'] > self.board_size-1:
+            if b['column'] > self.board_size - 1:
                 return
             color = color1 if self.logic_color[b['column']][b['row']] == 1 else color2
             button['bg'], self.color_pattern[b['row']][b['column']] = color, color

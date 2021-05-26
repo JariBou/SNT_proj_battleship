@@ -81,18 +81,22 @@ class Last_letter:
         self.create_menu(menubar)
 
         self.first_letter = self.alphabet[randint(0, 25)]
-        self.letter_display = tk.Label(self.root, text=f"First letter: {self.first_letter}", font=customLabelFont, borderwidth=3, relief='sunken')
+        self.letter_display = tk.Label(self.root, text=f"First letter: {self.first_letter}", font=customLabelFont,
+                                       borderwidth=3, relief='sunken')
         self.letter_display.grid(row=0, column=0, sticky='nsew')
 
         self.last_word = 'None'
-        self.last_word_display = tk.Label(self.root, text=f"Last Word: {self.last_word}", font=customLabelFont, borderwidth=3, relief='sunken')
+        self.last_word_display = tk.Label(self.root, text=f"Last Word: {self.last_word}", font=customLabelFont,
+                                          borderwidth=3, relief='sunken')
         self.last_word_display.grid(row=0, column=1, columnspan=2, sticky='nsew')
 
         self.points = 0
-        self.points_display = tk.Label(self.root, text=f"Points: {self.points}", font=customLabelFont, borderwidth=3, relief='sunken')
+        self.points_display = tk.Label(self.root, text=f"Points: {self.points}", font=customLabelFont, borderwidth=3,
+                                       relief='sunken')
         self.points_display.grid(row=0, column=3, sticky='nsew')
 
-        self.next_game_button = tk.Button(self.root, text="New Game", font=customLabelFont, borderwidth=3, command=lambda: new_game(self.root))
+        self.next_game_button = tk.Button(self.root, text="New Game", font=customLabelFont, borderwidth=3,
+                                          command=lambda: new_game(self.root))
         self.next_game_button.grid(row=0, column=4, sticky='nsew')
 
         self.console_output = tk.Label(self.root, text='', font=customLabelFont, borderwidth=3, relief='sunken')
@@ -102,7 +106,8 @@ class Last_letter:
         self.input_field = tk.Entry(self.root, bd=5)
         self.input_field.grid(row=2, column=1, columnspan=2, sticky='ew')
 
-        self.tries_state_button = tk.Label(self.root, text=f"Tries left: {3 - self.tries}", font=customLabelFont, borderwidth=3, relief='sunken')
+        self.tries_state_button = tk.Label(self.root, text=f"Tries left: {3 - self.tries}", font=customLabelFont,
+                                           borderwidth=3, relief='sunken')
         self.tries_state_button.grid(row=2, column=3, columnspan=2, sticky='nsew')
 
         self.enter_word_label = tk.Label(self.root, text='Enter a word:', font=customLabelFont)
@@ -121,7 +126,7 @@ class Last_letter:
     def admin_command(self):
         print(self.mylist.get(0, tk.END))
 
-    def print_input_to_console(self, event):
+    def print_input_to_console(self, _):
         self.console_output.config(text="")
         self.player_input = self.input_field.get()
         print(self.player_input)
@@ -203,8 +208,8 @@ class Last_letter:
             try:
                 self.tries_state_button.config(text="Game Over", bg='red')
                 time.sleep(0.7)
-                if self.quiting:   ## To fix window not exiting, main thread probably continues when time.sleep is called
-                    return         ## So we need to check the more often possible
+                if self.quiting:  ## To fix window not exiting, main thread probably continues when time.sleep is called
+                    return  ## So we need to check the more often possible
                 self.tries_state_button.config(text="Press New Game", bg='red')
                 time.sleep(0.7)
                 if self.quiting:

@@ -1,5 +1,4 @@
 # randomize rows, columns and numbers (of valid base pattern)
-import random
 from random import sample
 
 

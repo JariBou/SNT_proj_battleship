@@ -299,8 +299,9 @@ class Game:
                                               col * self.square_dim + self.gap - 3,
                                               line * self.square_dim + self.gap - 3,
                                               width=0, fill=
-                    self.colors[
-                        random.randint(0, len(self.empty_colors) - 1)] if self.random_color else self.void_color)
+                                              self.colors[
+                                                  random.randint(0,
+                                                                 len(self.empty_colors) - 1)] if self.random_color else self.void_color)
             self.nb_seen_squares += 1
             self.player_board[col, line] = 'vn'
             self.land_canvas.update_idletasks()
@@ -326,7 +327,7 @@ class Game:
                                                       x * self.square_dim + self.gap - 3,
                                                       y * self.square_dim + self.gap - 3,
                                                       width=0, fill=self.colors[
-                        random.randint(0, len(self.empty_colors) - 1)] if self.random_color else self.void_color)
+                            random.randint(0, len(self.empty_colors) - 1)] if self.random_color else self.void_color)
 
     def pointeurD(self, event):
         if not self.playing:
@@ -380,7 +381,7 @@ class Game:
         self.land_canvas.create_text(int(self.land_canvas.cget('width')) // 2,
                                      int(self.land_canvas.cget('height')) // 2, fill="green",
                                      font="Times 35 italic bold", text="WON")
-        self.play(self.sounds.get('win')[random.randint(0, len(self.sounds.get('win'))-1)])
+        self.play(self.sounds.get('win')[random.randint(0, len(self.sounds.get('win')) - 1)])
         self.games_played += 1
         self.ratio_value = ((self.wins // self.games_played) * 100)
         self.wins += 1

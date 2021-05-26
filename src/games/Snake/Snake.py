@@ -1,4 +1,3 @@
-import ctypes
 import threading
 import time
 import tkinter as tk
@@ -10,10 +9,10 @@ import pygame as pg
 
 from src import run_main
 from src.resources.utils.Constants import Constants as Ct
-from src.resources.utils.Constants import ImgLoader
 from tkinter import messagebox
 
 
+##TODO: add settings panel to switch game
 #####          STATIC METHODS          ####
 def g_help():
     messagebox.showinfo(title="Help & Rules", message="Cliquer sur une case de la grille révèle:\n\n"
@@ -33,6 +32,8 @@ def create_menu(menubar: tk.Menu):
     menubar.add_command(label="About", command=about)
     # menubar.add_command(label="Stats", command=self.stats)
     # menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
+
+
 ####                                  ####
 
 
@@ -117,7 +118,7 @@ class Game:
         self.bg_color = self.GREY
         self.text_color = self.WHITE
 
-        #self.settings(True)
+        # self.settings(True)
 
         self.init_lvl()
         self.draw_all()
@@ -174,10 +175,10 @@ class Game:
         color_list = ['modern', 'vintage', 'floorislava', 'ocean', 'outerworld']
         if get_random:
             color_list.remove(self.color)
-            next_color = color_list[randint(0, len(color_list)-1)]
+            next_color = color_list[randint(0, len(color_list) - 1)]
             return next_color
         pos = color_list.index(self.color)
-        next_color = color_list[pos+1 if pos+1 < len(color_list) else 0]
+        next_color = color_list[pos + 1 if pos + 1 < len(color_list) else 0]
         # return 'vintage' if self.color == 'modern' else ('floorislava' if self.color == 'vintage' else 'modern')
         return next_color
 
@@ -248,7 +249,8 @@ class Game:
     def place_bad_apple(self):
         x = randint(1, self.nb_columns)
         y = randint(1, self.nb_columns)
-        if [x, y] in self.snake or [x, y] in self.walls+self.bapple or self.get_snake_distance((x, y), 'min') < 6 or [x, y] == self.apple:
+        if [x, y] in self.snake or [x, y] in self.walls + self.bapple or self.get_snake_distance((x, y), 'min') < 6 or [
+            x, y] == self.apple:
             self.place_bad_apple()
         else:
             self.bapple.append([x, y])
@@ -348,13 +350,14 @@ class Game:
     def place_walls(self):
         #          east    north    west    south
         directions = [[1, 0], [0, 1], [-1, 0], [0, -1]]
-        facing = directions[randint(0, len(directions)-1)]
+        facing = directions[randint(0, len(directions) - 1)]
         x = randint(1, self.nb_columns + 1)
         y = randint(1, self.nb_lines + 1)
-        if self.get_snake_distance((x, y)) > 5 and self.is_far_from_wall((x, y), 7) and not (x > self.nb_columns - 8 and y < 8):
+        if self.get_snake_distance((x, y)) > 5 and self.is_far_from_wall((x, y), 7) and not (
+                x > self.nb_columns - 8 and y < 8):
             x, y, last_facing = self.place_wall_at((x, y), facing)
             directions.remove(last_facing)
-            facing = directions[randint(0, len(directions)-1)]
+            facing = directions[randint(0, len(directions) - 1)]
             self.place_wall_at((x, y), facing)
 
         else:
@@ -369,7 +372,7 @@ class Game:
             # if not self.is_far_from_wall((x + facing[0] * i, y + facing[1] * i), 3):
             #     return x + facing[0] * (i-1) - 1, y + facing[1] * (i-1) - 1, facing
             if [x + facing[0] * i - 1, y + facing[1] * i - 1] in self.walls:
-                return x + facing[0] * (i-1) - 1, y + facing[1] * (i-1) - 1, facing
+                return x + facing[0] * (i - 1) - 1, y + facing[1] * (i - 1) - 1, facing
             if self.get_snake_distance((x + facing[0] * i, y + facing[1] * i)) > 5:
                 col = (x + facing[0] * i - 1) * self.square_dim
                 line = (y + facing[1] * i - 1) * self.square_dim
@@ -401,12 +404,12 @@ class Game:
             for spos in self.snake:
                 sx, sy = spos
                 distances += int(sqrt((x - sx) * (x - sx) + (y - sy) * (y - sy)))
-            return distances//len(self.snake)
+            return distances // len(self.snake)
 
     def is_far_from_wall(self, position: tuple[int, int], min_distance: int = 3) -> bool:
         x, y = position
-        for x2 in range(x-min_distance, x+min_distance+1):
-            for y2 in range(y-min_distance, y+min_distance+1):
+        for x2 in range(x - min_distance, x + min_distance + 1):
+            for y2 in range(y - min_distance, y + min_distance + 1):
                 if [x2, y2] in self.walls:
                     return False
         return True
@@ -420,9 +423,9 @@ class Game:
             if not self.has_apple:
                 self.place_apple()
             if self.args.get('bapple'):
-                if (self.apple_cpt+1) % 5 == 0 and self.redo_bapples:
+                if (self.apple_cpt + 1) % 5 == 0 and self.redo_bapples:
                     self.change_bapples()
-                elif (self.apple_cpt+1) % 5 != 0:
+                elif (self.apple_cpt + 1) % 5 != 0:
                     self.redo_bapples = True
                 if not self.has_bapple:
                     while len(self.bapple) < self.nb_bapples:
@@ -450,7 +453,7 @@ class Game:
             time.sleep(self.time)
 
     def draw_text(self, text: str, position: str, size: int = -1):
-        font = pg.font.Font('freesansbold.ttf', self.nb_columns*self.square_dim//16 if size == -1 else size)
+        font = pg.font.Font('freesansbold.ttf', self.nb_columns * self.square_dim // 16 if size == -1 else size)
         text = font.render(text, True, self.text_color, self.bg_color)
         textRect = text.get_rect()
         if position == 'top_right':
@@ -466,7 +469,8 @@ class Game:
         elif position == 'top':
             textRect.topleft = ((self.nb_columns * self.square_dim // 2) - textRect.width // 2, 0)
         elif position == 'bottom':
-            textRect.bottomleft = ((self.nb_columns * self.square_dim // 2) - textRect.width // 2, self.nb_lines * self.square_dim)
+            textRect.bottomleft = (
+            (self.nb_columns * self.square_dim // 2) - textRect.width // 2, self.nb_lines * self.square_dim)
         else:
             raise Exception(f"Invalid argument '{position}'")
         self.screen.blit(text, textRect)

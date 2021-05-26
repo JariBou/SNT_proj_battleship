@@ -9,14 +9,17 @@ from PIL import Image, ImageTk
 from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 
+
 def about():
     messagebox.showinfo(title="About", message="Made by: Jari & LeTiramissou\n "
                                                "Version: Alpha 1.2")
+
 
 def g_help():
     messagebox.showinfo(title="About", message="Le but est de deviner le mot avant que le monsieur\n"
                                                "soit ignoblement pendu\n\n"
                                                "Vous pouvez utiliser le clavier pour tenter une lettre")
+
 
 def get_img(path, size=0):
     img = Image.open(path)
@@ -59,9 +62,9 @@ class Game:
         self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
         self.root.config(bg='white')
         for lettre in range(26):
-            self.root.bind(f"<KeyPress-{chr(65+lettre).lower()}>", self.on_key_press)
+            self.root.bind(f"<KeyPress-{chr(65 + lettre).lower()}>", self.on_key_press)
 
-        #Add a menu bar
+        # Add a menu bar
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar, bg='white')
         self.create_menu(menubar)
@@ -73,7 +76,8 @@ class Game:
         self.root.iconbitmap(self.path.joinpath('resources\\images\\Hangman\\Pendu.ico'))
 
         self.mots = []
-        with open(self.path.joinpath('resources\\txt_files\\' + (fileName if fileName.endswith(".txt") else fileName + ".txt")), "r") as f:
+        with open(self.path.joinpath(
+                'resources\\txt_files\\' + (fileName if fileName.endswith(".txt") else fileName + ".txt")), "r") as f:
             for line in f:
                 self.mots.append(line.replace("\n", ""))
         self.wrong = 0
@@ -84,7 +88,7 @@ class Game:
         self.lines = ['_'] * self.nb_letters
         self.button_list = []
         for i in range(26):
-            a = tk.Button(self.root, text=chr(65+i))
+            a = tk.Button(self.root, text=chr(65 + i))
             a['command'] = lambda b=a: self.clicked(b)
             a.pack(side=tk.LEFT, anchor='nw')
             self.button_list.append(a)

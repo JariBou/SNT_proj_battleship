@@ -156,8 +156,8 @@ class Game:
         max_line = line + 1 if line < self.nb_lines else line
 
         ans = len([key for key in self.alive.keys() if ((self.alive[key] == 1)
-                    & (min_line <= key[1] <= max_line)
-                    & (min_column <= key[0] <= max_column))])
+                                                        & (min_line <= key[1] <= max_line)
+                                                        & (min_column <= key[0] <= max_column))])
 
         if self.alive[col, line] == 1:
             ans -= 1
@@ -242,9 +242,6 @@ class Game:
             time.sleep(self.time)
 
     def update_gui(self):
-        blist = list(self.to_kill.keys()) + list(self.to_born.keys())
-        for key in blist:
-            pass
         for y in range(1, self.nb_lines + 1):
             for x in range(1, self.nb_columns + 1):
                 self.land_canvas.create_rectangle((x - 1) * self.square_dim + self.gap + self.gap / 2,
@@ -254,7 +251,7 @@ class Game:
                                                   width=0, fill=('black' if self.alive[x, y] == 1 else 'white'))
 
     def update_gui1(self):
-        for y in range(self.nb_lines//2, self.nb_lines + 1):
+        for y in range(self.nb_lines // 2, self.nb_lines + 1):
             for x in range(1, self.nb_columns + 1):
                 self.land_canvas.create_rectangle((x - 1) * self.square_dim + self.gap + self.gap / 2,
                                                   (y - 1) * self.square_dim + self.gap + self.gap / 2,
