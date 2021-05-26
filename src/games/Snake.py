@@ -71,11 +71,13 @@ class Game:
         print(self.args)
         # self.nb_walls = 5
         # self.acceleration = 0.0075
-        self.nb_walls = kwargs.get('nb_walls', 5)
+        self.wall_nb = kwargs.get('nb_walls', 5)
         self.acceleration = kwargs.get('acceleration', 0.0075)
         self.time = kwargs.get('speed', 0.075)
         self.color_types = ['modern', 'vintage', 'floorislava', 'ocean', 'outerworld']
         self.redo_bapples = True
+        self.nb_bapples = kwargs.get('nb_bapple', 3)
+        self.random_range = kwargs.get('rando_range', 3)
 
         self.nb_columns = kwargs.get('nb_columns', 20)
         self.nb_lines = kwargs.get('nb_lines', 20)
@@ -102,11 +104,8 @@ class Game:
         self.right = True
         self.has_apple = self.has_bapple = False
         self.updated = True
-        self.nb_bapples = 3
         self.walls: list = []
-        self.wall_nb = 0
         self.add_lenght = 0
-        self.random_range = [-3, 5]
         self.apple_cpt = 0
 
         self.apple_color = self.RED
@@ -117,13 +116,7 @@ class Game:
         self.bg_color = self.GREY
         self.text_color = self.WHITE
 
-        self.settings(True)
-        # root = tk.Tk()
-        # root.title('Select size')
-        # self.change_size_menu(root, True)
-        # self.args_menu(root)
-        # Ct.center(root)
-        # root.mainloop()
+        #self.settings(True)
 
         self.init_lvl()
         self.draw_all()
@@ -202,28 +195,7 @@ class Game:
         self.bapple: list[list[int, int]] = []
         self.snake: list[list[int, int]] = [[9, 5], [8, 5], [7, 5], [6, 5], [5, 5], [4, 5]]
 
-        self.apple_color = self.RED
-        self.bapple_color = self.PEACH
-        self.snake_color = self.WHITE
-        self.head_color = self.BLUE
-        self.wall_color = self.DARK_BLUE
-        self.bg_color = self.GREY
-        self.text_color = self.WHITE
-
         self.change_colors(self.color)
-
-        self.time = 0.075
-        self.down = False
-        self.up = False
-        self.left = False
-        self.right = True
-        self.has_apple = False
-        self.has_bapple = False
-        self.walls: list = []
-        self.wall_nb = 0
-        self.add_lenght = 0
-        self.random_range = [-3, 5]
-        self.apple_cpt = 0
 
         surface = pg.Surface((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
         pg.draw.rect(surface, self.GREY, surface.get_rect())
@@ -233,7 +205,7 @@ class Game:
             for i in range(self.nb_bapples):
                 self.place_bad_apple()
         if self.args.get('walls'):
-            for i in range(10):
+            for i in range(self.wall_nb):
                 self.place_walls()
                 self.wall_nb += 1
         self.clear_board()
@@ -273,7 +245,7 @@ class Game:
     def place_bad_apple(self):
         x = randint(1, self.nb_columns)
         y = randint(1, self.nb_columns)
-        if [x, y] in self.snake or [x, y] in self.walls or self.get_snake_distance((x, y), 'min') < 6 or [x, y] == self.apple:
+        if [x, y] in self.snake or [x, y] in self.walls+self.bapple or self.get_snake_distance((x, y), 'min') < 6 or [x, y] == self.apple:
             self.place_bad_apple()
         else:
             self.bapple.append([x, y])

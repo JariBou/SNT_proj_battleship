@@ -163,6 +163,10 @@ class Game:
                         self.clear_board()
                     if event.key == pg.K_r:
                         self.restart()
+                    elif event.key == pg.K_a:
+                        x = randint(1, self.nb_columns + 1)
+                        y = randint(1, self.nb_lines + 1)
+                        self.place_wallsV2(x, y, self.wall_color)
             keys = pg.key.get_pressed()
             if keys[pg.K_DOWN]:
                 self.switch_direction('down')
@@ -223,13 +227,22 @@ class Game:
     def switch_direction(self, direction):
         if not self.updated or not self.playing:
             return
-        if direction == 'right' and not self.left:
+        # if direction == 'right' and not self.left:
+        #     self.up, self.down, self.left, self.right = False, False, False, True
+        # elif direction == 'left' and not self.right:
+        #     self.up, self.down, self.left, self.right = False, False, True, False
+        # elif direction == 'up' and not self.down:
+        #     self.up, self.down, self.left, self.right = True, False, False, False
+        # elif direction == 'down' and not self.up:
+        #     self.up, self.down, self.left, self.right = False, True, False, False
+
+        if direction == 'right':
             self.up, self.down, self.left, self.right = False, False, False, True
-        elif direction == 'left' and not self.right:
+        elif direction == 'left':
             self.up, self.down, self.left, self.right = False, False, True, False
-        elif direction == 'up' and not self.down:
+        elif direction == 'up':
             self.up, self.down, self.left, self.right = True, False, False, False
-        elif direction == 'down' and not self.up:
+        elif direction == 'down':
             self.up, self.down, self.left, self.right = False, True, False, False
         self.updated = False
         x_off = 1 if self.right else (-1 if self.left else 0)
@@ -241,7 +254,7 @@ class Game:
         if y == 0 or y == self.nb_lines + 1:
             y = (self.nb_lines if y == 0 else 1)
         self.draw_next_snake([x, y])
-        # self.draw_radius()
+        self.draw_radius()
 
     def draw_radius(self):
         self.clear_board()
@@ -260,7 +273,9 @@ class Game:
         facing = directions[randint(0, len(directions)-1)]
         x = randint(1, self.nb_columns + 1)
         y = randint(1, self.nb_lines + 1)
-        if self.get_snake_distance((x, y)) > self.snake_distance and self.is_far_from_wall((x, y), 8) and not (x > self.nb_columns - 8 and y < 8):
+        if not (1 < x + facing[0] < self.nb_columns + 1) or not (1 < y + facing[1] < self.nb_lines + 1):
+            self.place_walls()
+        if self.get_snake_distance((x, y)) > self.snake_distance and self.is_far_from_wall((x, y), 8) and not (x > self.nb_columns - 8 and y < 8) and (not (1 < x + facing[0] < self.nb_columns + 1) or not (1 < y + facing[1] < self.nb_lines + 1)):
             x, y, last_facing = self.place_wall_at((x, y), facing)
             directions.remove(last_facing)
             facing = directions[randint(0, len(directions)-1)]
@@ -272,6 +287,25 @@ class Game:
         else:
             self.place_walls()
             return
+
+    def place_wallsV2(self, x, y, color, size=None, iteration=0, facing=None, sub=None):
+        if facing is None:
+            a = randint(-1, 1)
+            b = randint(-1, 1)
+            while abs(b) == abs(a):
+                b = randint(-1, 1)
+            facing = [a, b]
+        size = size if size is not None else randint(8, 15)
+        sub = sub if sub is not None else randint(5, 8)
+        if size > iteration > sub:
+            self.place_wallsV2(x, y, color, size, iteration + 1, None, 99)
+            # self.walls.append([x + facing[0], y + facing[1]])
+        elif iteration < size and self.get_snake_distance((x, y)) > self.snake_distance and not iteration > sub:
+            self.place_wallsV2(x+facing[0], y+facing[1], color, size, iteration+1, facing, sub)
+            col = (x+facing[0] - 1) * self.square_dim
+            line = (y+facing[1] - 1) * self.square_dim
+            self.draw_rect((col, line), color)
+            self.walls.append([x+facing[0], y+facing[1]])
 
     def place_wall_at(self, position: tuple[int, int], facing: list[int, int]) -> tuple[int, int, list[int, int]]:
         x, y = position
@@ -298,10 +332,9 @@ class Game:
         x, y = position
         if arg == 'min':
             min_distance = self.nb_columns * 2
-            for spos in self.snake:
-                sx, sy = self.snake[0]
-                curr_distance = int(sqrt((x - sx) * (x - sx) + (y - sy) * (y - sy)))
-                min_distance = min(curr_distance, min_distance)
+            sx, sy = self.snake[0]
+            curr_distance = int(sqrt((x - sx) * (x - sx) + (y - sy) * (y - sy)))
+            min_distance = min(curr_distance, min_distance)
             return min_distance
         elif arg == 'max':
             max_distance = -1
@@ -326,13 +359,13 @@ class Game:
         return True
 
     def draw_snake(self):
-        col = (self.snake[0][0] - 1) * self.square_dim
-        line = (self.snake[0][1] - 1) * self.square_dim
-        self.draw_rect((col, line), self.head_color)
         for position in self.snake[1:len(self.snake)]:
             col = (position[0] - 1) * self.square_dim
             line = (position[1] - 1) * self.square_dim
             self.draw_rect((col, line), self.snake_color)
+        col = (self.snake[0][0] - 1) * self.square_dim
+        line = (self.snake[0][1] - 1) * self.square_dim
+        self.draw_rect((col, line), self.head_color)
 
     def draw_next_snake(self, next_pos: list[int, int], snake=None):
         if snake is None:
@@ -340,13 +373,14 @@ class Game:
         self.updated = True
         self.pop_snake(self.snake)
         snake.insert(0, next_pos)
-        col = (next_pos[0] - 1) * self.square_dim
-        line = (next_pos[1] - 1) * self.square_dim
-        self.draw_rect((col, line), self.head_color)
-        for position in self.snake[1:len(snake)]:
-            col = (position[0] - 1) * self.square_dim
-            line = (position[1] - 1) * self.square_dim
-            self.draw_rect((col, line), self.snake_color)
+        self.draw_snake()
+        # for position in self.snake[1:len(snake)]:
+        #     col = (position[0] - 1) * self.square_dim
+        #     line = (position[1] - 1) * self.square_dim
+        #     self.draw_rect((col, line), self.snake_color)
+        # col = (next_pos[0] - 1) * self.square_dim
+        # line = (next_pos[1] - 1) * self.square_dim
+        # self.draw_rect((col, line), self.head_color)
 
     def pop_snake(self, snake: list[list[int, int]]):
         old = snake.pop()
