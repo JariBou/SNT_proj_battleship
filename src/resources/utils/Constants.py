@@ -16,7 +16,7 @@ class ImgLoader:
         return img
 
     @classmethod
-    def resize_img(cls, img, size: list[int, int], get_as_tk=True) -> ImageTk.PhotoImage:
+    def resize_img(cls, img, size: Union[list[int, int], tuple[int, int]], get_as_tk=True) -> ImageTk.PhotoImage:
         new_img = img.resize((size[0], size[1]))
         if get_as_tk:
             new_img = ImageTk.PhotoImage(new_img)
@@ -33,7 +33,7 @@ class ImgLoader:
 
 class Position:
 
-    def __init__(self, coordinates: list[int, int]):
+    def __init__(self, coordinates: Union[list[int, int], tuple[int, int]]):
         self.x = coordinates[0]
         self.y = coordinates[1]
 
@@ -66,7 +66,7 @@ class Constants:
         return Path(__file__).parent.parent.parent
 
     @classmethod
-    def new_board(cls) -> list:
+    def new_board(cls) -> list[list[int]]:
         return [
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -92,7 +92,8 @@ class Constants:
         for item in _list:
             if item.winfo_children():
                 _list.extend(item.winfo_children())
-        return _list if child_type.lower() == "all" else [child for child in _list if str(child.winfo_class()) == child_type]
+        return _list if child_type.lower() == "all" else [child for child in _list if
+                                                          str(child.winfo_class()) == child_type]
 
     @classmethod
     def remove_duplicates(cls, List: list) -> list:
@@ -109,7 +110,7 @@ class Constants:
         return value
 
     @classmethod
-    def get_img(cls, path: Path, size=0) -> ImageTk.PhotoImage:
+    def get_img(cls, path: Path, size: int = 0) -> ImageTk.PhotoImage:
         """ resources\\images\\XXX """
         img = Image.open(path)
         if size != 0:
@@ -168,4 +169,3 @@ class Constants:
         root['bg'] = color
         for element in cls.all_children(root, elements):
             element['bg'] = color
-
