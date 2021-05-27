@@ -73,7 +73,7 @@ class Battleship_1v1:
         myappid = 'mjcorp.battleship.alphav1.2'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
-        self.root.iconbitmap(self.path.joinpath('resources\\images\\Battleship\\Battleship_taskbar.ico'))
+        self.root.iconbitmap(self.path.joinpath('resources\\images\\Battleship\\battleship_icon.ico'))
 
         self.has_prev_key_release = None
         self.root.bind("<KeyRelease-r>", self.on_key_release_repeat)
