@@ -4,6 +4,7 @@ import tkinter as tk
 import sys as system
 from math import sqrt
 from random import randint
+from typing import Optional
 
 import pygame as pg
 
@@ -18,7 +19,7 @@ def g_help():
     messagebox.showinfo(title="Help & Rules", message="Cliquer sur une case de la grille révèle:\n\n"
                                                       "- Une zone ne contenant aucune mine\n"
                                                       "- Une case bordée par 1, 2, 3 ou 4 mines dans un rayon d'1\n"
-                                                      "  case (verticalement, horizontalement, diagonalement\n")
+                                                      "  case (verticalement, horizontalement, diagonalement\n")  ##TODO: help text
 
 
 def about():
@@ -27,11 +28,11 @@ def about():
                                                "Version: Alpha 1.0")
 
 
-def create_menu(menubar: tk.Menu):
+def create_menu(menubar: tk.Menu, root: Optional[tk.Tk]):
     menubar.add_command(label="Help", command=g_help)
     menubar.add_command(label="About", command=about)
     # menubar.add_command(label="Stats", command=self.stats)
-    # menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
+    menubar.add_command(label="Game Select Menu", command=lambda: [pg.quit(), root.destroy(), run_main.run_main()])
 
 
 ####                                  ####
@@ -532,6 +533,9 @@ class Game:
         root.title('Settings')
         root.resizable(width=False, height=False)
         root.protocol("WM_DELETE_WINDOW", self.exit_game)
+        menubar = tk.Menu(root)
+        root.config(menu=menubar)
+        create_menu(menubar, root)
         self.change_size_menu(root, start)
         self.args_menu(root)
         tk.Button(root, text='Done', command=lambda: root.destroy()).pack()

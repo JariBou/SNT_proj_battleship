@@ -2,6 +2,14 @@ import time
 import tkinter as tk
 import sys as system
 from random import randint
+import ctypes
+import threading
+import tkinter as tk
+from PIL.ImageTk import PhotoImage
+from tkinter import font as ft, messagebox
+from typing import Optional, Union
+from src.resources.utils.Constants import Constants
+from src import run_main
 
 import pygame as pg
 
@@ -20,7 +28,12 @@ def g_help():
                                 "À chaque étape, l’évolution d’une cellule est déterminée par l’état de ses huit voisines de la façon suivante :\n\n"
                                 "* Une cellule morte possédant exactement trois voisines vivantes devient vivante (elle naît)\n"
                                 "* une cellule vivante possédant deux ou trois voisines vivantes le reste, sinon elle meurt\n"
-                                "\n Cliquez sur l'écran pour placer ou tuer une cellule")
+                                "\n Cliquez sur l'écran pour placer ou tuer une cellule"
+                                "\n Appuyer sur <Enter> pour lancer le jeu après"
+                                "\n Cliquez sur 'r' pour placer des cellules aléatoirement"
+                                "\n Cliquez sur 'h' pour les paramètres et pouvoir reaccéder à ces infos"
+                                "\n Cliquez sur 'c' pour réinitialiser le jeu"
+                                "\n Utilisez les flèches pour accélérer ou ralentir le jeu")
 
 
 def about():
@@ -31,11 +44,10 @@ def about():
 
 ####                                  ####
 
-def create_menu(menubar: tk.Menu):
+def create_menu(menubar: tk.Menu, root: Optional[tk.Tk]):
     menubar.add_command(label="Help", command=g_help)
     menubar.add_command(label="About", command=about)
-    # menubar.add_command(label="Stats", command=self.stats)
-    # menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
+    menubar.add_command(label="Game Select Menu", command=lambda: [pg.quit(), root.destroy(), run_main.run_main()])
 
 
 class Game:
@@ -50,19 +62,21 @@ class Game:
         self.bg_color = self.BLACK
         self.cell_color = self.WHITE
         self.nb_columns = kwargs.get('nb_columns', 30)
-        self.nb_lines = kwargs.get('nb_lines', 3)
-        self.square_dim = kwargs.get('square_size', 10)
+        self.nb_lines = kwargs.get('nb_lines', 30)
+        self.square_dim = kwargs.get('square_dim', 10)
+        self.time = kwargs.get('speed', 0.05)
+        self.percentage = kwargs.get('rando', 20)
         self.square_size = (self.square_dim, self.square_dim)
         self.square_surface = pg.Surface(self.square_size)
         self.root = pg.Surface((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
         self.screen = pg.display.set_mode((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
         pg.display.set_caption('Game Of Life V3 - idle')
         pg.display.flip()
-        root = tk.Tk()
-        root.title('Select size')
-        self.change_size_menu(root, True)
-        Ct.center(root)
-        root.mainloop()
+        # root = tk.Tk()
+        # root.title('Select size')
+        # self.change_size_menu(root, True)
+        # Ct.center(root)
+        # root.mainloop()
         pg.init()
 
         self.t1 = None
@@ -75,8 +89,6 @@ class Game:
         self.to_born: dict = {}
 
         running = True
-        self.time = 0.05
-        self.percentage = 10
 
         self.init_lvl()
         master = tk.Tk()  ## So that a new Tk window isn't created when you use g_help()
@@ -87,29 +99,35 @@ class Game:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
+                    pg.quit()
+                    quit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_RETURN:
                         self.playing = True if not self.playing else False
                         print('playing now enabled' if self.playing else 'playing now disabled')
                         pg.display.set_caption(f'Game Of Life V3 - {"running" if self.playing else "idle"}')
-                    if event.key == pg.K_r:
+                    elif event.key == pg.K_r:
                         self.randomize()
-                    if event.key == pg.K_c:
+                    elif event.key == pg.K_c:
                         self.clear_board()
-                    if event.key == pg.K_a:
+                    elif event.key == pg.K_a:
                         self.time = 0
-                    if event.key == pg.K_z:
+                    elif event.key == pg.K_z:
                         self.time = 0.025
-                    if event.key == pg.K_e:
+                    elif event.key == pg.K_e:
                         self.time = 0.05
-                    if event.key == pg.K_q:
+                    elif event.key == pg.K_q:
                         self.time = 0.1
-                    if event.key == pg.K_h:
+                    elif event.key == pg.K_h:
                         self.settings()
-                    if event.key == pg.K_UP:
+                    elif event.key == pg.K_UP:
                         self.change_speed(0.01)
-                    if event.key == pg.K_DOWN:
+                    elif event.key == pg.K_DOWN:
                         self.change_speed(-0.01)
+                    elif event.key == pg.K_RIGHT:
+                        self.change_speed(0.02)
+                    elif event.key == pg.K_LEFT:
+                        self.change_speed(-0.02)
                 elif event.type == pg.MOUSEBUTTONUP:
                     self.place(pg.mouse.get_pos())
             if self.playing:
@@ -165,7 +183,7 @@ class Game:
         for x in range(1, self.nb_columns + 1):
             for y in range(1, self.nb_lines + 1):
                 self.alive[x, y] = 0
-                self.draw_rect(((x - 1) * self.square_dim, (y - 1) * self.square_dim), self.bg_color)
+        self.screen.fill(self.bg_color)
         print('>done')
 
     def get_neighbours(self, col: int, line: int) -> int:
@@ -267,20 +285,10 @@ class Game:
         self.change_size_menu(root)
         menubar = tk.Menu(root)
         root.config(menu=menubar)
-        create_menu(menubar)
+        create_menu(menubar, root)
         tk.Button(root, text='Done', command=lambda: root.destroy()).pack()
         Ct.center(root)
         root.mainloop()
-
-
-import ctypes
-import threading
-import tkinter as tk
-from PIL.ImageTk import PhotoImage
-from tkinter import font as ft, messagebox
-from typing import Union
-from src.resources.utils.Constants import Constants
-from src import run_main
 
 
 #####          STATIC METHODS          ####
@@ -290,6 +298,11 @@ def aboutL():
                                                "Version: Alpha 1.2")
 
 
+def g_helpL():
+    messagebox.showinfo(title="Help & Rules",
+                        message="Speed float is given as 1 over the number of updates per second\n"
+                                "(1 / 0.055 ~ 18.18updates/sec)"
+                                "\n Random percentage roughtly indicates the percentage of the screen that will become alive cells")
 ####                                  ####
 
 
@@ -297,26 +310,26 @@ class Launcher:
 
     def __init__(self):
         self.w = tk.Tk()
-        self.w.title("Snake Launcher")
+        self.w.title("GoL Launcher")
         menubar = tk.Menu(self.w)
         self.w.config(menu=menubar)
         self.create_menu(menubar)
-        myappid = 'mjcorp.snake.alphav1.2'  # arbitrary string
+        myappid = 'mjcorp.gol.alphav1.2'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Constants.get_path()
-        self.w.iconbitmap(self.path.joinpath('resources\\images\\snake\\snake.ico'))
+        self.w.iconbitmap(self.path.joinpath('resources\\images\\GoL\\GoL_icon.ico'))
 
-        self.rando = tk.IntVar(value=30)
-        self.speed = tk.DoubleVar(value=0.075)
-        self.columns = tk.IntVar(value=30)
-        self.lines = tk.IntVar(value=30)
-        self.square_size = tk.IntVar(value=10)
+        self.rando = tk.IntVar(value=20)
+        self.speed = tk.DoubleVar(value=0.055)
+        self.columns = tk.IntVar(value=70)
+        self.lines = tk.IntVar(value=70)
+        self.square_size = tk.IntVar(value=7)
 
         customFont = ft.Font(family='Source Sans Pro Black', size=17)
         self.running = True
         imgs = {'logo': PhotoImage(file=self.path.joinpath('resources\\images\\GoL\\GoL_icon.png'))}
 
-        tk.Label(self.w, text='Snake', image=imgs['logo'], font=customFont).grid(row=0, column=1, sticky='n')
+        tk.Label(self.w, image=imgs['logo'], font=customFont).grid(row=0, column=1, sticky='n')
 
         self.args_frame = tk.Frame(self.w)
         tk.Label(self.args_frame, text='--Args--', font=customFont).grid(row=0, column=0, columnspan=2, sticky='n')
@@ -324,9 +337,10 @@ class Launcher:
                                                                                               sticky='w')
         tk.Label(self.args_frame, text='Base speed(advanced)', font=customFont, anchor='w').grid(row=2, column=0,
                                                                                                  sticky='w')
-        self.rentry = tk.Entry(self.args_frame, font=customFont, textvariable=self.rando, state=tk.DISABLED)
+        self.rentry = tk.Entry(self.args_frame, font=customFont, textvariable=self.rando)
         self.rentry.grid(row=1, column=1)
         tk.Entry(self.args_frame, font=customFont, textvariable=self.speed).grid(row=2, column=1)
+        self.args_frame.grid(row=0, column=0)
 
         size_frame = tk.Frame(self.w)
         tk.Label(size_frame, text='Size:', font=customFont, anchor='w').grid(row=0, column=0, sticky='w')
@@ -336,79 +350,31 @@ class Launcher:
         tk.Entry(size_frame, textvariable=self.lines, font=customFont).grid(row=2, column=1)
         tk.Label(size_frame, text='square length: ', font=customFont, anchor='w').grid(row=3, column=0, sticky='w')
         tk.Entry(size_frame, textvariable=self.square_size, font=customFont).grid(row=3, column=1)
-        size_frame.grid(row=2, column=0, columnspan=4)
+        size_frame.grid(row=2, column=0)
 
-        tk.Button(self.w, text='Open snake',
-                  command=self.snakeuh, font=customFont, relief=tk.RAISED, border=10).grid(row=5, column=0,
+        tk.Button(self.w, text='Open GoL',
+                  command=self.GoL, font=customFont, relief=tk.RAISED, border=10).grid(row=5, column=0,
                                                                                            columnspan=2)
-
-        self.t1 = threading.Thread(target=self.loop)
-        self.t1.start()
-
         ### pas du tout Ctrl + C  Ctrl + V
-        self.color_frame = tk.Frame(self.w)
-        self.color_var = tk.StringVar()
-        self.color_var.set('modern')
-        tk.Label(self.color_frame, text='--Colors--', font=customFont).pack(anchor='n', padx=30)
-        radio1 = tk.Radiobutton(self.color_frame, text='Modern', font=customFont, variable=self.color_var,
-                                value='modern')
-        radio1.pack(anchor='nw', padx=30)
-        radio2 = tk.Radiobutton(self.color_frame, text='Vintage', font=customFont, variable=self.color_var,
-                                value='vintage')
-        radio2.pack(anchor='nw', padx=30)
-        radio3 = tk.Radiobutton(self.color_frame, text='Floor is lava', font=customFont, variable=self.color_var,
-                                value='floorislava')
-        radio3.pack(anchor='nw', padx=30)
-        radio4 = tk.Radiobutton(self.color_frame, text='Ocean', font=customFont, variable=self.color_var,
-                                value='ocean')
-        radio4.pack(anchor='nw', padx=30)
-        radio5 = tk.Radiobutton(self.color_frame, text='Outerworld', font=customFont,
-                                variable=self.color_var, value='outerworld')
-        radio5.pack(anchor='nw', padx=30)
-
-        self.color_frame.grid(row=1, column=1)
         from src.resources.utils.Constants import Constants as Ct
-
         Ct.center(self.w)
 
         self.w.mainloop()
 
-    def loop(self):
-        while self.running:
-            self.bentry.config(state=(tk.NORMAL if self.bapple.get() else tk.DISABLED))
-            self.rentry.config(state=(tk.NORMAL if self.randomania.get() else tk.DISABLED))
-            self.accentry.config(state=(tk.NORMAL if self.accelerato.get() else tk.DISABLED))
-            self.wentry.config(state=(tk.NORMAL if self.walls.get() else tk.DISABLED))
-
-    def snakeuh(self):
-        from src.games.Snake.Snake import Game
+    def GoL(self):
         self.running = False
         self.w.destroy()
-        Game(color=self.color_var.get(),
-             randomania=self.randomania.get(),
-             rando_range=Constants.convert_str_to_list(self.rando.get()),
-             bapple=self.bapple.get(),
-             nb_bapple=self.bapple_nb.get(),
-             accelerato=self.accelerato.get(),
-             acceleration=self.acceleration.get(),
-             walls=self.walls.get(),
-             nb_walls=self.walls_nb.get(),
-             colormania=self.colormania.get(),
+        Game(rando=self.rando.get(),
              speed=self.speed.get(),
              nb_columns=self.columns.get(),
              nb_lines=self.lines.get(),
-             square_dim=self.square_size.get(),
-             max_speed=self.max_speed.get())
+             square_dim=self.square_size.get())
 
     def create_menu(self, menubar: tk.Menu):
-        menubar.add_command(label="Help", command=g_help)
-        menubar.add_command(label="About", command=about)
-        # menubar.add_command(label="Stats", command=self.stats)
+        menubar.add_command(label="Help", command=g_helpL)
+        menubar.add_command(label="About", command=aboutL)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.w.destroy(), run_main.run_main()])
 
 
 if __name__ == '__main__':
     Launcher()
-
-if __name__ == '__main__':
-    Game()

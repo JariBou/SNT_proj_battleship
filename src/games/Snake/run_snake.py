@@ -12,8 +12,7 @@ from src import run_main
 def g_help():
     messagebox.showinfo(title="Help & Rules",
                         message="Speed float is given as 1 over the number of squares it moves per second\n"
-                                "(1 / 0.075 ~ 13.33squares/sec)"
-                        )
+                                "(1 / 0.075 ~ 13.33squares/sec)")
 
 
 def about():
@@ -57,7 +56,7 @@ class Launcher:
         self.running = True
         imgs = {'snake': PhotoImage(file=self.path.joinpath('resources\\images\\snake\\snake.png'))}
 
-        tk.Label(self.w, text='Snake', image=imgs['snake'], font=customFont).grid(row=0, column=1, sticky='n')
+        tk.Label(self.w, image=imgs['snake'], font=customFont).grid(row=0, column=1, sticky='n')
 
         self.args_frame = tk.Frame(self.w)
         tk.Label(self.args_frame, text='--Args--', font=customFont).grid(row=0, column=0, columnspan=2, sticky='n')

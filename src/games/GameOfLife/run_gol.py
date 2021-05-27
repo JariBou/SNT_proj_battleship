@@ -25,7 +25,7 @@ class run:
         V1.grid(row=0, column=0, sticky="nsew")
         V2 = Button(text="V2.0", command=lambda: (self.w.destroy(), GameOfLifeV2.Game()), font=customFont)
         V2.grid(row=0, column=1, sticky="nsew")
-        V3 = Button(text="V3.0", command=lambda: (self.w.destroy(), GameOfLifeV3.Game()), font=customFont)
+        V3 = Button(text="V3.0", command=lambda: (self.w.destroy(), GameOfLifeV3.Launcher()), font=customFont)
         V3.grid(row=0, column=2, sticky="nsew")
 
         Ct.center(self.w)
