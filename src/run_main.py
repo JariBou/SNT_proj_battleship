@@ -2,7 +2,7 @@ import tkinter.font as ft
 from tkinter import *
 
 from src.games import Battleship, Demineur, Last_letter_game, Pendu_gui, Rock_paper_scissors
-from src.games.Chess import run_chess
+from src.games.Chess import chess_launcher
 from src.games.GameOfLife import run_gol
 from src.games.Snake import run_snake
 from src.games.TicTacToe import run_TTT as Runmorpion
@@ -36,7 +36,7 @@ class run_main:
             Button(text="Battleship", image=self.images['battleship'],
                    command=lambda: (self.w.destroy(), Battleship.Battleship_1v1()),
                    font=customFont, compound='top'),
-            Button(text="Échecs", image=self.images['chess'], command=lambda: (self.w.destroy(), run_chess.ChessGui()),
+            Button(text="Échecs", image=self.images['chess'], command=lambda: (self.w.destroy(), chess_launcher.Launcher()),
                    font=customFont, compound='top'),
             Button(text="Jeu de la Vie", image=self.images['GoL'], command=lambda: (self.w.destroy(), run_gol.run()), font=customFont, compound='top'),
             Button(text="Dernière Lettre", command=lambda: (self.w.destroy(), Last_letter_game.Last_letter()),
