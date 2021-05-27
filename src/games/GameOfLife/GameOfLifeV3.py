@@ -147,9 +147,7 @@ class Game:
         self.to_born = {}
         self.to_kill = {}
         self.alive = {}
-
         self.screen.fill(self.bg_color)
-
         for y in range(1, self.nb_lines + 1):
             for x in range(1, self.nb_columns + 1):
                 self.alive[x, y] = 0
