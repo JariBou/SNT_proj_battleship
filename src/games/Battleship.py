@@ -210,14 +210,24 @@ class Battleship_1v1:
         ## Creation of the dictionary with all images
         self.images_root = {'touched': get_img(self.path.joinpath('resources\\images\\Battleship\\touched.png')),
                             'missed': get_img(self.path.joinpath('resources\\images\\Battleship\\missed.png'))}
-        self.images_horizontal = {
-            'center': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\center.png')),
-            'first': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\first.png')),
-            'last': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\last.png'))}
-        self.images_vertical = {
-            'center': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\center.png')),
-            'first': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\first.png')),
-            'last': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\last.png'))}
+        self.images_alive_horizontal = {
+            'center': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\alive\\center.png')),
+            'first': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\alive\\first.png')),
+            'last': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\alive\\last.png'))}
+        self.images_alive_vertical = {
+            'center': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\alive\\center.png')),
+            'first': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\alive\\first.png')),
+            'last': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\alive\\last.png'))}
+        self.images_destroyed_horizontal = {
+            'center': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\destroyed\\center.png')),
+            'first': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\destroyed\\first.png')),
+            'last': get_img(self.path.joinpath('resources\\images\\Battleship\\horizontal\\destroyed\\last.png'))}
+        self.images_destroyed_vertical = {
+            'center': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\destroyed\\center.png')),
+            'first': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\destroyed\\first.png')),
+            'last': get_img(self.path.joinpath('resources\\images\\Battleship\\vertical\\destroyed\\last.png'))}
+        self.images_horizontal = {'alive': self.images_alive_horizontal, 'destroyed': self.images_destroyed_horizontal}
+        self.images_vertical = {'alive': self.images_alive_vertical, 'destroyed': self.images_destroyed_vertical}
         self.images_root['horizontal'] = self.images_horizontal
         self.images_root['vertical'] = self.images_vertical
 
@@ -518,20 +528,26 @@ class Battleship_1v1:
             if [c['row'], c['column']] == coordinates[part]:
                 if part == 0:
                     if boat_state[part] == 1:
-                        child.config(image=self.images_root.get(orientation).get('first'), bg=self.defaultbg)
+                        child.config(image=self.images_root.get(orientation).get('alive').get('first'), bg=self.defaultbg)
                     else:
+                        child.config(image=self.images_root.get(orientation).get('destroyed').get('first'),
+                                     bg=self.defaultbg)
                         pass  # Draw touched texture
                 elif part == boat_size - 1:
                     if boat_state[part] == 1:
-                        child.config(image=self.images_root.get(orientation).get('last'), bg=self.defaultbg)
+                        child.config(image=self.images_root.get(orientation).get('alive').get('last'), bg=self.defaultbg)
                     else:
+                        child.config(image=self.images_root.get(orientation).get('destroyed').get('last'),
+                                     bg=self.defaultbg)
                         # child.config(image=self.images_touched_root.get(orientation).get('last'), bg=self.defaultbg)
                         pass  # Draw touched texture
                     break
                 else:
                     if boat_state[part] == 1:
-                        child.config(image=self.images_root.get(orientation).get('center'), bg=self.defaultbg)
+                        child.config(image=self.images_root.get(orientation).get('alive').get('center'), bg=self.defaultbg)
                     else:
+                        child.config(image=self.images_root.get(orientation).get('destroyed').get('center'),
+                                     bg=self.defaultbg)
                         pass  # Draw touched texture
                 part += 1
 
