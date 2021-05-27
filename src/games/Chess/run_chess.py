@@ -22,11 +22,9 @@ def about():
 
 class ChessGui:
 
-    def __init__(self, board_size=None, variant_name=''):
-        if board_size is None:
-            self.board_size = [8, 8]
-        self.variant_name = variant_name
-        self.board_size = board_size
+    def __init__(self, **kwargs):
+        self.variant_name = kwargs.get('variant_name', '')
+        self.board_size = kwargs.get('board_size', [8, 8])
         ## Window creation
         self.root = tk.Tk()
         self.root.title("Chess - Alpha V6.0")
@@ -43,8 +41,8 @@ class ChessGui:
         self.root.config(menu=menubar)
         self.create_menubar(menubar)
 
-        self.board_size_x = self.board_size[0]
-        self.board_size_y = self.board_size[1]
+        self.board_size_x = int(self.board_size[0])
+        self.board_size_y = int(self.board_size[1])
 
         chess_array_img = ImgLoader.load_img('resources\\images\\Chess\\ChessPiecesArray.png')
 
@@ -69,7 +67,7 @@ class ChessGui:
 
         self.defaultbg = self.root.cget('bg')
 
-        self.b_class = Board(self.board_size, variant_name)
+        self.b_class = Board(self.board_size, self.variant_name)
         board = self.b_class.board
 
         self.buttons_list = []
@@ -93,11 +91,11 @@ class ChessGui:
         self.logic_color: list[int] = [1 if self.color_pattern[i] == 'black' else 0 for i in range(len(self.color_pattern))]
         self.color_pattern: list[list[str]] = Ct.regroup_list(self.color_pattern, self.board_size_x)
         self.logic_color: list[list[int]] = Ct.regroup_list(self.logic_color, self.board_size_x)
-        print(self.logic_color)
 
         self.playing = False
         self.player = 0
         self.colors = ['White', 'Black']
+        self.change_color(kwargs.get('color', 'black')[0], kwargs.get('color', 'white')[1])
         self.checkers = []
 
         self.s_round = 0
@@ -262,9 +260,9 @@ class ChessGui:
     def change_color(self, color1, color2):
         for button in Ct.all_children(self.root, 'Button'):
             b = button.grid_info()
-            if b['column'] > self.board_size_x-1:
-                return
-            color = color1 if self.logic_color[b['column']][b['row']] == 1 else color2
+            if b['column'] == self.board_size_x:
+                continue
+            color = color1 if self.logic_color[b['row']][b['column']] == 1 else color2
             self.color_pattern[b['row']][b['column']] = color
             if button['bg'] not in ['red', 'green']:
                 button['bg'] = color
@@ -280,7 +278,7 @@ class ChessGui:
         menubar.add_cascade(label="Board colors", menu=colorsettings)
         menubar.add_command(label="Help")
         menubar.add_command(label="About", command=about)
-        menubar.add_command(label="Play again", command=lambda: (self.root.destroy(), ChessGui(self.board_size, self.variant_name)))
+        menubar.add_command(label="Play again", command=lambda: (self.root.destroy(), ChessGui(board_size=self.board_size, variant_name=self.variant_name)))
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
 

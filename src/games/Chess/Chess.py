@@ -43,18 +43,45 @@ def get_board(board_size: list[int, int], variant_name: str) -> list[list[Option
             ]
 
     elif board_size == [5, 6]:
-        return [
-            [Tower('White', [0, 0]), Knight('White', [1, 0]), Bishop('White', [2, 0]), Queen('White', [3, 0]),
-             King('White', [4, 0])],
-            [Pawn('White', [i, 1]) for i in range(5)],
+        if variant_name == 'Chess attack':
+            return [
+                [Tower('White', [0, 0]), Knight('White', [1, 0]), Bishop('White', [2, 0]), Queen('White', [3, 0]),
+                 King('White', [4, 0])],
+                [Pawn('White', [i, 1]) for i in range(5)],
 
-            [None] * 8,
-            [None] * 8,
+                [None] * 8,
+                [None] * 8,
 
-            [Pawn('Black', [i, 4]) for i in range(5)],
-            [Tower('Black', [0, 5]), Knight('Black', [1, 5]), Bishop('Black', [2, 5]), Queen('Black', [3, 5]),
-             King('Black', [4, 5])]
-            ]
+                [Pawn('Black', [i, 4]) for i in range(5)],
+                [Tower('Black', [0, 5]), Knight('Black', [1, 5]), Bishop('Black', [2, 5]), Queen('Black', [3, 5]),
+                 King('Black', [4, 5])]
+                ]
+        elif variant_name == 'Speed chess':
+            return [
+                [Queen('White', [0, 0]), King('White', [1, 0]), Bishop('White', [2, 0]), Knight('White', [3, 0]),
+                 Tower('White', [4, 0])],
+                [Pawn('White', [i, 1]) for i in range(5)],
+
+                [None] * 8,
+                [None] * 8,
+
+                [Pawn('Black', [i, 4]) for i in range(5)],
+                [Tower('Black', [0, 5]), Knight('Black', [1, 5]), Bishop('Black', [2, 5]), King('Black', [3, 5]),
+                 Queen('Black', [4, 5])]
+                ]
+        elif variant_name == 'Elena chess':
+            return [
+                [Tower('White', [0, 0]), Bishop('White', [1, 0]), King('White', [2, 0]), Queen('White', [3, 0]),
+                 Knight('White', [4, 0])],
+                [Pawn('White', [i, 1]) for i in range(5)],
+
+                [None] * 8,
+                [None] * 8,
+
+                [Pawn('Black', [i, 4]) for i in range(5)],
+                [Knight('Black', [0, 5]), Queen('Black', [1, 5]), King('Black', [2, 5]), Bishop('Black', [3, 5]),
+                 Tower('Black', [4, 5])]
+                ]
 
     elif board_size == [4, 5]:
         if variant_name == 'Microchess':
@@ -105,6 +132,32 @@ def get_board(board_size: list[int, int], variant_name: str) -> list[list[Option
                 [King('Black', [0, 4]), Queen('Black', [1, 4]), Tower('Black', [2, 4]),
                  Knight('Black', [3, 4]), Bishop('Black', [4, 4])]
                 ]
+        elif variant_name == 'Gardner':
+            return [
+                [Tower('White', [0, 0]), Knight('White', [1, 0]), Bishop('White', [2, 0]), Queen('White', [3, 0]),
+                 King('White', [4, 0])],
+                [Pawn('White', [i, 1]) for i in range(5)],
+
+                [None] * 8,
+
+                [Pawn('Black', [i, 3]) for i in range(5)],
+                [Tower('Black', [0, 4]), Knight('Black', [1, 4]), Bishop('Black', [2, 4]),
+                 Queen('Black', [3, 4]), King('Black', [4, 4])]
+                ]
+
+    elif board_size == [6, 6]:
+        return [
+            [Tower('White', [0, 0]), Knight('White', [1, 0]), Queen('White', [2, 0]), King('White', [3, 0]),
+             Knight('White', [4, 0]), Tower('White', [5, 0])],
+            [Pawn('White', [i, 1]) for i in range(6)],
+
+            [None] * 8,
+            [None] * 8,
+
+            [Pawn('Black', [i, 4]) for i in range(6)],
+            [Tower('Black', [0, 5]), Knight('Black', [1, 5]), Queen('Black', [2, 5]), King('Black', [3, 5]),
+             Knight('Black', [4, 5]), Tower('Black', [5, 5])]
+            ]
 ####                                  ####
 
 

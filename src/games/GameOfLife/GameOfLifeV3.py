@@ -300,7 +300,9 @@ def g_helpL():
     messagebox.showinfo(title="Help & Rules",
                         message="Speed float is given as 1 over the number of updates per second\n"
                                 "(1 / 0.055 ~ 18.18updates/sec)"
-                                "\n Random percentage roughtly indicates the percentage of the screen that will become alive cells")
+                                "\n Random percentage roughly indicates the percentage of the screen that will become "
+                                "alive cells, please enter a number between 1 and 99 included. You can put anything "
+                                "else but it won't go further than 100 and lesser than 0")
 ####                                  ####
 
 
