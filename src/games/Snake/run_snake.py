@@ -3,9 +3,9 @@ import threading
 import tkinter as tk
 from PIL.ImageTk import PhotoImage
 from tkinter import font as ft, messagebox
-from typing import Union
-from src.resources.utils.Constants import Constants
+
 from src import run_main
+from src.resources.utils.Constants import Constants
 
 
 #####          STATIC METHODS          ####
