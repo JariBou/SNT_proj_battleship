@@ -230,7 +230,7 @@ class Battleship_1v1:
         self.images_vertical = {'alive': self.images_alive_vertical, 'destroyed': self.images_destroyed_vertical}
         self.images_root['horizontal'] = self.images_horizontal
         self.images_root['vertical'] = self.images_vertical
-
+        g_help()
         self.root.mainloop()
 
     def rotate_boat(self):
