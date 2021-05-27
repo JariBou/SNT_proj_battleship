@@ -43,7 +43,7 @@ class Launcher:
         self.bapple = tk.BooleanVar(value=False)
         self.accelerato = tk.BooleanVar(value=False)
         self.walls = tk.BooleanVar(value=False)
-        self.rando = tk.StringVar(value='[0, 5]')
+        self.rando = tk.StringVar(value='[-3, 5]')
         self.acceleration = tk.DoubleVar(value=0.0055)
         self.speed = tk.DoubleVar(value=0.075)
         self.max_speed = tk.DoubleVar(value=0.01)
@@ -147,7 +147,7 @@ class Launcher:
         self.w.destroy()
         Game(color=self.color_var.get(),
              randomania=self.randomania.get(),
-             rando_range=convert_str_to_list(self.rando.get()),
+             rando_range=Constants.convert_str_to_list(self.rando.get()),
              bapple=self.bapple.get(),
              nb_bapple=self.bapple_nb.get(),
              accelerato=self.accelerato.get(),
@@ -166,20 +166,6 @@ class Launcher:
         menubar.add_command(label="About", command=about)
         # menubar.add_command(label="Stats", command=self.stats)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.w.destroy(), run_main.run_main()])
-
-
-def convert_str_to_list(str_list: str) -> list[Union[float, str]]:
-    str_list.strip()
-    if not (str_list[0] == '[' and str_list[len(str_list) - 1] == ']'):
-        raise ValueError(f'Cannot convert {str_list} to list')
-    values = str_list[1:-1].split(',')
-    L = []
-    for val in values:
-        try:
-            L.append(float(val))
-        except ValueError:
-            L.append(val.strip())
-    return L
 
 
 if __name__ == '__main__':

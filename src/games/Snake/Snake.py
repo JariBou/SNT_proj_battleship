@@ -78,7 +78,7 @@ class Game:
         self.color_types = ['modern', 'vintage', 'floorislava', 'ocean', 'outerworld']
         self.redo_bapples = True
         self.nb_bapples = kwargs.get('nb_bapple', 3)
-        self.random_range = kwargs.get('rando_range', 3)
+        self.random_range = kwargs.get('rando_range', [-3, 5])
 
         self.nb_columns = kwargs.get('nb_columns', 30)
         self.nb_lines = kwargs.get('nb_lines', 30)
