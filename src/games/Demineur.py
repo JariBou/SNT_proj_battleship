@@ -161,7 +161,6 @@ class Game:
                                 self.path.joinpath('resources\\sounds\\touch\\sr-pelo-boom-sound-effect.mp3'),
                                 self.path.joinpath('resources\\sounds\\touch\\wazaaaa.mp3')]}
 
-        self.ratio_value = 'N/A'
         self.void_color = 'white'
         self.random_color = False
 
@@ -383,7 +382,6 @@ class Game:
                                      font="Times 35 italic bold", text="WON")
         self.play(self.sounds.get('win')[random.randint(0, len(self.sounds.get('win')) - 1)])
         self.games_played += 1
-        self.ratio_value = ((self.wins // self.games_played) * 100)
         self.wins += 1
 
     def lost(self, nCol, nLine):
@@ -408,14 +406,12 @@ class Game:
                                      int(self.land_canvas.cget('height')) // 2, fill="red",
                                      font="Times 35 italic bold", text="LOST")
         self.games_played += 1
-        self.ratio_value = ((self.wins // self.games_played) * 100)
         self.loses += 1
 
     def stats(self):
         messagebox.showinfo(title="Stats", message=f"Games played: {self.games_played}\n "
                                                    f"Wins: {self.wins}\n"
-                                                   f"Loses: {self.loses}\n"
-                                                   f"Win ration: {self.ratio_value} \n")
+                                                   f"Loses: {self.loses}\n")
 
     def update_timer(self):
         while self.playing:
