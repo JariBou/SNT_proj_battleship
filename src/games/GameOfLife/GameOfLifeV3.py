@@ -192,9 +192,9 @@ class Game:
         max_line = line + 1 if line < self.nb_lines else line
 
         ans = -1 if self.alive[col, line] == 1 else 0
-        for col in range(min_column, max_column + 1):
-            for line in range(min_line, max_line + 1):
-                if self.alive[col, line] == 1:
+        for x in range(min_column, max_column + 1):
+            for y in range(min_line, max_line + 1):
+                if self.alive[x, y] == 1:
                     ans += 1
         return ans
 
