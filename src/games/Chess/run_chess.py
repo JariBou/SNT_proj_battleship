@@ -283,4 +283,4 @@ class ChessGui:
 
 
 if __name__ == '__main__':
-    ChessGui([8, 8], '')
+    ChessGui(board_size=[8, 8], variant_name='')
