@@ -1,21 +1,16 @@
+import ctypes
+import sys as system
 import time
 import tkinter as tk
-import sys as system
-from random import randint
-import ctypes
-import threading
-import tkinter as tk
 from PIL.ImageTk import PhotoImage
+from random import randint
 from tkinter import font as ft, messagebox
-from typing import Optional, Union
-from src.resources.utils.Constants import Constants
-from src import run_main
+from typing import Optional
 
 import pygame as pg
 
 from src import run_main
-from src.resources.utils.Constants import Constants as Ct
-from tkinter import messagebox
+from src.resources.utils.Constants import Constants, Constants as Ct
 
 
 ##TODO: add settings panel to switch game
@@ -47,7 +42,7 @@ def about():
 def create_menu(menubar: tk.Menu, root: Optional[tk.Tk]):
     menubar.add_command(label="Help", command=g_help)
     menubar.add_command(label="About", command=about)
-    menubar.add_command(label="Game Select Menu", command=lambda: [pg.quit(), root.destroy(), run_main.run_main()])
+    menubar.add_command(label="Game Select Menu", command=lambda: [pg.quit(), root.withdraw(), root.destroy(), run_main.run_main()])
 
 
 class Game:
@@ -84,7 +79,7 @@ class Game:
 
         self.pos: list[int, int] = [20, 20]
 
-        self.test_dict: dict = {}
+        self.neighbours_values: dict = {}
         self.to_kill: dict = {}
         self.to_born: dict = {}
 
@@ -94,6 +89,8 @@ class Game:
         master = tk.Tk()  ## So that a new Tk window isn't created when you use g_help()
         master.withdraw()
         g_help()
+        master.destroy()
+        master.quit()
 
         while running:
             for event in pg.event.get():
@@ -199,19 +196,19 @@ class Game:
         return ans
 
     def update_dicts(self):
-        for key in self.test_dict.keys():
-            is_born = True if (self.test_dict.get(key) == 3 and (self.alive[key] == 0)) else False
+        for key in self.neighbours_values.keys():
+            is_born = True if (self.neighbours_values.get(key) == 3 and (self.alive[key] == 0)) else False
             if is_born:
                 self.draw_rect(((key[0] - 1) * self.square_dim, (key[1] - 1) * self.square_dim), self.cell_color)
-            dies = False if (self.test_dict.get(key) in [2, 3]) or (self.alive[key] == 0) else True
-            self.alive[key] = 1 if (is_born or ((self.test_dict.get(key) in [2, 3]) and self.alive[key] == 1)) else 0
+            dies = False if (self.neighbours_values.get(key) in [2, 3]) or (self.alive[key] == 0) else True
+            self.alive[key] = 1 if (is_born or ((self.neighbours_values.get(key) in [2, 3]) and self.alive[key] == 1)) else 0
             if dies:
                 self.draw_rect(((key[0] - 1) * self.square_dim, (key[1] - 1) * self.square_dim), self.bg_color)
 
     def round(self):
         for y in range(1, self.nb_lines + 1):
             for x in range(1, self.nb_columns + 1):
-                self.test_dict[x, y] = self.get_neighbours(x, y)
+                self.neighbours_values[x, y] = self.get_neighbours(x, y)
         self.update_dicts()
         time.sleep(self.time)
 
@@ -277,6 +274,7 @@ class Game:
             self.settings()
 
     def settings(self):
+        self.playing = False
         root = tk.Tk()
         root.title('Help')
         self.change_rand_menu(root)
