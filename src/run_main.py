@@ -19,12 +19,11 @@ class run_main:
         self.images = {'morpion': PhotoImage(file='resources\\images\\TicTacToe\\tictactoe.png'),
                        'battleship': PhotoImage(file='resources\\images\\Battleship\\battleship_icon.png'),
                        'chess': PhotoImage(file='resources\\images\\Chess\\taskbar_img_2.png'),
+                       'GoL': PhotoImage(file='resources\\images\\GoL\\GoL_icon.png'),
                        'shifumi': PhotoImage(file='resources\\images\\rock_paper_scissors\\shifumi_icon.gif'),
                        'hangman': PhotoImage(file='resources\\images\\Hangman\\pendu_icon.gif'),
                        'demineur': PhotoImage(file='resources\\images\\Demineur\\mine.png'),
                        'snake': PhotoImage(file='resources\\images\\snake\\snake.png')}
-
-        """'GoL':Ct.get_img(self.path.joinpath('ressources\\images\\GoL\\GoL.png''))"""
 
         customFont = ft.Font(family='Source Sans Pro Black', size=20)
         customFont = ft.Font(family='Bahnschrift SemiBold', size=20)
@@ -39,7 +38,7 @@ class run_main:
                    font=customFont, compound='top'),
             Button(text="Échecs", image=self.images['chess'], command=lambda: (self.w.destroy(), run_chess.ChessGui()),
                    font=customFont, compound='top'),
-            Button(text="Jeu de la Vie", command=lambda: (self.w.destroy(), run_gol.run()), font=customFont),
+            Button(text="Jeu de la Vie", image=self.images['GoL'], command=lambda: (self.w.destroy(), run_gol.run()), font=customFont, compound='top'),
             Button(text="Dernière Lettre", command=lambda: (self.w.destroy(), Last_letter_game.Last_letter()),
                    font=customFont, compound='top'),
             Button(text="Shifumi", image=self.images['shifumi'],
