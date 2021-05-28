@@ -52,7 +52,7 @@ class Launcher:
         self.args_frame = tk.Frame(self.w)
         tk.Label(self.args_frame, text='Board size: ', font=customFont).grid(row=0, column=0, sticky='w')
         tk.OptionMenu(self.args_frame, self.board_size, '[8, 8]', '[5, 6]', '[4, 5]', '[5, 5]', '[6, 6]').grid(row=0, column=1)
-        tk.Label(self.args_frame, text='Variant: ', font=customFont).grid(row=1, column=0, sticky='w')
+        tk.Label(self.args_frame, text='Variant name: ', font=customFont).grid(row=1, column=0, sticky='w')
         tk.OptionMenu(self.args_frame, self.variant_name, '').grid(row=1, column=1)
         self.args_frame.columnconfigure(1, minsize=150)
         self.args_frame.grid(row=1, column=0, rowspan=2)
