@@ -43,6 +43,7 @@ class Launcher:
         self.variant_name = tk.StringVar(value='None')
 
         customFont = ft.Font(family='Source Sans Pro Black', size=17)
+        customFont_radio = ft.Font(family='Source Sans Pro Black', size=14)
         self.running = True
         imgs = {'icon': PhotoImage(file=self.path.joinpath('resources\\images\\Chess\\taskbar_img_2.png'))}
 
@@ -66,21 +67,24 @@ class Launcher:
         self.color_var = tk.StringVar()
         self.color_var.set("[black, white]")
         tk.Label(self.color_frame, text='--Colors--', font=customFont).pack(anchor='n', padx=30)
-        radio1 = tk.Radiobutton(self.color_frame, text='Black & White', font=customFont, variable=self.color_var,
+        radio1 = tk.Radiobutton(self.color_frame, text='Black & White', font=customFont_radio, variable=self.color_var,
                                 value="[black, white]")
         radio1.pack(anchor='nw', padx=30)
-        radio2 = tk.Radiobutton(self.color_frame, text='Terracota & Ivory', font=customFont, variable=self.color_var,
+        radio2 = tk.Radiobutton(self.color_frame, text='Terracota & Ivory', font=customFont_radio, variable=self.color_var,
                                 value="[brown, ivory]")
         radio2.pack(anchor='nw', padx=30)
-        radio3 = tk.Radiobutton(self.color_frame, text='Gold & Ivory', font=customFont, variable=self.color_var,
+        radio3 = tk.Radiobutton(self.color_frame, text='Gold & Ivory', font=customFont_radio, variable=self.color_var,
                                 value="[gold, ivory]")
         radio3.pack(anchor='nw', padx=30)
-        radio4 = tk.Radiobutton(self.color_frame, text='Dark brown & Ivory', font=customFont, variable=self.color_var,
+        radio4 = tk.Radiobutton(self.color_frame, text='Dark brown & Ivory', font=customFont_radio, variable=self.color_var,
                                 value="[#662200, ivory]")
         radio4.pack(anchor='nw', padx=30)
-        radio5 = tk.Radiobutton(self.color_frame, text='Dark turquoise & Light blue', font=customFont,
+        radio5 = tk.Radiobutton(self.color_frame, text='Dark turquoise & Light blue', font=customFont_radio,
                                 variable=self.color_var, value="[#006666, #809fff]")
         radio5.pack(anchor='nw', padx=30)
+        radio6 = tk.Radiobutton(self.color_frame, text='Black & Orange', font=customFont_radio,
+                                variable=self.color_var, value="[black, #ff9933]")
+        radio6.pack(anchor='nw', padx=30)
 
         self.color_frame.grid(row=0, column=1, rowspan=2)
 
@@ -103,7 +107,7 @@ class Launcher:
                 self.variant_name.set('None')
             elif size == '[5, 6]':
                 tk.OptionMenu(self.args_frame, self.variant_name, 'Chess attack', 'Speed chess', 'Elena chess').grid(row=1, column=1)
-                self.variant_name.set('Microchess')
+                self.variant_name.set('Chess attack')
             elif size == '[4, 5]':
                 tk.OptionMenu(self.args_frame, self.variant_name, 'Microchess', 'Silverman 4×5').grid(row=1, column=1)
                 self.variant_name.set('Microchess')

@@ -8,6 +8,7 @@ from tkinter import messagebox
 
 from src import run_main
 from src.games.Chess.Chess import *
+from src.games.Chess import chess_launcher
 from src.resources.utils.Constants import Constants as Ct, ImgLoader as Il
 
 
@@ -17,6 +18,8 @@ def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: Jari\n "
                                                "Version: Alpha V5.2")
+
+
 ####                                  ####
 
 
@@ -88,7 +91,8 @@ class ChessGui:
                 self.color_pattern.append(a['bg'])
 
         self.buttons_list: list[list[tk.Button]] = Ct.regroup_list(self.buttons_list, self.board_size_x)
-        self.logic_color: list[int] = [1 if self.color_pattern[i] == 'black' else 0 for i in range(len(self.color_pattern))]
+        self.logic_color: list[int] = [1 if self.color_pattern[i] == 'black' else 0 for i in
+                                       range(len(self.color_pattern))]
         self.color_pattern: list[list[str]] = Ct.regroup_list(self.color_pattern, self.board_size_x)
         self.logic_color: list[list[int]] = Ct.regroup_list(self.logic_color, self.board_size_x)
 
@@ -153,8 +157,11 @@ class ChessGui:
 
     def exit_game(self):
         self.playing = False
-        if self.t1 is not None:
-            self.t1.join()
+        try:
+            if self.t1 is not None:
+                self.t1.join()
+        except AttributeError:
+            pass
         sleep(0.5)
         system.exit('User cancelation')
 
@@ -196,7 +203,8 @@ class ChessGui:
                 print(f'unable to move piece to {curr_pos.get_position()}')
                 return
             self.last_button_clicked['bg'] = self.last_color
-            if isinstance(self.last_piece, Pawn) and self.last_piece.reached_end():  ## Not doing it from the pawn so that the board may be updated
+            if isinstance(self.last_piece,
+                          Pawn) and self.last_piece.reached_end():  ## Not doing it from the pawn so that the board may be updated
                 self.update_board()
                 self.last_piece.transform()
             self.b_class.pass_board_to_pieces()
@@ -210,8 +218,8 @@ class ChessGui:
                 if _over:
                     button['bg'] = 'green'
                     self.switch_players()
-                    print(f'Player {self.player+1} won!')
-                    tk.Label(self.root, text=f'Player {self.player+1} won!').grid(row=4, column=self.board_size_x)
+                    print(f'Player {self.player + 1} won!')
+                    tk.Label(self.root, text=f'Player {self.player + 1} won!').grid(row=4, column=self.board_size_x)
                     self._over()
                     return
             return
@@ -235,7 +243,7 @@ class ChessGui:
         board: list[list[Optional[ChessPiece]]] = self.b_class.return_board()
         for button in Ct.all_children(self.root, 'Button'):
             b = button.grid_info()
-            if b['column'] > self.board_size_x-1:
+            if b['column'] > self.board_size_x - 1:
                 return
             piece: Optional[ChessPiece] = board[b['row']][b['column']]
             button['image'] = ''
@@ -248,7 +256,7 @@ class ChessGui:
     def hide_board(self):
         for button in Ct.all_children(self.root, 'Button'):
             b = button.grid_info()
-            if b['column'] > self.board_size_x-1:
+            if b['column'] > self.board_size_x - 1:
                 return
             button['image'] = ''
 
@@ -275,10 +283,20 @@ class ChessGui:
         colorsettings.add_command(label="Dark brown & Ivory", command=lambda: self.change_color('#662200', 'ivory'))
         colorsettings.add_command(label="Dark turquoise & Light blue",
                                   command=lambda: self.change_color('#006666', '#809fff'))
+        colorsettings.add_command(label="Black & Orange",
+                                  command=lambda: self.change_color('black', '#ff9933'))
         menubar.add_cascade(label="Board colors", menu=colorsettings)
         menubar.add_command(label="Help")
         menubar.add_command(label="About", command=about)
-        menubar.add_command(label="Play again", command=lambda: (self.root.destroy(), ChessGui(board_size=self.board_size, variant_name=self.variant_name)))
+        playsettings = tk.Menu(menubar, tearoff=0)
+        playsettings.add_command(label="Same board", command=lambda: (self.root.destroy(),
+                                                                      ChessGui(board_size=self.board_size,
+                                                                               variant_name=self.variant_name,
+                                                                               color=[self.color_pattern[0][0],
+                                                                                      self.color_pattern[0][1]])))
+        playsettings.add_command(label='Change board', command=lambda: (self.root.destroy(),
+                                                                        chess_launcher.Launcher()))
+        menubar.add_cascade(label="Play again", menu=playsettings)
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
 
