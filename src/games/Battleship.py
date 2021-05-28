@@ -87,7 +87,6 @@ class Battleship_1v1:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.root.iconbitmap(self.path.joinpath('resources\\images\\Battleship\\battleship_icon.ico'))
-
         self.has_prev_key_release = None
         self.root.bind("<KeyRelease-r>", self.on_key_release_repeat)
         self.root.bind("<KeyPress-r>", self.on_key_press_repeat)

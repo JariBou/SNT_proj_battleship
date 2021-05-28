@@ -13,9 +13,10 @@ class run_main:
 
     def __init__(self):
         self.w = Tk()
-        self.w.title("Choose GameMode")
+        self.w.title("Game Library - Steam x86")
         self.w.config(bg="lightgray")
         self.path = Ct.get_path()
+        self.w.iconbitmap(self.path.joinpath('resources\\images\\steam_icon.ico'))
         self.images = {'morpion': PhotoImage(file='resources\\images\\TicTacToe\\tictactoe.png'),
                        'battleship': PhotoImage(file='resources\\images\\Battleship\\battleship_icon.png'),
                        'chess': PhotoImage(file='resources\\images\\Chess\\taskbar_img_2.png'),
