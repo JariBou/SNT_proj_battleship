@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Union
 
 
+# -------- Helper classes by Jari_Bou -------- #
+
 class ImgLoader:
 
     def __init__(self):
@@ -37,12 +39,29 @@ class Position:
         self.y = coordinates[1]
 
     def __repr__(self):
-        return f'{self.__class__.__name__} at ( x={self.x}, y={self.y} )'
+        return f'<{self.__class__.__name__} at (x={self.x}, y={self.y})>'
 
     def get_position(self) -> tuple[int, int]:
         return self.x, self.y
 
-    def add(self, args: str):
+    def add(self, args: str = '', **kwargs):
+        if args == '':  ##This is just for fun
+            x, y = 0, 0
+            for key in kwargs.keys():
+                if key not in ['x', 'y']:
+                    raise AttributeError(f"unknows attribute '{key}' for class {self.__class__}")
+                else:
+                    try:
+                        if key == 'x':
+                            x = int(kwargs.get('x', 0))
+                        elif key == 'y':
+                            y = int(kwargs.get('y', 0))
+                    except ValueError:
+                        raise ValueError(f'invalid integer value {int(kwargs.get(key, 0))} for attribute {key}')
+            self.x += x
+            self.y += y
+            return
+
         args = args.split('+')
         for arg in args:
             value = 0
@@ -50,12 +69,15 @@ class Position:
                 name, value = arg.split('=')
             except ValueError:
                 name = arg
-            if name == 'x':
-                self.x += int(value)
-            elif name == 'y':
-                self.y += int(value)
-            else:
-                raise AttributeError(f'unknows attribute {name} for class {self.__class__}')
+            try:
+                if name == 'x':
+                    self.x += int(value)
+                elif name == 'y':
+                    self.y += int(value)
+                else:
+                    raise AttributeError(f'unknows attribute {name} for class {self.__class__}')
+            except ValueError:
+                raise ValueError(f'invalid integer {value} for attribute {name}')
 
 
 class Constants:

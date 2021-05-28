@@ -263,6 +263,7 @@ class ChessPiece(ABC):
         return f'{self.__class__.__name__}(name={self.get_name()}, position={self.position.get_position()}'
 
     def get_position(self, coordinates=False) -> Union[Position, list[int, int]]:
+        """If coordinates is True returns a list[int, int] of the position instead of the <Position> class"""
         return self.position if not coordinates else self.position.get_position()
 
     def get_color(self) -> str:

@@ -1,6 +1,7 @@
 import ctypes
 import random
 import tkinter as tk
+import tkinter.font
 from tkinter import messagebox
 from PIL import ImageTk, Image
 import pygame as pygame
@@ -11,7 +12,6 @@ from src.resources.utils.Constants import Constants as Ct
 
 
 ## TODO: code cleanup
-## TODO: add touched boats texture
 
 
 #####          STATIC METHODS          ####
@@ -27,14 +27,14 @@ def get_img(path) -> ImageTk.PhotoImage:
 def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: LeTiramissu & Jari\n "
-                                               "Version: Alpha V1.3")
+                                               "Version: Alpha V2.0")
 
 
 def g_help():
     """Used to display help_rules about the game"""
     messagebox.showinfo(title="Help & Rules", message="Commencer une partie de bataille navale \n"
                                                       "---------------------------------------\n"
-                                                      "Au début du jeu, chaque joueur place à sa guise tous ses bateaux sur sa grille (à gauche) avec possibilité de les faire pivoter (Rotate) , puis confirme le placement de ses bateaux.\n\n"
+                                                      "Au début du jeu, chaque joueur place à sa guise tous ses bateaux sur sa grille (à gauche) avec possibilité de les faire pivoter (Rotate)(r) , puis confirme le placement de ses bateaux.\n\n"
                                                       "Chaque joueur dispose de la flotte suivante: \n"
                                                       "-1 porte avion (5 cases)\n"
                                                       "-1 croiseur (4 cases, cliquer sur les 2 cases centrales)\n"
@@ -48,29 +48,42 @@ def g_help():
                                                       "\n\n"
                                                       "Comment gagner une partie de bataille navale\n"
                                                       "---------------------------------------\n"
-                                                      "Une partie de bataille navale se termine lorsque l’un des joueurs n’a plus de navires.")
+                                                      "Une partie de bataille navale se termine lorsque l’un des joueurs n’a plus de navires."
+                                                      "\n----------"
+                                                      "\n Vous pouvez également utiliser le pavé numérique pour choisir la taille des bateaux ainsi que la touche r pour les tourner")
 
 
 ####                                  ####
 
 
 # noinspection SpellCheckingInspection
+def create_menu(menubar, root):
+    # colorsettings = tk.Menu(menubar, tearoff=0)
+    # colorsettings.add_command(label="White (default)", command=lambda: Ct.set_color(root, 'white', 'Label'))
+    # colorsettings.add_command(label="Light grey", command=lambda: Ct.set_color(root, 'lightgrey', 'Label'))
+    # colorsettings.add_command(label="Grey", command=lambda: Ct.set_color(root, 'grey', 'Label'))
+    # colorsettings.add_command(label="Light blue", command=lambda: Ct.set_color(root, 'lightblue', 'Label'))
+    # menubar.add_cascade(label="Color settings", menu=colorsettings)
+    menubar.add_command(label="Help", command=g_help)
+    menubar.add_command(label="About", command=about)
+    menubar.add_command(label="Play again", command=lambda: (root.destroy(), Battleship_1v1()))
+    menubar.add_command(label="Game Select Menu", command=lambda: [root.destroy(), run_main.run_main()])
+
+
+def over(player):
+    messagebox.showinfo('You won!', f'Congrats Player {player+1}, you won!\n You are a master at this game! Or just lucky? Who knows?\n (You may continue playing for whatever reason you have)')
+    pass
+
+
 class Battleship_1v1:
 
     def __init__(self):
         ## Window creation
         self.root = tk.Tk()
-        self.root.title("Battleship - Alpha V1.3")
+        self.root.title("Battleship - Alpha V2.0")
         self.root.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
-        screen_width = self.root.winfo_screenwidth()
-        screen_height = self.root.winfo_screenheight()
-        self.width, self.height = screen_width / 1.25, screen_height / 1.25
-        ## calculate x and y coordinates for the window to be opened at
-        x = (screen_width / 2) - (self.width / 2)
-        y = (screen_height / 2) - (self.height / 2)
-        self.root.geometry('%dx%d+%d+%d' % (self.width, self.height, x, y))
         ## Add Icon
-        myappid = 'mjcorp.battleship.alphav1.2'  # arbitrary string
+        myappid = 'mjcorp.battleship.alphav2.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.root.iconbitmap(self.path.joinpath('resources\\images\\Battleship\\battleship_icon.ico'))
@@ -91,12 +104,12 @@ class Battleship_1v1:
         self.volume = 0.8
         test_sound = tk.Button(self.root, text='Test Volume',
                                command=lambda: self.play(self.path.joinpath('resources\\sounds\\fail\\ah.mp3')))
-        test_sound.grid(row=10, column=13)
+        test_sound.grid(row=8, column=13)
 
         ## Create a Menubar
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar)
-        self.create_menu(menubar)
+        create_menu(menubar, self.root)
 
         ## Creation of the dictionary with all sounds
         self.sounds = {'destroy': [self.path.joinpath('resources\\sounds\\destroy\\amaterasu-sound-effect.mp3'),
@@ -113,8 +126,9 @@ class Battleship_1v1:
 
         ######## BUTTONS AND LABEL FOR GAME CREATION ########
         ## row and column configuration
-        for i in range(0, 30):
+        for i in range(0, 12):
             self.root.rowconfigure(i, minsize=50)
+        for i in range(0, 27):
             self.root.columnconfigure(i, minsize=50)
         self.root.columnconfigure(14, minsize=75)
 
@@ -156,32 +170,23 @@ class Battleship_1v1:
         ## --------------------------------------------------------------------
 
         ## Rotate boat orientation button and current orientation display
-        self.rotate = tk.Button(self.root, bg="white", text="Rotate", command=self.rotate_boat)
-        self.rotate.grid(row=0, column=13, sticky='nsew')
+        tk.Button(self.root, bg="white", text="Rotate", command=self.rotate_boat).grid(row=1, column=13, sticky='nsew')
+        # self.rotate.grid(row=1, column=13, sticky='nsew')
         self.curr_rotation = tk.Label(self.root, text='Horizontal')
-        self.curr_rotation.grid(row=0, column=14, sticky='nsew')
+        self.curr_rotation.grid(row=1, column=14, sticky='nsew')
 
         ## Size Buttons
         self.size_2 = tk.Button(self.root, bg="white", text="Size: 2", command=lambda: self.size(self.size_2, "2"))
-        self.size_2.grid(row=1, column=13, sticky='nsew')
         self.size_3 = tk.Button(self.root, bg="white", text="Size: 3", command=lambda: self.size(self.size_3, "3"))
-        self.size_3.grid(row=2, column=13, sticky='nsew')
         self.size_4 = tk.Button(self.root, bg="white", text="Size: 4", command=lambda: self.size(self.size_4, "4"))
-        self.size_4.grid(row=3, column=13, sticky='nsew')
         self.size_5 = tk.Button(self.root, bg="white", text="Size: 5", command=lambda: self.size(self.size_5, "5"))
-        self.size_5.grid(row=4, column=13, sticky='nsew')
         self.size_buttons = [self.size_2, self.size_3, self.size_4, self.size_5]
-
-        ## Helper Buttons   {TO BE REMOVED}
-        self.console_out = tk.Button(self.root, bg="white", text="print_board", command=self.print_console)
-        self.console_out.grid(row=6, column=13, sticky='nsew')
-        self.boat_list = tk.Button(self.root, bg="white", text="boat_interactions", command=self.boat_interactions)
-        self.boat_list.grid(row=7, column=13, sticky='nsew')
+        for b, row in zip(self.size_buttons, range(2, 6)):
+            b.grid(row=row, column=13, sticky='nsew')
 
         ## Change Player button
-        self.change_player = tk.Button(self.root, bg="white", text="Change Player", command=self.switch_player)
-        self.change_player.grid(row=8, column=13, sticky='nsew')
-        self.change_player.config(state=tk.DISABLED)
+        self.change_player = tk.Button(self.root, bg="white", text="Change Player", command=self.switch_player, state=tk.DISABLED)
+        self.change_player.grid(row=7, column=13, sticky='nsew')
 
         ## Boards creation
         self.p1_board = Ct.new_board()
@@ -207,6 +212,9 @@ class Battleship_1v1:
         self.defaultbg = self.root.cget('bg')
         self.last_clicked = None
 
+        self.curr_player = tk.Label(self.root, font=tkinter.font.Font(size=15), text=f'Player: {self.player+1}')
+        self.curr_player.grid(row=0, column=13, sticky='nsew')
+
         ## Creation of the dictionary with all images
         self.images_root = {'touched': get_img(self.path.joinpath('resources\\images\\Battleship\\touched.png')),
                             'missed': get_img(self.path.joinpath('resources\\images\\Battleship\\missed.png'))}
@@ -231,6 +239,9 @@ class Battleship_1v1:
         self.images_root['horizontal'] = self.images_horizontal
         self.images_root['vertical'] = self.images_vertical
         g_help()
+
+        Ct.center(self.root)
+
         self.root.mainloop()
 
     def rotate_boat(self):
@@ -276,7 +287,6 @@ class Battleship_1v1:
                         self.last_clicked = None
                         self.size_2.config(state=tk.DISABLED, bg='white')
                         self.boat = ""
-                        return
 
                     elif abs(b_last["row"] - b["row"]) == 1 and abs(b_last["column"] - b["column"]) == 0:
                         # VERTICAL
@@ -291,14 +301,15 @@ class Battleship_1v1:
                         self.last_clicked = None
                         self.size_2.config(state=tk.DISABLED, bg='white')
                         self.boat = ""
-                        return
 
                     else:
                         self.last_clicked.config(bg=self.defaultbg)
                         button.config(bg=self.defaultbg)
                         self.last_clicked = None
                         return
-                self.last_clicked = button if self.last_clicked is None else self.last_clicked
+                else:
+                    self.last_clicked = button
+                # self.last_clicked = button if self.last_clicked is None else self.last_clicked
 
             elif self.boat == "4":
                 b = button.grid_info()
@@ -311,7 +322,6 @@ class Battleship_1v1:
                             self.last_clicked.config(bg=self.defaultbg)
                             button.config(bg=self.defaultbg)
                             self.last_clicked = None
-                            return
 
                         if (board[b_last["row"]][b_last['column'] + 1] == 0 and
                             board[b_last["row"]][b_last['column'] - 1] == 0) and \
@@ -339,7 +349,6 @@ class Battleship_1v1:
                             self.size_4.config(state=tk.DISABLED, bg='white')
                             self.boat = ""
 
-                            return
                         else:
                             self.last_clicked.config(bg=self.defaultbg)
                             button.config(bg=self.defaultbg)
@@ -352,7 +361,6 @@ class Battleship_1v1:
                             self.last_clicked.config(bg=self.defaultbg)
                             button.config(bg=self.defaultbg)
                             self.last_clicked = None
-                            return
 
                         elif (board[b_last["row"] + 1][b_last['column']] == 0 and
                               board[b_last["row"] - 1][b_last['column']] == 0) and \
@@ -379,7 +387,6 @@ class Battleship_1v1:
                             self.last_clicked = None
                             self.size_4.config(state=tk.DISABLED, bg='white')
                             self.boat = ""
-                            return
 
                         else:
                             self.last_clicked.config(bg=self.defaultbg)
@@ -393,14 +400,15 @@ class Battleship_1v1:
                         button.config(bg=self.defaultbg)
                         self.last_clicked = None
                         return
-
-                self.last_clicked = button if self.last_clicked is None else self.last_clicked
+                else:
+                    self.last_clicked = button
+                # self.last_clicked = button if self.last_clicked is None else self.last_clicked
 
         else:
             print("Nope")
         self.boards[self.player] = board
         self.boats[self.player] = boats
-        if len(self.boats[self.player]) == 5:
+        if len(self.boats[self.player]) == 1:
             print("Suka")
             self.play(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'))
             ans = messagebox.askquestion(title='Are you sure about that?',
@@ -607,6 +615,13 @@ class Battleship_1v1:
                             self.play(
                                 self.sounds.get('destroy')[random.randint(0, len(self.sounds.get('destroy')) - 1)])
                             tk.messagebox.showinfo(title='Nice', message=f'You sank a {boat.get_type()} boat')
+                            one_alive = False
+                            for checkboat in other_player_boats:
+                                if not checkboat.is_dead():
+                                    one_alive = True
+                                    break
+                            if not one_alive:
+                                over(self.player)
                         else:
                             self.play(self.sounds.get('touch')[random.randint(0, len(self.sounds.get('touch')) - 1)])
         else:
@@ -614,6 +629,7 @@ class Battleship_1v1:
             button.config(image=self.images_root.get('missed'))
             curr_player_atk_board[b['row']][b['column'] - self.atk_offset] = -1
         self.atk_boards[self.player] = curr_player_atk_board
+
         self.boats[abs(self.player - 1)] = other_player_boats
         self.end_turn()
 
@@ -623,11 +639,6 @@ class Battleship_1v1:
             c = child.grid_info()
             if c['row'] < 10 and c['column'] >= self.atk_offset:
                 child.config(command='')
-        boats = self.boats[self.player]
-        for boat in boats:
-            if boat.is_dead():
-                boats.remove(boat)
-        self.boats[self.player] = boats
         self.change_player.config(state=tk.NORMAL, bg='green')
 
     def remove_all_images(self):
@@ -646,6 +657,7 @@ class Battleship_1v1:
         """Called when the other player confirms the change"""
         self.change_player.config(text="Change Player", command=self.switch_player, state=tk.DISABLED,
                                   bg=self.defaultbg)
+        self.curr_player.config(text=f'Player: {self.player+1}')
         self.draw_attacks()
         for boat in self.boats[self.player]:
             self.draw_boat_img(boat)
@@ -705,17 +717,6 @@ class Battleship_1v1:
             print("on_key_press_repeat", repr(event.char))
         else:
             self.on_key_press(event)
-
-    def create_menu(self, menubar):
-        colorsettings = tk.Menu(menubar, tearoff=0)
-        colorsettings.add_command(label="White (default)", command=lambda: Ct.set_color(self.root, 'white', 'Label'))
-        colorsettings.add_command(label="Light grey", command=lambda: Ct.set_color(self.root, 'lightgrey', 'Label'))
-        colorsettings.add_command(label="Grey", command=lambda: Ct.set_color(self.root, 'grey', 'Label'))
-        colorsettings.add_command(label="Light blue", command=lambda: Ct.set_color(self.root, 'lightblue', 'Label'))
-        menubar.add_cascade(label="Color settings", menu=colorsettings)
-        menubar.add_command(label="Help", command=g_help)
-        menubar.add_command(label="About", command=about)
-        menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])
 
 
 class Boat:
