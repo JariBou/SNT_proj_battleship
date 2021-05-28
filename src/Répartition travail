@@ -1,7 +1,7 @@
 Mathis:
-- Jeu de Dame                                                                                           TRANSFERT A 220 MILLIONS € VERS FC JARI
-- Menu de sélection des jeux                                                                            DONE
-- Texture des bateaux quand touchés et l'implémenter dans Battleship.py
+- Jeu de Dame                                                                                           NotImplemented
+- Menu de sélection des jeux                                                                            DONE GUI part
+- Texture des bateaux quand touchés et l'implémenter dans Battleship.py                                 DONE
 - Faire des textures pour le pendu   /!\ URGENT                                                         JARI DID IT
 - Créer la fonction help_rules de Battleship.py pour les règles et comment jouer avec le GUI            DONE FOR ALL GAMES
 - Faire les icones des jeux                                                                             DONE
