@@ -1,5 +1,6 @@
 import tkinter.font as ft
 from tkinter import *
+import ctypes
 
 from src.games import Battleship, Demineur, Last_letter_game, Pendu_gui, Rock_paper_scissors
 from src.games.Chess import chess_launcher
@@ -25,6 +26,10 @@ class run_main:
                        'hangman': PhotoImage(file='resources\\images\\Hangman\\pendu_icon.gif'),
                        'demineur': PhotoImage(file='resources\\images\\Demineur\\mine.png'),
                        'snake': PhotoImage(file='resources\\images\\snake\\snake.png')}
+
+
+        myappid = 'mjcorp.launcher.alphav1.1'  # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
         customFont = ft.Font(family='Source Sans Pro Black', size=20)
         customFont = ft.Font(family='Bahnschrift SemiBold', size=20)
