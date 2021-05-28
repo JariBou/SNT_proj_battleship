@@ -82,9 +82,3 @@ class run_main:
 
 if __name__ == '__main__':
     run_main()
-
-run_main()
-print('hello')
-input()
-while True:
-    pass
