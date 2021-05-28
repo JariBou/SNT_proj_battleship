@@ -7,7 +7,7 @@ from random import randint
 from typing import Optional
 
 import pygame as pg
-
+"""from src.games.Snake.run_snake import g_help as Rshelp"""
 from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 from tkinter import messagebox
@@ -147,7 +147,8 @@ class Game:
                         # if self.playing:
                         #     threading.Thread(target=self.round).start()
                     if event.key == pg.K_h:
-                        self.settings()
+                        """self.settings()"""
+                        self.help()
                     if event.key == pg.K_w:
                         if self.wall_nb <= 10:
                             for o in range(3):
@@ -523,6 +524,37 @@ class Game:
         self.change_sizes(int(nCol), int(nLine), squareDim)
         if window is not None:
             window.destroy()
+
+    def help(self, start = False):
+        if self.playing:
+            self.playing = False
+            print('playing set to false')
+            self.draw_text('press <space> to resume', 'top', self.nb_columns * self.square_dim // 20)
+        root = tk.Tk()
+        root.title('Aide')
+        root.geometry('450x350')
+        root.protocol("WM_DELETE_WINDOW", self.exit_game)
+        Texte = tk.Label(root, text = "Colormania : \n"
+                                    "Le thème du jeu change de couleur à chaque nouvelle pomme mangée\n"
+                                    "------------------------------------------------------------\n"
+                                    "Randomania : \n"
+                                    "Augmente ou réduit la taille du serpent aléatoirement selon les paramètres donnés\n"
+                                    "------------------------------------------------------------\n"
+                                    "Bapple : \n"
+                                    "Génère des mauvaises pommes, qui si mangées réduisent de 1 votre serpent\n"
+                                    "------------------------------------------------------------\n"
+                                    "Accelerato : \n"
+                                    "Augmente la vitesse du serpent d'un montant fixe (paramètre) après chaque pomme\n"
+                                    "------------------------------------------------------------\n"
+                                    "Walls : \n"
+                                    "Génère des murs de la longueur mentionnée\n\n"
+                                    "Appuyez sur H en jeu pour faire apparaître l'aide\n"
+                                    "Appuyez sur R en jeu pour réinitialiser la partie\n"
+                                    "Appuyez sur C en jeu pour changer le thème de couleur\n"
+                                    "Appuyez sur W en jeu pour créer des murs\n")
+        Texte.pack()
+        tk.Button(root, text='Ok', command=lambda: root.destroy()).pack()
+        root.mainloop()
 
     def settings(self, start=False):
         if self.playing:

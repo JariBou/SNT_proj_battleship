@@ -11,8 +11,27 @@ from src.resources.utils.Constants import Constants
 #####          STATIC METHODS          ####
 def g_help():
     messagebox.showinfo(title="Help & Rules",
-                        message="Speed float is given as 1 over the number of squares it moves per second\n"
-                                "(1 / 0.075 ~ 13.33squares/sec)")
+                        message="Colormania : \n"
+                                "Le thème du jeu change de couleur à chaque nouvelle pomme mangée\n"
+                                "------------------------------------------------------------\n"
+                                "Randomania : \n"
+                                "Augmente ou réduit la taille du serpent aléatoirement selon les paramètres donnés\n"
+                                "------------------------------------------------------------\n"
+                                "Bapple : \n"
+                                "Génère des mauvaises pommes, qui si mangées réduisent de 1 votre serpent\n"
+                                "------------------------------------------------------------\n"
+                                "Accelerato : \n"
+                                "Augmente la vitesse du serpent d'un montant fixe (paramètre) après chaque pomme\n"
+                                "------------------------------------------------------------\n"
+                                "Walls : \n"
+                                "Génère des murs de la longueur mentionnée\n\n"
+                                "Appuyez sur H en jeu pour faire apparaître l'aide\n"
+                                "Appuyez sur R en jeu pour réinitialiser la partie\n"
+                                "Appuyez sur C en jeu pour changer le thème de couleur\n"
+                                "Appuyez sur W en jeu pour créer des murs\n")
+
+
+
 
 
 def about():

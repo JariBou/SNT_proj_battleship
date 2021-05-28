@@ -335,7 +335,7 @@ class MorpionMulti:
         self.wChoose = Tk()
         self.wChoose.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
         self.wChoose.config(bg="lightgray")
-        self.wChoose.iconbitmap(self.path.joinpath('resources\\images\\TicTacToe\\icon.ico'))
+        self.wChoose.iconbitmap(Ct.get_path().joinpath('resources\\images\\TicTacToe\\icon.ico'))
         ## get screen width and height
         ws = self.wChoose.winfo_screenwidth()
         hs = self.wChoose.winfo_screenheight()

@@ -20,10 +20,11 @@ def get_img(path):
 
 
 def g_help():
-    messagebox.showinfo(title="Help & Rules", message="Cliquer sur une case de la grille révèle:\n\n"
-                                                      "- Une zone ne contenant aucune mine\n"
-                                                      "- Une case bordée par 1, 2, 3 ou 4 mines dans un rayon d'1\n"
-                                                      "  case (verticalement, horizontalement, diagonalement\n")
+    messagebox.showinfo(title="Help & Rules",
+                        message="Une cellule possède huit voisins, qui sont les cellules adjacentes horizontalement, verticalement et diagonalement.\n\n"
+                                "À chaque étape, l’évolution d’une cellule est déterminée par l’état de ses huit voisines de la façon suivante :\n\n"
+                                "* Une cellule morte possédant exactement trois voisines vivantes devient vivante (elle naît)\n"
+                                "* une cellule vivante possédant deux ou trois voisines vivantes le reste, sinon elle meurt")
 
 
 def about():
