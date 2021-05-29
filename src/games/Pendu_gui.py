@@ -123,8 +123,8 @@ class Game:
                 is_in_word = True
         if not is_in_word:
             self.wrong += 1
-        self.test_win()
         self.update_gui()
+        self.test_win()
         button.config(state=tk.DISABLED)
         self.canvas.delete(self.word_label)
         self.word_label = self.canvas.create_text(300, 60, text=lines_as_str(self.lines), font='Courrier 30')
@@ -145,6 +145,7 @@ class Game:
     def _over(self):
         for button in self.button_list:
             button.config(state=tk.DISABLED)
+        messagebox.showinfo('Perdu!', f'Le mot était: {self.word}')
 
     def test_full(self):
         return '_' not in self.lines
@@ -152,9 +153,6 @@ class Game:
     def on_key_press(self, event):
         key_pressed = repr(event.char).replace("'", '', 2)
         self.clicked(self.button_list[ord(key_pressed.upper()) - ord('A')])
-
-    def on_key_press_repeat(self, event):
-        self.on_key_press(event)
 
     def create_menu(self, menubar: tk.Menu):
         menubar.add_command(label="Help", command=g_help)
