@@ -2,8 +2,11 @@ import ctypes
 import random
 import tkinter as tk
 import tkinter.font
+from pathlib import Path
 from tkinter import messagebox
 from PIL import ImageTk, Image
+from typing import Union
+
 import pygame as pygame
 import sys as system
 
@@ -57,22 +60,41 @@ def g_help():
 
 
 # noinspection SpellCheckingInspection
-def create_menu(menubar, root):
-    # colorsettings = tk.Menu(menubar, tearoff=0)
-    # colorsettings.add_command(label="White (default)", command=lambda: Ct.set_color(root, 'white', 'Label'))
-    # colorsettings.add_command(label="Light grey", command=lambda: Ct.set_color(root, 'lightgrey', 'Label'))
-    # colorsettings.add_command(label="Grey", command=lambda: Ct.set_color(root, 'grey', 'Label'))
-    # colorsettings.add_command(label="Light blue", command=lambda: Ct.set_color(root, 'lightblue', 'Label'))
-    # menubar.add_cascade(label="Color settings", menu=colorsettings)
+def create_menu(menubar: tk.Menu, root: tk.Tk):
     menubar.add_command(label="Help", command=g_help)
     menubar.add_command(label="About", command=about)
     menubar.add_command(label="Play again", command=lambda: (root.destroy(), Battleship_1v1()))
     menubar.add_command(label="Game Select Menu", command=lambda: [root.destroy(), run_main.run_main()])
 
 
-def over(player):
+def over(player: int):
     messagebox.showinfo('You won!', f'Congrats Player {player+1}, you won!\n You are a master at this game! Or just lucky? Who knows?\n (You may continue playing for whatever reason you have)')
     pass
+
+
+class Boat:
+
+    def __init__(self, coordinates: list, size):
+        ## Coordinates like this: [ [x, y], [x, y], [x, y] ]
+        ## State like this:       [  1/0,    1/0,    1/0 ]
+        self.is_alive = True
+        self.coordinates = coordinates
+        self.state = [1] * len(coordinates)
+        self.size = str(size)
+
+    def is_dead(self) -> bool:
+        return not self.state.__contains__(1)
+
+    def get_type(self) -> str:
+        # 2 tiles boat is a Destroyer // 3 tiles boats are Submarine and Cruiser #
+        # 4 tiles boat is a Battleship // 5 tiles boat is a Carrier #
+        return ['Destroyer', 'Cruiser/Submarine', 'Battleship', 'Carrier'][int(self.size) - 2]
+
+    def get_coordinates(self) -> list:
+        return self.coordinates
+
+    def set_state(self, i: int, val: int):
+        self.state[i] = val
 
 
 class Battleship_1v1:
@@ -88,7 +110,6 @@ class Battleship_1v1:
         self.path = Ct.get_path()
         self.root.iconbitmap(self.path.joinpath('resources\\images\\Battleship\\battleship_icon.ico'))
         self.has_prev_key_release = None
-        self.root.bind("<KeyRelease-r>", self.on_key_release_repeat)
         self.root.bind("<KeyPress-r>", self.on_key_press_repeat)
         self.root.bind("<KeyPress-2>", self.on_key_press_repeat)
         self.root.bind("<KeyPress-3>", self.on_key_press_repeat)
@@ -170,7 +191,6 @@ class Battleship_1v1:
 
         ## Rotate boat orientation button and current orientation display
         tk.Button(self.root, bg="white", text="Rotate", command=self.rotate_boat).grid(row=1, column=13, sticky='nsew')
-        # self.rotate.grid(row=1, column=13, sticky='nsew')
         self.curr_rotation = tk.Label(self.root, text='Horizontal')
         self.curr_rotation.grid(row=1, column=14, sticky='nsew')
 
@@ -249,7 +269,7 @@ class Battleship_1v1:
         self.curr_rotation.config(text='Vertical') if self.curr_rotation.cget(
             'text') == 'Horizontal' else self.curr_rotation.config(text='Horizontal')
 
-    def clicked(self, button):
+    def clicked(self, button: tk.Button):
         """ Function called when placing boats
         :param button: Button pressed
         """
@@ -308,8 +328,6 @@ class Battleship_1v1:
                         return
                 else:
                     self.last_clicked = button
-                # self.last_clicked = button if self.last_clicked is None else self.last_clicked
-
             elif self.boat == "4":
                 b = button.grid_info()
                 button.config(bg="orange")
@@ -401,14 +419,11 @@ class Battleship_1v1:
                         return
                 else:
                     self.last_clicked = button
-                # self.last_clicked = button if self.last_clicked is None else self.last_clicked
-
         else:
-            print("Nope")
+            return
         self.boards[self.player] = board
         self.boats[self.player] = boats
-        if len(self.boats[self.player]) == 1:
-            print("Suka")
+        if len(self.boats[self.player]) == 5:
             self.play(self.path.joinpath('resources\\sounds\\are-you-sure-about-that.mp3'))
             ans = messagebox.askquestion(title='Are you sure about that?',
                                          message="Dou you wish to keep this boat placement?")
@@ -427,12 +442,10 @@ class Battleship_1v1:
                 self.remove_all_images()
                 self.count_3 = 0
                 self.boards[self.player] = Ct.new_board()
-                self.size_2.config(state=tk.NORMAL)
-                self.size_3.config(state=tk.NORMAL)
-                self.size_4.config(state=tk.NORMAL)
-                self.size_5.config(state=tk.NORMAL)
+                for button in self.size_buttons:
+                    button.config(state=tk.NORMAL)
 
-    def can_place(self, size, button) -> bool:
+    def can_place(self, size: str, button: tk.Button) -> bool:
         """ Checks if you can place a boat of a certain size in a certain orientation
         :param size: size of the boat
         :param button: button clicked
@@ -444,7 +457,7 @@ class Battleship_1v1:
         b = button.grid_info()
         if size == "":
             print('Please select a Boat size')
-            return True
+            return False
         size = int(size)
         if size == 2:
             arm = 0
@@ -481,7 +494,7 @@ class Battleship_1v1:
                     return False
             return True
 
-    def draw_boat(self, arm_size, button):
+    def draw_boat(self, arm_size: int, button: tk.Button):
         """ !USE ONLY WITH ODD NUMBERS! draws the boat in the players board {mechanical, only in code, not visual}
         :param arm_size: Size of the boat -1 and divided by 2
         :param button: button clicked
@@ -521,8 +534,8 @@ class Battleship_1v1:
         self.boards[self.player] = board
         self.boats[self.player] = boats
 
-    def draw_boat_img(self, boat):
-        """ Draws a boat in its coodinates on the player's board {visual}
+    def draw_boat_img(self, boat: Boat):
+        """ Draws a boat in its coordinates on the player's board {visual}
         :param boat: The boat to be drawn -> Boat class
         """
         coordinates = boat.get_coordinates()
@@ -546,7 +559,6 @@ class Battleship_1v1:
                     else:
                         child.config(image=self.images_root.get(orientation).get('destroyed').get('last'),
                                      bg=self.defaultbg)
-                        # child.config(image=self.images_touched_root.get(orientation).get('last'), bg=self.defaultbg)
                         pass  # Draw touched texture
                     break
                 else:
@@ -569,7 +581,7 @@ class Battleship_1v1:
                 elif board[c['row']][c['column'] - self.atk_offset] == -1:
                     child.config(image=self.images_root.get('missed'))
 
-    def size(self, button, size):
+    def size(self, button: tk.Button, size: str):
         """ Changes the size of the boat to be drawn and colors in green the button with the size chosen
         :param button: Button clicked
         :param size: Size to next boat
@@ -579,18 +591,7 @@ class Battleship_1v1:
             buttons.config(bg='white')
         button.config(bg="green")
 
-    def print_console(self):
-        """Prints the current player's Board in the console"""
-        for k in self.boards[self.player]:
-            print(str(k))
-
-    def boat_interactions(self):
-        """Prints the current player's Boat coordinates and state of each coordinate in the console"""
-        for boat in self.boats[self.player]:
-            print(boat.get_coordinates())
-            print(boat.state)
-
-    def attack(self, button):
+    def attack(self, button: tk.Button):
         """ Called when attacking in the right atk board, mechanically attacks and draws the attempt on screen.
         Detects if a boat was sunk
         :param button: Button pressed
@@ -678,7 +679,7 @@ class Battleship_1v1:
         """
         self.volume = int(w) / 100
 
-    def play(self, path):
+    def play(self, path: Union[str, Path]):
         """ Plays a sound
         :param path: Path to sound
         """
@@ -687,11 +688,7 @@ class Battleship_1v1:
         pygame.mixer.music.set_volume(self.volume)
         pygame.mixer.music.play()
 
-    def on_key_release(self, event):
-        self.has_prev_key_release = None
-        print("on_key_release", repr(event.char))
-
-    def on_key_press(self, event):
+    def on_key_press(self, event: chr):
         key_pressed = repr(event.char).replace("'", '', 2)
         if key_pressed == 'r':
             self.rotate_boat()
@@ -705,11 +702,7 @@ class Battleship_1v1:
             self.size(self.size_5, "5")
         print("on_key_press", repr(event.char))
 
-    def on_key_release_repeat(self, event):
-        self.has_prev_key_release = self.root.after_idle(self.on_key_release, event)
-        print("on_key_release_repeat", repr(event.char))
-
-    def on_key_press_repeat(self, event):
+    def on_key_press_repeat(self, event: chr):
         if self.has_prev_key_release:
             self.root.after_cancel(self.has_prev_key_release)
             self.has_prev_key_release = None
@@ -718,34 +711,5 @@ class Battleship_1v1:
             self.on_key_press(event)
 
 
-class Boat:
-
-    def __init__(self, coordinates: list, size):
-        ## Coordinates like this: [ [x, y], [x, y], [x, y] ]
-        ## State like this:       [  1/0,    1/0,    1/0 ]
-
-        self.is_alive = True
-        self.coordinates = coordinates
-        self.state = [1] * len(coordinates)
-        self.size = str(size)
-
-    def is_dead(self) -> bool:
-        return not self.state.__contains__(1)
-
-    def get_type(self) -> str:
-        # 2 tiles boat is a Destroyer // 3 tiles boats are Submarine and Cruiser #
-        # 4 tiles boat is a Battleship // 5 tiles boat is a Carrier #
-        return ['Destroyer', 'Cruiser/Submarine', 'Battleship', 'Carrier'][int(self.size) - 2]
-
-    def get_coordinates(self) -> list:
-        return self.coordinates
-
-    def set_state(self, i: int, val: int):
-        self.state[i] = val
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     Battleship_1v1()
-
-# See PyCharm help_rules at https://www.jetbrains.com/help/pycharm/
