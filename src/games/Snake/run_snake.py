@@ -168,7 +168,14 @@ class Launcher:
         menubar.add_command(label="Help", command=g_help)
         menubar.add_command(label="About", command=about)
         # menubar.add_command(label="Stats", command=self.stats)
-        menubar.add_command(label="Game Select Menu", command=lambda: [self.w.destroy(), run_main.run_main()])
+        menubar.add_command(label="Game Select Menu", command=self.exit_launcher)
+
+    def exit_launcher(self):
+        self.running = False
+        if self.t1 is not None:
+            self.t1.join()
+        self.w.destroy()
+        run_main.run_main()
 
 
 if __name__ == '__main__':

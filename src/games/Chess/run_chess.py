@@ -111,8 +111,8 @@ class ChessGui:
         self.timer = tk.Label(self.root, text='-timer-')
         self.timer.grid(row=1, column=self.board_size_x)
 
-        self.switch_player = tk.Button(self.root, text='switch', command=self.switch_players)
-        self.switch_player.grid(row=3, column=self.board_size_x)
+        # self.switch_player = tk.Button(self.root, text='switch', command=self.switch_players)    ## For debug only
+        # self.switch_player.grid(row=3, column=self.board_size_x)
         self.start_button = tk.Button(self.root, text='Start', command=self.start_game, relief=tk.RIDGE, border=10)
         self.start_button.grid(row=2, column=self.board_size_x, sticky='nsew')
 
@@ -170,7 +170,7 @@ class ChessGui:
         self.curr_player.config(text=f'Current Player: {self.player + 1}  ({self.colors[self.player]})')
         print('switched players\n')
 
-    def clicked(self, button):
+    def clicked(self, button: tk.Button):
         if not self.playing:
             return
         print('----------------------------')
@@ -265,10 +265,10 @@ class ChessGui:
             button['command'] = ''
         self.playing = False
 
-    def change_color(self, color1, color2):
+    def change_color(self, color1: str, color2: str):
         for button in Ct.all_children(self.root, 'Button'):
             b = button.grid_info()
-            if b['column'] == self.board_size_x:
+            if b['column'] >= self.board_size_x:
                 continue
             color = color1 if self.logic_color[b['row']][b['column']] == 1 else color2
             self.color_pattern[b['row']][b['column']] = color
@@ -286,7 +286,7 @@ class ChessGui:
         colorsettings.add_command(label="Black & Orange",
                                   command=lambda: self.change_color('black', '#ff9933'))
         menubar.add_cascade(label="Board colors", menu=colorsettings)
-        menubar.add_command(label="Help")
+        menubar.add_command(label="Help") ##TODO: add help thingy @Mathissou
         menubar.add_command(label="About", command=about)
         playsettings = tk.Menu(menubar, tearoff=0)
         playsettings.add_command(label="Same board", command=lambda: (self.root.destroy(),
