@@ -1,6 +1,7 @@
 import tkinter.font as ft
 from tkinter import *
 import ctypes
+import sys as system
 
 from src.games import Battleship, Demineur, Last_letter_game, Pendu_gui, Rock_paper_scissors
 from src.games.Chess import chess_launcher
@@ -16,8 +17,8 @@ class run_main:
         self.w = Tk()
         self.w.title("Game Library - Steam x86")
         self.w.config(bg="lightgray")
+        self.w.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
         self.path = Ct.get_path()
-        self.w.iconbitmap(self.path.joinpath('resources\\images\\steam_icon.ico'))
         self.images = {'morpion': PhotoImage(file='resources\\images\\TicTacToe\\tictactoe.png'),
                        'battleship': PhotoImage(file='resources\\images\\Battleship\\battleship_icon.png'),
                        'chess': PhotoImage(file='resources\\images\\Chess\\taskbar_img_2.png'),
@@ -29,6 +30,7 @@ class run_main:
 
         myappid = 'mjcorp.launcher.alphav1.1'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        self.w.iconbitmap(self.path.joinpath('resources\\images\\steam_icon.ico'))
 
         customFont = ft.Font(family='Source Sans Pro Black', size=20)
         customFont = ft.Font(family='Bahnschrift SemiBold', size=20)
