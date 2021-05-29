@@ -11,27 +11,8 @@ from src.resources.utils.Constants import Constants
 #####          STATIC METHODS          ####
 def g_help():
     messagebox.showinfo(title="Help & Rules",
-                        message="Colormania : \n"
-                                "Le thème du jeu change de couleur à chaque nouvelle pomme mangée\n"
-                                "------------------------------------------------------------\n"
-                                "Randomania : \n"
-                                "Augmente ou réduit la taille du serpent aléatoirement selon les paramètres donnés\n"
-                                "------------------------------------------------------------\n"
-                                "Bapple : \n"
-                                "Génère des mauvaises pommes, qui si mangées réduisent de 1 votre serpent\n"
-                                "------------------------------------------------------------\n"
-                                "Accelerato : \n"
-                                "Augmente la vitesse du serpent d'un montant fixe (paramètre) après chaque pomme\n"
-                                "------------------------------------------------------------\n"
-                                "Walls : \n"
-                                "Génère des murs de la longueur mentionnée\n\n"
-                                "Appuyez sur H en jeu pour faire apparaître l'aide\n"
-                                "Appuyez sur R en jeu pour réinitialiser la partie\n"
-                                "Appuyez sur C en jeu pour changer le thème de couleur\n"
-                                "Appuyez sur W en jeu pour créer des murs\n")
-
-
-
+                        message="Speed float is given as 1 over the number of squares it moves per second\n"
+                                "(1 / 0.075 ~ 13.33squares/sec)")
 
 
 def about():
@@ -57,6 +38,7 @@ class Launcher:
         self.w.iconbitmap(self.path.joinpath('resources\\images\\snake\\snake.ico'))
 
         self.colormania = tk.BooleanVar(value=False)
+        self.random_color = tk.BooleanVar(value=False)
         self.randomania = tk.BooleanVar(value=False)
         self.bapple = tk.BooleanVar(value=False)
         self.accelerato = tk.BooleanVar(value=False)
@@ -81,6 +63,8 @@ class Launcher:
         tk.Label(self.args_frame, text='--Args--', font=customFont).grid(row=0, column=0, columnspan=2, sticky='n')
         tk.Checkbutton(self.args_frame, text='colormania', font=customFont, variable=self.colormania, anchor='w').grid(
             row=1, column=0, sticky='w')
+        self.rcentry = tk.Checkbutton(self.args_frame, text='random color switch', font=customFont, variable=self.random_color, state=tk.DISABLED, anchor='w')
+        self.rcentry.grid(row=1, column=1, sticky='w')
         tk.Checkbutton(self.args_frame, text='randomania', font=customFont, variable=self.randomania, anchor='w').grid(
             row=2, column=0, sticky='w')
         tk.Checkbutton(self.args_frame, text='bapple', font=customFont, variable=self.bapple, anchor='w').grid(row=3,
@@ -154,6 +138,7 @@ class Launcher:
 
     def loop(self):
         while self.running:
+            self.rcentry.config(state=(tk.NORMAL if self.colormania.get() else tk.DISABLED))
             self.bentry.config(state=(tk.NORMAL if self.bapple.get() else tk.DISABLED))
             self.rentry.config(state=(tk.NORMAL if self.randomania.get() else tk.DISABLED))
             self.accentry.config(state=(tk.NORMAL if self.accelerato.get() else tk.DISABLED))
@@ -164,6 +149,7 @@ class Launcher:
         self.running = False
         self.w.destroy()
         Game(color=self.color_var.get(),
+             random_color=self.random_color.get(),
              randomania=self.randomania.get(),
              rando_range=Constants.convert_str_to_list(self.rando.get()),
              bapple=self.bapple.get(),

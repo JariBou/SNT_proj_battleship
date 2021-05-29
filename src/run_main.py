@@ -14,7 +14,7 @@ class run_main:
 
     def __init__(self):
         self.w = Tk()
-        self.w.title("Game Library - Steame x87")
+        self.w.title("Game Library - Steam x86")
         self.w.config(bg="lightgray")
         self.path = Ct.get_path()
         self.w.iconbitmap(self.path.joinpath('resources\\images\\steam_icon.ico'))
@@ -26,7 +26,6 @@ class run_main:
                        'hangman': PhotoImage(file='resources\\images\\Hangman\\pendu_icon.gif'),
                        'demineur': PhotoImage(file='resources\\images\\Demineur\\mine.png'),
                        'snake': PhotoImage(file='resources\\images\\snake\\snake.png')}
-
 
         myappid = 'mjcorp.launcher.alphav1.1'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)

@@ -35,7 +35,8 @@ def g_help():
                                                       "Appuyez sur H en jeu pour faire apparaître un menu pour l'aide ou pour changer de jeu\n"
                                                       "Appuyez sur R en jeu pour réinitialiser la partie\n"
                                                       "Appuyez sur C en jeu pour changer le thème de couleur\n"
-                                                      "Appuyez sur W en jeu pour créer des murs\n")  ##TODO: help text
+                                                      "Appuyez sur W en jeu pour créer des murs\n"
+                                                      "Press 'm' to return to snake menu or 'e' to return to game selection menu")  ##TODO: help text
 
 
 def about():
@@ -83,6 +84,7 @@ class Game:
         #######
         print(kwargs)
         self.color = kwargs.get('color', 'modern')
+        self.random_color = kwargs.get('random_color', False)
         for arg in ['bapple', 'accelerato', 'walls', 'colormania', 'randomania', 'speed']:
             self.args[arg] = kwargs.get(arg, False)
         # self.args = {'bapple': kwargs.get('bapple', False), 'accelerato': False, 'walls': False, 'colormania': False,
@@ -143,6 +145,9 @@ class Game:
         master = tk.Tk()
         master.withdraw()
         g_help()
+        master.destroy()   ## THis bloody fixes problems going back to main menu
+        master.quit()
+        self.displayed = False
 
         while running:
             for event in pg.event.get():
@@ -188,23 +193,28 @@ class Game:
                         self.restart()
                     if event.key == pg.K_c:
                         self.change_colors(self.get_color())
-                    # if event.key == pg.K_e:
-                    #     self.playing = False     Fuck you python
-                    #     if self.t1 is not None:
-                    #         self.t1.join()
-                    #     pg.quit()
-                    #     Launcher()
-                    #
-                    # if event.key == pg.K_m:
-                    #     self.playing = False
-                    #     if self.t1 is not None:
-                    #         self.t1.join()
-                    #     pg.quit()
-                    #     run_main.run_main()
+                    if event.key == pg.K_e:
+                        self.playing = False
+                        if self.t1 is not None:
+                            self.t1.join()
+                        pg.quit()
+                        Launcher()
+
+                    if event.key == pg.K_m:
+                        self.playing = False
+                        if self.t1 is not None:
+                            self.t1.join()
+                        pg.quit()
+                        run_main.run_main()
             pg.display.update()
-            # if self.dead:
-            #     messagebox.showinfo("End of Game",
-            #                         "After closing this window press 'r' to restart,\n'm' to return to snake menu,\n or 'e' to return to game menu")
+            if self.dead and not self.displayed:
+                self.displayed = True
+                master = tk.Tk()
+                master.withdraw()
+                messagebox.showinfo("End of Game",
+                                    "After closing this window press 'r' to restart,\n'm' to return to snake menu,\n or 'e' to return to game menu")
+                master.destroy()  ## THis bloody fixes problems going back to main menu
+                master.quit()
 
     def get_color(self, get_random: bool = False):
         color_list = ['modern', 'vintage', 'floorislava', 'ocean', 'outerworld']
@@ -325,6 +335,11 @@ class Game:
         if snake is None:
             snake = self.snake
         self.updated = True
+        if len(snake) == 1:
+            self.playing = False
+            self.dead = True
+            self.draw_text('You chopped your head silly...', 'bottom')
+            return
         if next_pos in self.walls:
             self.walls.remove(next_pos)
             col = (next_pos[0] - 1) * self.square_dim
@@ -333,7 +348,6 @@ class Game:
             self.pop_snake(snake)
             self.cpt -= 1
             return
-
         if next_pos in snake:
             self.playing = False
             self.dead = True
@@ -356,7 +370,7 @@ class Game:
                 a, b = self.random_range
                 self.add_lenght = randint(a, b)
             if self.args.get('colormania'):
-                self.change_colors(self.get_color())
+                self.change_colors(self.get_color(self.random_color))
             if self.args.get('accelerato') and self.time >= self.acceleration:
                 if self.time >= self.acceleration:
                     self.time -= self.acceleration
@@ -403,7 +417,6 @@ class Game:
             directions.remove(last_facing)
             facing = directions[randint(0, len(directions) - 1)]
             self.place_wall_at((x, y), facing)
-
         else:
             self.place_walls()
             return
@@ -462,8 +475,8 @@ class Game:
         self.draw_all()
         while self.playing:
             self.draw_text(f'  {self.cpt}  ', 'top_right')
-            self.draw_apple()
-            self.draw_bapples()
+            # self.draw_apple()
+            # self.draw_bapples()
             if not self.has_apple:
                 self.place_apple()
             if self.args.get('bapple'):
@@ -633,6 +646,7 @@ class Game:
         return strbuilder
 
     def restart(self):
+        self.displayed = False
         self.playing = False
         self.init_lvl()
 
