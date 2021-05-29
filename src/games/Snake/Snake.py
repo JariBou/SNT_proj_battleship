@@ -195,6 +195,7 @@ class Game:
                         self.change_colors(self.get_color())
                     if event.key == pg.K_e:
                         self.playing = False
+                        running = False
                         if self.t1 is not None:
                             self.t1.join()
                         pg.quit()
@@ -202,6 +203,7 @@ class Game:
 
                     if event.key == pg.K_m:
                         self.playing = False
+                        running = False
                         if self.t1 is not None:
                             self.t1.join()
                         pg.quit()
@@ -619,7 +621,6 @@ class Game:
         root = tk.Tk()
         root.title('Settings')
         root.resizable(width=False, height=False)
-        root.protocol("WM_DELETE_WINDOW", self.exit_game)
         menubar = tk.Menu(root)
         root.config(menu=menubar)
         create_menu(menubar, root)
