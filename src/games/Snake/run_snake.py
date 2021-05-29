@@ -56,10 +56,9 @@ class Launcher:
         customFont = ft.Font(family='Source Sans Pro Black', size=17)
         self.running = True
         imgs = {'snake': PhotoImage(file=self.path.joinpath('resources\\images\\snake\\snake.png'))}
+        tk.Label(self.w, borderwidth=10, relief="ridge", image=imgs['snake'], font=customFont).grid(row=0, column=1, sticky='n')
 
-        tk.Label(self.w, image=imgs['snake'], font=customFont).grid(row=0, column=1, sticky='n')
-
-        self.args_frame = tk.Frame(self.w)
+        self.args_frame = tk.Frame(self.w, borderwidth=6, relief="groove")
         tk.Label(self.args_frame, text='--Args--', font=customFont).grid(row=0, column=0, columnspan=2, sticky='n')
         tk.Checkbutton(self.args_frame, text='colormania', font=customFont, variable=self.colormania, anchor='w').grid(
             row=1, column=0, sticky='w')
@@ -92,7 +91,7 @@ class Launcher:
         tk.Entry(self.args_frame, font=customFont, textvariable=self.max_speed).grid(row=7, column=1)
         self.args_frame.grid(row=0, column=0, rowspan=2)
 
-        size_frame = tk.Frame(self.w)
+        size_frame = tk.Frame(self.w, borderwidth=6, relief="groove")
         tk.Label(size_frame, text='Size:', font=customFont, anchor='w').grid(row=0, column=0, sticky='w')
         tk.Label(size_frame, text='columns: ', font=customFont, anchor='w').grid(row=1, column=0, sticky='w')
         tk.Entry(size_frame, textvariable=self.columns, font=customFont).grid(row=1, column=1)
@@ -109,7 +108,7 @@ class Launcher:
         self.t1.start()
 
         ### pas du tout Ctrl + C  Ctrl + V
-        self.color_frame = tk.Frame(self.w)
+        self.color_frame = tk.Frame(self.w, borderwidth=6, relief="solid")
         self.color_var = tk.StringVar()
         self.color_var.set('modern')
         tk.Label(self.color_frame, text='--Colors--', font=customFont).pack(anchor='n', padx=30)

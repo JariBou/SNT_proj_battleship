@@ -46,10 +46,9 @@ class Launcher:
         customFont_radio = ft.Font(family='Source Sans Pro Black', size=14)
         self.running = True
         imgs = {'icon': PhotoImage(file=self.path.joinpath('resources\\images\\Chess\\taskbar_img_2.png'))}
+        tk.Label(self.w, borderwidth=10, relief="ridge", image=imgs['icon'], font=customFont).grid(row=0, column=0, sticky='n')
 
-        tk.Label(self.w, image=imgs['icon'], font=customFont).grid(row=0, column=0, sticky='n')
-
-        self.args_frame = tk.Frame(self.w)
+        self.args_frame = tk.Frame(self.w, borderwidth=6, relief="groove")
         tk.Label(self.args_frame, text='Board size: ', font=customFont).grid(row=0, column=0, sticky='w')
         tk.OptionMenu(self.args_frame, self.board_size, '[8, 8]', '[5, 6]', '[4, 5]', '[5, 5]', '[6, 6]').grid(row=0, column=1)
         tk.Label(self.args_frame, text='Variant name: ', font=customFont).grid(row=1, column=0, sticky='w')
@@ -63,7 +62,7 @@ class Launcher:
         self.t1 = threading.Thread(target=self.loop)
         self.t1.start()
 
-        self.color_frame = tk.Frame(self.w)
+        self.color_frame = tk.Frame(self.w, borderwidth=6, relief="solid")
         self.color_var = tk.StringVar()
         self.color_var.set("[black, white]")
         tk.Label(self.color_frame, text='--Colors--', font=customFont).pack(anchor='n', padx=30)
@@ -85,14 +84,10 @@ class Launcher:
         radio6 = tk.Radiobutton(self.color_frame, text='Black & Orange', font=customFont_radio,
                                 variable=self.color_var, value="[black, #ff9933]")
         radio6.pack(anchor='nw', padx=30)
-
         self.color_frame.grid(row=0, column=1, rowspan=2)
 
-        from src.resources.utils.Constants import Constants as Ct
-
         self.w.columnconfigure(0, minsize=200)
-
-        Ct.center(self.w)
+        Constants.center(self.w)
         self.prev_val = ''
 
         self.w.mainloop()
