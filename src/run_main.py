@@ -79,10 +79,6 @@ class run_main:
         Ct.center(self.w)
 
         self.w.mainloop()
-        print('hello')
-        input()
-        while True:
-            pass
 
 
 if __name__ == '__main__':
