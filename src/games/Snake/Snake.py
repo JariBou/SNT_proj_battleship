@@ -7,19 +7,35 @@ from random import randint
 from typing import Optional
 
 import pygame as pg
+
+
 """from src.games.Snake.run_snake import g_help as Rshelp"""
 from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 from tkinter import messagebox
+from src.games.Snake.run_snake import Launcher
 
 
-##TODO: add settings panel to switch game
 #####          STATIC METHODS          ####
 def g_help():
-    messagebox.showinfo(title="Help & Rules", message="Cliquer sur une case de la grille révèle:\n\n"
-                                                      "- Une zone ne contenant aucune mine\n"
-                                                      "- Une case bordée par 1, 2, 3 ou 4 mines dans un rayon d'1\n"
-                                                      "  case (verticalement, horizontalement, diagonalement\n")  ##TODO: help text
+    messagebox.showinfo(title="Help & Rules", message="Colormania : \n"
+                                                      "Le thème du jeu change de couleur à chaque nouvelle pomme mangée\n"
+                                                      "------------------------------------------------------------\n"
+                                                      "Randomania : \n"
+                                                      "Augmente ou réduit la taille du serpent aléatoirement selon les paramètres donnés\n"
+                                                      "------------------------------------------------------------\n"
+                                                      "Bapple : \n"
+                                                      "Génère des mauvaises pommes, qui si mangées réduisent de 1 votre serpent\n"
+                                                      "------------------------------------------------------------\n"
+                                                      "Accelerato : \n"
+                                                      "Augmente la vitesse du serpent d'un montant fixe (paramètre) après chaque pomme\n"
+                                                      "------------------------------------------------------------\n"
+                                                      "Walls : \n"
+                                                      "Génère des murs de la longueur mentionnée\n\n"
+                                                      "Appuyez sur H en jeu pour faire apparaître un menu pour l'aide ou pour changer de jeu\n"
+                                                      "Appuyez sur R en jeu pour réinitialiser la partie\n"
+                                                      "Appuyez sur C en jeu pour changer le thème de couleur\n"
+                                                      "Appuyez sur W en jeu pour créer des murs\n")  ##TODO: help text
 
 
 def about():
@@ -107,9 +123,10 @@ class Game:
         self.right = True
         self.has_apple = self.has_bapple = False
         self.updated = True
-        self.walls: list = []
+        self.walls: list[list[int, int]] = []
         self.add_lenght = 0
         self.apple_cpt = 0
+        self.dead = False
 
         self.apple_color = self.RED
         self.bapple_color = self.PEACH
@@ -122,10 +139,10 @@ class Game:
         # self.settings(True)
 
         self.init_lvl()
-        self.draw_all()
-        self.clear_board()
-        self.draw_snake()
-        self.draw_text('Press <space> to start!', 'center')
+
+        master = tk.Tk()
+        master.withdraw()
+        g_help()
 
         while running:
             for event in pg.event.get():
@@ -135,7 +152,7 @@ class Game:
                     quit()
                 elif event.type == pg.KEYDOWN:
                     if event.key == pg.K_SPACE:
-                        if not self.playing:
+                        if not self.playing and not self.dead:
                             self.resume_screen()
                         elif self.playing:
                             self.pause_screen()
@@ -147,8 +164,8 @@ class Game:
                         # if self.playing:
                         #     threading.Thread(target=self.round).start()
                     if event.key == pg.K_h:
-                        """self.settings()"""
-                        self.help()
+                        self.settings()
+                        # self.help()
                     if event.key == pg.K_w:
                         if self.wall_nb <= 10:
                             for o in range(3):
@@ -171,7 +188,23 @@ class Game:
                         self.restart()
                     if event.key == pg.K_c:
                         self.change_colors(self.get_color())
+                    # if event.key == pg.K_e:
+                    #     self.playing = False     Fuck you python
+                    #     if self.t1 is not None:
+                    #         self.t1.join()
+                    #     pg.quit()
+                    #     Launcher()
+                    #
+                    # if event.key == pg.K_m:
+                    #     self.playing = False
+                    #     if self.t1 is not None:
+                    #         self.t1.join()
+                    #     pg.quit()
+                    #     run_main.run_main()
             pg.display.update()
+            # if self.dead:
+            #     messagebox.showinfo("End of Game",
+            #                         "After closing this window press 'r' to restart,\n'm' to return to snake menu,\n or 'e' to return to game menu")
 
     def get_color(self, get_random: bool = False):
         color_list = ['modern', 'vintage', 'floorislava', 'ocean', 'outerworld']
@@ -197,15 +230,21 @@ class Game:
         print('playing now enabled')
 
     def init_lvl(self):
+        self.dead = False
         self.apple: list[int, int] = [0, 0]
         self.bapple: list[list[int, int]] = []
         self.snake: list[list[int, int]] = [[9, 5], [8, 5], [7, 5], [6, 5], [5, 5], [4, 5]]
+        self.redo_bapples = True
+        self.cpt = 0
+        self.down = self.up = self.left = False
+        self.right = True
+        self.has_apple = self.has_bapple = False
+        self.updated = True
+        self.walls: list[list[int, int]] = []
+        self.add_lenght = 0
+        self.apple_cpt = 0
 
         self.change_colors(self.color)
-
-        surface = pg.Surface((self.nb_columns * self.square_dim, self.nb_lines * self.square_dim))
-        pg.draw.rect(surface, self.GREY, surface.get_rect())
-        self.screen.blit(surface, (0, 0))
 
         if self.args.get('bapple'):
             for i in range(self.nb_bapples):
@@ -214,10 +253,11 @@ class Game:
             for i in range(self.wall_nb):
                 self.place_walls()
                 self.wall_nb += 1
+
+        self.draw_all()
         self.clear_board()
-        if not self.playing:
-            self.draw_text('Press <space> to start!', 'center')
         self.draw_snake()
+        self.draw_text('Press <space> to start!', 'center')
 
     def switch_direction(self, direction):
         if not self.updated or not self.playing:
@@ -296,6 +336,8 @@ class Game:
 
         if next_pos in snake:
             self.playing = False
+            self.dead = True
+            self.draw_text('You ate yourself, smart...', 'bottom')
             return
         if self.args.get('bapple') and next_pos in self.bapple:
             self.apple_cpt += 1
@@ -472,7 +514,7 @@ class Game:
             textRect.topleft = ((self.nb_columns * self.square_dim // 2) - textRect.width // 2, 0)
         elif position == 'bottom':
             textRect.bottomleft = (
-            (self.nb_columns * self.square_dim // 2) - textRect.width // 2, self.nb_lines * self.square_dim)
+                (self.nb_columns * self.square_dim // 2) - textRect.width // 2, self.nb_lines * self.square_dim)
         else:
             raise Exception(f"Invalid argument '{position}'")
         self.screen.blit(text, textRect)
@@ -525,36 +567,36 @@ class Game:
         if window is not None:
             window.destroy()
 
-    def help(self, start = False):
-        if self.playing:
-            self.playing = False
-            print('playing set to false')
-            self.draw_text('press <space> to resume', 'top', self.nb_columns * self.square_dim // 20)
-        root = tk.Tk()
-        root.title('Aide')
-        root.geometry('450x350')
-        root.protocol("WM_DELETE_WINDOW", self.exit_game)
-        Texte = tk.Label(root, text = "Colormania : \n"
-                                    "Le thème du jeu change de couleur à chaque nouvelle pomme mangée\n"
-                                    "------------------------------------------------------------\n"
-                                    "Randomania : \n"
-                                    "Augmente ou réduit la taille du serpent aléatoirement selon les paramètres donnés\n"
-                                    "------------------------------------------------------------\n"
-                                    "Bapple : \n"
-                                    "Génère des mauvaises pommes, qui si mangées réduisent de 1 votre serpent\n"
-                                    "------------------------------------------------------------\n"
-                                    "Accelerato : \n"
-                                    "Augmente la vitesse du serpent d'un montant fixe (paramètre) après chaque pomme\n"
-                                    "------------------------------------------------------------\n"
-                                    "Walls : \n"
-                                    "Génère des murs de la longueur mentionnée\n\n"
-                                    "Appuyez sur H en jeu pour faire apparaître l'aide\n"
-                                    "Appuyez sur R en jeu pour réinitialiser la partie\n"
-                                    "Appuyez sur C en jeu pour changer le thème de couleur\n"
-                                    "Appuyez sur W en jeu pour créer des murs\n")
-        Texte.pack()
-        tk.Button(root, text='Ok', command=lambda: root.destroy()).pack()
-        root.mainloop()
+    # def help(self, start=False):
+    #     if self.playing:
+    #         self.playing = False
+    #         print('playing set to false')
+    #         self.draw_text('press <space> to resume', 'top', self.nb_columns * self.square_dim // 20)
+    #     root = tk.Tk()
+    #     root.title('Aide')
+    #     root.geometry('450x350')
+    #     root.protocol("WM_DELETE_WINDOW", self.exit_game)
+    #     Texte = tk.Label(root, text="Colormania : \n"
+    #                                 "Le thème du jeu change de couleur à chaque nouvelle pomme mangée\n"
+    #                                 "------------------------------------------------------------\n"
+    #                                 "Randomania : \n"
+    #                                 "Augmente ou réduit la taille du serpent aléatoirement selon les paramètres donnés\n"
+    #                                 "------------------------------------------------------------\n"
+    #                                 "Bapple : \n"
+    #                                 "Génère des mauvaises pommes, qui si mangées réduisent de 1 votre serpent\n"
+    #                                 "------------------------------------------------------------\n"
+    #                                 "Accelerato : \n"
+    #                                 "Augmente la vitesse du serpent d'un montant fixe (paramètre) après chaque pomme\n"
+    #                                 "------------------------------------------------------------\n"
+    #                                 "Walls : \n"
+    #                                 "Génère des murs de la longueur mentionnée\n\n"
+    #                                 "Appuyez sur H en jeu pour faire apparaître l'aide\n"
+    #                                 "Appuyez sur R en jeu pour réinitialiser la partie\n"
+    #                                 "Appuyez sur C en jeu pour changer le thème de couleur\n"
+    #                                 "Appuyez sur W en jeu pour créer des murs\n")
+    #     Texte.pack()
+    #     tk.Button(root, text='Ok', command=lambda: root.destroy()).pack()
+    #     root.mainloop()
 
     def settings(self, start=False):
         if self.playing:
@@ -591,7 +633,7 @@ class Game:
         return strbuilder
 
     def restart(self):
-        self.clear_board()
+        self.playing = False
         self.init_lvl()
 
     def args_menu(self, window):

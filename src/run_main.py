@@ -14,7 +14,7 @@ class run_main:
 
     def __init__(self):
         self.w = Tk()
-        self.w.title("Game Library - Steam x86")
+        self.w.title("Game Library - Steame x87")
         self.w.config(bg="lightgray")
         self.path = Ct.get_path()
         self.w.iconbitmap(self.path.joinpath('resources\\images\\steam_icon.ico'))
