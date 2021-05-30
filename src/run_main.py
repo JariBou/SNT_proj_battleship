@@ -33,8 +33,8 @@ class run_main:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.w.iconbitmap(self.path.joinpath('resources\\images\\steam_icon.ico'))
 
-        customFont = ft.Font(family='Bahnschrift SemiBold', size=20)  ##tu changes el nom et la tailel de celle ci
-        print(ft.families()) ##TODO: Cette font est parfaite bg tkt
+        customFont = ft.Font(family='Bahnschrift SemiBold', size=20)
+        print(ft.families())
 
         # Set all buttons for apps
         buttonList = [

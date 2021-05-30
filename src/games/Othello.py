@@ -12,6 +12,7 @@ from src import run_main
 
 ##### 3Hours challenge COMPLETE!!!!!
 
+
 #####          STATIC METHODS          ####
 # noinspection SpellCheckingInspection
 def about():
