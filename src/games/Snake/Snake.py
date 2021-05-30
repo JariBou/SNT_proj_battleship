@@ -36,7 +36,8 @@ def g_help():
                                                       "Appuyez sur R en jeu pour réinitialiser la partie\n"
                                                       "Appuyez sur C en jeu pour changer le thème de couleur\n"
                                                       "Appuyez sur W en jeu pour créer des murs\n"
-                                                      "Press 'm' to return to snake menu or 'e' to return to game selection menu")  ##TODO: help text
+                                                      "Appuyez sur E en jeu pour retourner au launcher Snake©\n"
+                                                      "Appuyez sur M en jeu pour retourner dans la Library Steam\n")
 
 
 def about():
