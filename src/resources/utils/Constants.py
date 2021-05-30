@@ -1,8 +1,9 @@
+import copy
 import tkinter
 from PIL import Image, ImageTk
 
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 
 
 # -------- Helper classes by Jari_Bou -------- #
@@ -131,7 +132,7 @@ class Constants:
         return value
 
     @classmethod
-    def get_img(cls, path: Path, size: int = 0) -> ImageTk.PhotoImage:
+    def get_img(cls, path: Union[Path, str], size: int = 0) -> ImageTk.PhotoImage:
         """ resources\\images\\XXX """
         img = Image.open(path)
         if size != 0:
@@ -190,3 +191,16 @@ class Constants:
         root['bg'] = color
         for element in cls.all_children(root, elements):
             element['bg'] = color
+
+    @classmethod
+    def get_flattened(cls, seq) -> list:
+        se = copy.deepcopy(seq)
+        flattened_list = []
+        for sub in se:
+            t = type(sub)
+            if t is tuple or t is list:
+                for sub2 in cls.get_flattened(sub):
+                    flattened_list.append(sub2)
+            else:
+                flattened_list.append(sub)
+        return flattened_list

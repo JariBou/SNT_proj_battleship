@@ -3,7 +3,7 @@ from tkinter import *
 import ctypes
 import sys as system
 
-from src.games import Battleship, Demineur, Last_letter_game, Pendu_gui, Rock_paper_scissors
+from src.games import Battleship, Demineur, Last_letter_game, Pendu_gui, Rock_paper_scissors, Othello
 from src.games.Chess import chess_launcher
 from src.games.GameOfLife import run_gol
 from src.games.Snake import run_snake
@@ -26,15 +26,16 @@ class run_main:
                        'shifumi': PhotoImage(file='resources\\images\\rock_paper_scissors\\shifumi_icon.gif'),
                        'hangman': PhotoImage(file='resources\\images\\Hangman\\pendu_icon.gif'),
                        'demineur': PhotoImage(file='resources\\images\\Demineur\\mine.png'),
-                       'snake': PhotoImage(file='resources\\images\\snake\\snake.png')}
+                       'snake': PhotoImage(file='resources\\images\\snake\\snake.png'),
+                       'othello': Ct.get_img('resources\\images\\Othello\\taskbar_ico_img.png', size=128)}
 
         myappid = 'mjcorp.launcher.alphav1.1'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.w.iconbitmap(self.path.joinpath('resources\\images\\steam_icon.ico'))
 
-        customFont = ft.Font(family='Source Sans Pro Black', size=20)
-        customFont = ft.Font(family='Bahnschrift SemiBold', size=20)
-        print(ft.families())
+        customFont = ft.Font(family='Bahnschrift SemiBold', size=20)  ## Celle que j'aime bien
+        customFont = ft.Font(family='Roman', size=20)  ##tu changes el nom et la tailel de celle ci
+        print(ft.families()) ##TODO: Mathis choiosit la font, j'aime bien celle la perso mais teste en d'autres et tu me dit
 
         # Set all buttons for apps
         buttonList = [
@@ -57,9 +58,11 @@ class run_main:
             Button(text="Démineur", image=self.images['demineur'], command=lambda: (self.w.destroy(), Demineur.Game()),
                    font=customFont, compound='top'),
             Button(text="Snake", image=self.images['snake'], command=lambda: (self.w.destroy(), run_snake.Launcher()),
+                   font=customFont, compound='top'),
+            Button(text="Othello", image=self.images['othello'], command=lambda: (self.w.destroy(), Othello.Game()),
                    font=customFont, compound='top')]
 
-        size = 3
+        size = 5
         while len(buttonList) % size != 0:
             buttonList.append('None')
 
@@ -85,5 +88,3 @@ class run_main:
 
 if __name__ == '__main__':
     run_main()
-
-run_main()

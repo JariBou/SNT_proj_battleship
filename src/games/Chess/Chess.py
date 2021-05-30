@@ -6,25 +6,13 @@ from abc import ABC, abstractmethod
 from typing import Optional, Union
 
 from src.resources.utils.Constants import Position
+from src.resources.utils.Constants import Constants as Ct
 
 
 ## POSITIONS OF PIECES ARE AS FOllOWS: [x, y] AND GO TOP-> BOTTOM   LEFT -> RIGHT /!\
 
 
 #####          STATIC METHODS          ####
-def get_flattened(seq) -> list[Optional['ChessPiece']]:
-    se = copy.deepcopy(seq)
-    flattened_list = []
-    for sub in se:
-        t = type(sub)
-        if t is tuple or t is list:
-            for sub2 in get_flattened(sub):
-                flattened_list.append(sub2)
-        else:
-            flattened_list.append(sub)
-    return flattened_list
-
-
 def get_board(board_size: list[int, int], variant_name: str) -> list[list[Optional['ChessPiece']]]:
     if board_size == [8, 8]:
         return [
@@ -193,7 +181,7 @@ class Board:
 
     def get_king(self, color: str) -> 'King':
         piece: King    ## Just so that Pycharm gives me a break, it isn't actually True, in the end it is but actually not
-        kings_list: list[King] = [piece for piece in get_flattened(self.board) if
+        kings_list: list[King] = [piece for piece in Ct.get_flattened(self.board) if
                                   piece.__class__ == King and piece.get_color() == color]
         if not kings_list:  ##Should never be an error since you should always have a king
             raise AttributeError('ERROR: KING LIST EMPTY')
@@ -211,7 +199,7 @@ class Board:
     def check_over(self, player: int) -> bool:
         """Checks if game is over"""
         color = self.colors[player]
-        piece_list = [piece for piece in [cell for cell in get_flattened(self.board) if cell is not None] if
+        piece_list = [piece for piece in [cell for cell in Ct.get_flattened(self.board) if cell is not None] if
                       piece.get_color() == color]
         if not piece_list:
             print("ERROR 'check_over', 'piece_list' EMPTY")

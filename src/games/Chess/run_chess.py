@@ -17,7 +17,7 @@ from src.resources.utils.Constants import Constants as Ct, ImgLoader as Il
 def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: Jari\n "
-                                               "Version: Alpha V5.2")
+                                               "Version: Alpha V6.0")
 
 
 ####                                  ####
@@ -33,7 +33,7 @@ class ChessGui:
         self.root.title("Chess - Alpha V6.0")
         self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
         ## Add Icon
-        myappid = 'mjcorp.Chess.alphav6.0'  # arbitrary string
+        myappid = 'mjcorp.chess.alphav6.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.root.iconbitmap(self.path.joinpath('resources\\images\\Chess\\taskbar.ico'))
