@@ -12,7 +12,7 @@ from src.resources.utils.Constants import Constants as Ct
 
 
 def g_help():
-    messagebox.showinfo(title="Help", message="C'est du morpion fréro")
+    messagebox.showinfo(title="Help", message="See the image for who beats who :)")
 
 
 def about():
@@ -42,7 +42,7 @@ class Game:
         myappid = 'mjcorp.rockpaperscissors.alphav2.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
-        w.iconbitmap(self.path.joinpath('resources\\images\\rock_paper_scissors\\icon.ico'))
+        w.iconbitmap(self.path.joinpath('resources\\images\\rock_paper_scissors\\shifumi_icon.ico'))
 
         ## Create a Menubar
         menubar = Menu(w)

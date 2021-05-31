@@ -20,6 +20,12 @@ def about():
                                                "Version: Alpha V6.0")
 
 
+def g_help():
+    messagebox.showinfo(title="Help", message="White starts, you can move pieces once you press start"
+                                              "\nYou can change the color of the board at any given time"
+                                              "\nYou can also pause the game if need be"
+                                              "\nYou can play again with the same board or go back to the launcher to change it")
+
 ####                                  ####
 
 
@@ -286,7 +292,7 @@ class ChessGui:
         colorsettings.add_command(label="Black & Orange",
                                   command=lambda: self.change_color('black', '#ff9933'))
         menubar.add_cascade(label="Board colors", menu=colorsettings)
-        menubar.add_command(label="Help") ##TODO: add help thingy @Mathissou
+        menubar.add_command(label="Help", command=g_help)
         menubar.add_command(label="About", command=about)
         playsettings = tk.Menu(menubar, tearoff=0)
         playsettings.add_command(label="Same board", command=lambda: (self.root.destroy(),

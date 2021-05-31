@@ -20,6 +20,13 @@ def about():
     messagebox.showinfo(title="About", message="Made by: Jari\n "
                                                "Version: Alpha V1.0")
 
+
+def g_help():
+    messagebox.showinfo(title="Help", message="Each piece played must be laid adjacent to an opponent's piece so that "
+                                              "the opponent's piece or a row of opponent's pieces is flanked by the new "
+                                              "piece and another piece of the player's colour. All of the opponent's pieces "
+                                              "between these two pieces are 'captured' and turned over to match the player's colour.")
+
 ####                                  ####
 
 
@@ -119,7 +126,7 @@ class Game:
         system.exit('User cancelation')
 
     def create_menubar(self, menubar: tk.Menu):
-        menubar.add_command(label="Help")  ##TODO: add help thingy @Mathissou
+        menubar.add_command(label="Help", command=g_help)
         menubar.add_command(label="About", command=about)
         menubar.add_command(label='Play again', command=lambda: (self.root.destroy(), Game()))
         menubar.add_command(label="Game Select Menu", command=lambda: [self.root.destroy(), run_main.run_main()])

@@ -13,8 +13,7 @@ from src import run_main
 #####          STATIC METHODS          ####
 def g_help():
     messagebox.showinfo(title="Help & Rules",
-                        message="Speed float is given as 1 over the number of squares it moves per second\n"
-                                "(1 / 0.075 ~ 13.33squares/sec)")   ##TODO: help function ya know it
+                        message="Choose the color of board, its size and, if available, the variant that you wish to play")   ##TODO: help function ya know it
 
 
 def about():

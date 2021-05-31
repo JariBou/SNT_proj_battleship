@@ -172,8 +172,6 @@ class Launcher:
 
     def exit_launcher(self):
         self.running = False
-        if self.t1 is not None:
-            self.t1.join()
         self.w.destroy()
         run_main.run_main()
 

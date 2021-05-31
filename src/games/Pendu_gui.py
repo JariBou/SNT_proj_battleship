@@ -108,6 +108,7 @@ class Game:
         self.img_label.place(x=0, y=140)
 
         self.word_label = self.canvas.create_text(300, 60, text=lines_as_str(self.lines), font='Courrier 30')
+        print(self.word)
         self.root.mainloop()
 
     def clicked(self, button):
@@ -124,10 +125,10 @@ class Game:
         if not is_in_word:
             self.wrong += 1
         self.update_gui()
-        self.test_win()
         button.config(state=tk.DISABLED)
         self.canvas.delete(self.word_label)
         self.word_label = self.canvas.create_text(300, 60, text=lines_as_str(self.lines), font='Courrier 30')
+        self.test_win()
 
     def update_gui(self):
         self.img_label.config(image=self.pendu_img[self.wrong])
@@ -138,14 +139,17 @@ class Game:
 
     def test_win(self):
         if self.test_full():
-            self._over()
+            self._over('win')
         elif self.wrong > 6:
-            self._over()
+            self._over('loss')
 
-    def _over(self):
+    def _over(self, state):
         for button in self.button_list:
             button.config(state=tk.DISABLED)
-        messagebox.showinfo('Perdu!', f'Le mot était: {self.word}')
+        if state == 'loss':
+            messagebox.showinfo('Perdu!', f'Le mot était: {self.word}')
+        else:
+            messagebox.showinfo('Gagné!', f'Bravo! Le mot était bien: {self.word}')
 
     def test_full(self):
         return '_' not in self.lines
