@@ -1,4 +1,5 @@
 ## Code Cleaned Up ##
+from tkinter import messagebox
 
 from src import run_main
 
@@ -8,12 +9,15 @@ import random as r
 import sys as system
 from src.resources.utils.Constants import Constants as Ct
 
+
 def g_help():
-    message.showinfo(title= "Help", message = "C'est du morpion fréro")
+    messagebox.showinfo(title="Help", message="C'est du morpion fréro")
+
 
 def about():
     messagebox.showinfo(title="About", message="Made by: LeTiramissou & Jari\n "
                                                "Version: Alpha V1.0")
+
 
 class Game:
 
