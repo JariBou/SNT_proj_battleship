@@ -29,7 +29,7 @@ def get_img(path) -> ImageTk.PhotoImage:
 # noinspection SpellCheckingInspection
 def about():
     """ Used to display an about messageBox """
-    messagebox.showinfo(title="About", message="Made by: LeTiramissu & Jari\n "
+    messagebox.showinfo(title="About", message="Made by: LeTiramissou & Jari\n "
                                                "Version: Alpha V2.0")
 
 

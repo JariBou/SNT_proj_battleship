@@ -11,7 +11,7 @@ from src.resources.utils.Constants import Constants as Ct
 
 
 def about():
-    messagebox.showinfo(title="About", message="Made by: Jari & LeTiramissou\n "
+    messagebox.showinfo(title="About", message="Made by: Jari & LeTiramissou \n "
                                                "Version: Alpha 1.2")
 
 
