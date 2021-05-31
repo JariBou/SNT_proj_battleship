@@ -42,7 +42,7 @@ def g_help():
 
 def about():
     """ Used to display an about messageBox """
-    messagebox.showinfo(title="About", message="Made by: Jari \n "
+    messagebox.showinfo(title="About", message="Made by: Jari & Mathis\n "
                                                "Version: Alpha 1.0")
 
 

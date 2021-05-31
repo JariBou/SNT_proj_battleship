@@ -18,7 +18,7 @@ def turnHelp():
 
 def about():
     """ Used to display an about messageBox """
-    messagebox.showinfo(title="About", message="Made by: Jari \n "
+    messagebox.showinfo(title="About", message="Made by: Jari & Tissou \n "
                                                "Version: Beta 2.3-2P")
 ####                                  ####
 

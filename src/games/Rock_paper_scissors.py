@@ -6,7 +6,14 @@ from pathlib import Path
 from tkinter import *
 import random as r
 import sys as system
+from src.resources.utils.Constants import Constants as Ct
 
+def g_help():
+    message.showinfo(title= "Help", message = "C'est du morpion fréro")
+
+def about():
+    messagebox.showinfo(title="About", message="Made by: LeTiramissou & Jari\n "
+                                               "Version: Alpha V1.0")
 
 class Game:
 
@@ -27,12 +34,16 @@ class Game:
         self.result = Label(w, text='')
         self.result.grid(row=1, column=1)
         path = Path(__file__).parent.parent
+        myappid = 'mjcorp.rockpaperscissors.alphav2.0'  # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        self.path = Ct.get_path()
+        self.w.iconbitmap(self.path.joinpath('resources\\images\\rock_paper_scissors\\icon.ico'))
 
         ## Create a Menubar
         menubar = Menu(w)
         w.config(menu=menubar)
-        # menubar.add_command(label="Help", command=help_rules)
-        # menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Help", command=g_help)
+        menubar.add_command(label="About", command=about)
         menubar.add_command(label="Game Select Menu", command=lambda: [w.destroy(), run_main.run_main()])
 
         humain = Label(text="Humain:")
