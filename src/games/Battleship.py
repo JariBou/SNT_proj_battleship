@@ -101,6 +101,7 @@ class Battleship_1v1:
         self.root = tk.Tk()
         self.root.title("Battleship - Alpha V2.0")
         self.root.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
+        self.root.resizable(width=False, height=False)
         ## Add Icon
         myappid = 'mjcorp.battleship.alphav2.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)

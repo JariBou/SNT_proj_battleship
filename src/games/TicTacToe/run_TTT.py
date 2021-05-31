@@ -25,6 +25,7 @@ class run:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.w.iconbitmap(self.path.joinpath('resources\\images\\TicTacToe\\icon.ico'))
+        self.w.resizable(width=False, height=False)
 
         customFont = ft.Font(size=20)
         single = Button(text="SinglePlayer", command=lambda: (self.w.destroy(), MorpionSolo()), font=customFont)

@@ -42,6 +42,7 @@ class Game:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.root.iconbitmap(self.path.joinpath('resources\\images\\Othello\\taskbar_ico.ico'))
+        self.root.resizable(width=False, height=False)
 
         ## Create a Menubar
         menubar = tk.Menu(self.root)

@@ -67,6 +67,7 @@ class GameOfLife:
         x = (ws / 2) - (w / 2)
         y = (hs / 2) - (h / 2)
         self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        self.root.resizable(width=False, height=False)
         ## Add Icon
         myappid = 'mjcorp.gameoflife.alphav3.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)

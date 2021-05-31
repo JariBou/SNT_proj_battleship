@@ -18,6 +18,7 @@ class run:
         ## Create a Menubar
         menubar = Menu(self.w)
         self.w.config(menu=menubar)
+        self.w.resizable(width=False, height=False)
         myappid = 'mjcorp.gollauncher.alphav1.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Constants.get_path()

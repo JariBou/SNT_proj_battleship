@@ -52,6 +52,7 @@ class Game:
         self.root = tk.Tk()
         self.root.title("Pendu - Alpha V1.2")
         self.root.protocol("WM_DELETE_WINDOW", system.exit)
+        self.root.resizable(width=False, height=False)
         w = 800
         h = 600
         ## get screen width and height
@@ -108,7 +109,6 @@ class Game:
         self.img_label.place(x=0, y=140)
 
         self.word_label = self.canvas.create_text(300, 60, text=lines_as_str(self.lines), font='Courrier 30')
-        print(self.word)
         self.root.mainloop()
 
     def clicked(self, button):

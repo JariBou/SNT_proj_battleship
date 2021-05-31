@@ -45,18 +45,10 @@ class MorpionMulti:
 
         self.w = Tk()
         self.w.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
-        w = 800
-        h = 400
-        ## get screen width and height
-        ws = self.w.winfo_screenwidth()
-        hs = self.w.winfo_screenheight()
-        ## calculate x and y coordinates for the window to be opened at
-        x = (ws / 2) - (w / 2)
-        y = (hs / 2) - (h / 2)
-        self.w.geometry('%dx%d+%d+%d' % (w, h, x, y))
         self.w.title("Tic Tac Toe - 2 Players")
         self.menubar = Menu(self.w)
         self.w.config(menu=self.menubar, bg="lightgray")
+        self.w.resizable(width=False, height=False)
         self.menubar.add_command(label="Help", command=turnHelp)
         self.menubar.add_command(label="About", command=about)
         self.menubar.add_command(label="SwitchGamemode", command=self.switch)
@@ -155,7 +147,7 @@ class MorpionMulti:
                 i += 1
 
         self.reset()
-
+        Ct.center(self.w)
         self.w.mainloop()
 
     def setCursor(self, cursor):

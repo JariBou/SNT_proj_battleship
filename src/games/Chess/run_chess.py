@@ -38,6 +38,7 @@ class ChessGui:
         self.root = tk.Tk()
         self.root.title("Chess - Alpha V6.0")
         self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
+        self.root.resizable(width=False, height=False)
         ## Add Icon
         myappid = 'mjcorp.chess.alphav6.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)

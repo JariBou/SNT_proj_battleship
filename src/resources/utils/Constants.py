@@ -1,9 +1,8 @@
 import copy
 import tkinter
-from PIL import Image, ImageTk
-
 from pathlib import Path
-from typing import Optional, Union
+from PIL import Image, ImageTk
+from typing import Union
 
 
 # -------- Helper classes by Jari_Bou -------- #

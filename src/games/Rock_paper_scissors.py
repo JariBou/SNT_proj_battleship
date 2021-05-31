@@ -25,15 +25,6 @@ class Game:
     def __init__(self):
         w = Tk()
         w.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
-        ww = 800
-        h = 500
-        ## get screen width and height
-        ws = w.winfo_screenwidth()
-        hs = w.winfo_screenheight()
-        ## calculate x and y coordinates for the window to be opened at
-        x = (ws / 2) - (ww / 2)
-        y = (hs / 2) - (h / 2)
-        w.geometry('%dx%d+%d+%d' % (ww, h, x, y))
         w.title("Rock Paper Scissors Lizard Spock  -  Solo")
 
         self.result = Label(w, text='')
@@ -43,6 +34,7 @@ class Game:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         w.iconbitmap(self.path.joinpath('resources\\images\\rock_paper_scissors\\shifumi_icon.ico'))
+        w.resizable(width=False, height=False)
 
         ## Create a Menubar
         menubar = Menu(w)
@@ -106,9 +98,9 @@ class Game:
         help_text.grid(row=0, column=5)
 
         help_img = PhotoImage(file=path.joinpath("resources\\images\\rock_paper_scissors\\lizard_spock.png"))
-        help = Label(image=help_img)
-        help.grid(row=1, rowspan=4, column=5)
-
+        Help = Label(image=help_img)
+        Help.grid(row=1, rowspan=4, column=5)
+        Ct.center(w)
         w.mainloop()
 
     def CPU(self, player):

@@ -31,6 +31,7 @@ class Launcher:
         self.w.title("Snake Launcher")
         menubar = tk.Menu(self.w)
         self.w.config(menu=menubar)
+        self.w.resizable(width=False, height=False)
         self.create_menu(menubar)
         myappid = 'mjcorp.snake.alphav2.1'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)

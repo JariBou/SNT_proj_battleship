@@ -38,20 +38,13 @@ class Last_letter:
         self.root = tk.Tk()
         self.root.title("Last letter - Alpha V1.0")
         self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
-        w = 550
-        h = 310
-        ## get screen width and height
-        ws = self.root.winfo_screenwidth()
-        hs = self.root.winfo_screenheight()
-        x = (ws / 2) - (w / 2)
-        y = (hs / 2) - (h / 2)
-        self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
         ## Add Icon
         myappid = 'mjcorp.lastword.alphav1.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.root.bind('<Return>', self.print_input_to_console)
         self.root.iconbitmap(self.path.joinpath('resources\\images\\LastLetter\\Last_letter.ico'))
+        self.root.resizable(width=False, height=False)
 
         self.alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
                          "t", "u", "v", "w", "x", "y", "z"]
@@ -64,7 +57,7 @@ class Last_letter:
         self.used = []
         self.t1 = None
 
-        for i in range(4):
+        for i in range(3):
             self.root.rowconfigure(i, minsize=75)
             self.root.columnconfigure(i, minsize=110)
         customLabelFont = font.Font(family="Times", size=13)
@@ -114,18 +107,12 @@ class Last_letter:
         self.enter_word_label = tk.Label(self.root, text='Enter a word:', font=customLabelFont)
         self.enter_word_label.grid(row=2, column=0)
 
-        self.print_input = tk.Button(self.root, text='print_input', command=self.admin_command)
-        self.print_input.grid(row=3, column=0)
-
         self.player_input = ''
         self.mots = []
         self.points = 0
         self.turns_count = 1
-
+        Ct.center(self.root)
         self.root.mainloop()
-
-    def admin_command(self):
-        print(self.mylist.get(0, tk.END))
 
     def print_input_to_console(self, _):
         self.console_output.config(text="")
@@ -217,7 +204,7 @@ class Last_letter:
                     return
                 self.tries_state_button.config(text="To Continue", bg='red')
                 time.sleep(0.7)
-            except:
+            except AttributeError:
                 return
         return
 

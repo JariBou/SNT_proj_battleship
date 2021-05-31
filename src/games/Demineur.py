@@ -166,7 +166,6 @@ class Game:
 
         Ct.set_color(self.root, 'white')
         self.start()
-
         self.root.mainloop()
 
     def draw_separators(self, origine):
