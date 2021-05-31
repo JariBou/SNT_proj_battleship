@@ -1,5 +1,6 @@
 ## Code Cleaned Up ##
 from tkinter import messagebox
+import ctypes
 
 from src import run_main
 
@@ -41,7 +42,7 @@ class Game:
         myappid = 'mjcorp.rockpaperscissors.alphav2.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
-        self.w.iconbitmap(self.path.joinpath('resources\\images\\rock_paper_scissors\\icon.ico'))
+        w.iconbitmap(self.path.joinpath('resources\\images\\rock_paper_scissors\\icon.ico'))
 
         ## Create a Menubar
         menubar = Menu(w)

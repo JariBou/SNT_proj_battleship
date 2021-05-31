@@ -107,8 +107,7 @@ class Battleship_1v1:
         ## Add Icon
         myappid = 'mjcorp.battleship.alphav2.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        self.path = Ct.get_path()
-        self.root.iconbitmap(self.path.joinpath('resources\\images\\Battleship\\battleship_icon.ico'))
+        8
         self.has_prev_key_release = None
         self.root.bind("<KeyPress-r>", self.on_key_press_repeat)
         self.root.bind("<KeyPress-2>", self.on_key_press_repeat)
