@@ -14,7 +14,7 @@ from src.resources.utils.Constants import Constants as Ct
 def about():
     """ Used to display an about messageBox """
     messagebox.showinfo(title="About", message="Made by: Jari\n "
-                                               "Version: Alpha V0.6")
+                                               "Version: Alpha V1.0")
 
 
 def help_rules():
@@ -36,7 +36,7 @@ class Last_letter:
 
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Last letter - Alpha V0.6")
+        self.root.title("Last letter - Alpha V1.0")
         self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
         w = 550
         h = 310
@@ -47,10 +47,11 @@ class Last_letter:
         y = (hs / 2) - (h / 2)
         self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
         ## Add Icon
-        myappid = 'mjcorp.lastword.alphav0.6'  # arbitrary string
+        myappid = 'mjcorp.lastword.alphav1.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         self.path = Ct.get_path()
         self.root.bind('<Return>', self.print_input_to_console)
+        self.root.iconbitmap(self.path.joinpath('resources\\images\\LastLetter\\Last_letter.ico'))
 
         self.alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
                          "t", "u", "v", "w", "x", "y", "z"]

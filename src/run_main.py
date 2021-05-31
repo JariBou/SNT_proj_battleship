@@ -27,7 +27,8 @@ class run_main:
                        'hangman': PhotoImage(file='resources\\images\\Hangman\\pendu_icon.gif'),
                        'demineur': PhotoImage(file='resources\\images\\Demineur\\mine.png'),
                        'snake': PhotoImage(file='resources\\images\\snake\\snake.png'),
-                       'othello': Ct.get_img('resources\\images\\Othello\\taskbar_ico_img.png', size=128)}
+                       'othello': Ct.get_img('resources\\images\\Othello\\taskbar_ico_img.png', size=128),
+                       'lastletter': Ct.get_img('resources\\images\\LastLetter\\LettersIco_img.png', size=128)}
 
         myappid = 'mjcorp.launcher.alphav1.1'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -46,7 +47,7 @@ class run_main:
             Button(text="Échecs", image=self.images['chess'], command=lambda: (self.w.destroy(), chess_launcher.Launcher()),
                    font=customFont, compound='top'),
             Button(text="Jeu de la Vie", image=self.images['GoL'], command=lambda: (self.w.destroy(), run_gol.run()), font=customFont, compound='top'),
-            Button(text="Dernière Lettre", command=lambda: (self.w.destroy(), Last_letter_game.Last_letter()),
+            Button(text="Dernière Lettre", image=self.images['lastletter'], command=lambda: (self.w.destroy(), Last_letter_game.Last_letter()),
                    font=customFont, compound='top'),
             Button(text="Shifumi", image=self.images['shifumi'],
                    command=lambda: (self.w.destroy(), Rock_paper_scissors.Game()),
