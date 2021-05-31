@@ -67,7 +67,7 @@ class Game:
                 a.grid(row=row, column=column, sticky='nsew')
                 self.buttons_list.append(a)
 
-        self.player_label = tk.Label(self.root, text='Player: 1')
+        self.player_label = tk.Label(self.root, text='Player: 1 (white)')
         self.player_label.grid(row=0, column=self.board_size['x'])
         tk.Button(self.root, text='print_board', command=self.b_class.print_board).grid(row=1, column=self.board_size['x'])
 
@@ -80,11 +80,12 @@ class Game:
     def clicked(self, button: tk.Button):
         curr_pos: Position = Position([button.grid_info()['column'], button.grid_info()['row']])
         positions = self.b_class.get_possible_places(self.colors[self.player])
+        print(positions)
         if [button.grid_info()['column'], button.grid_info()['row']] in positions:
             self.b_class.place_piece(curr_pos, self.colors[self.player])
             self.switch_player()
             self.update_board()
-            self.check_end()
+        self.check_end()
 
     def check_end(self):
         positions = self.b_class.get_possible_places(self.colors[self.player])
@@ -176,9 +177,9 @@ class Piece:
             for offset in offsets:
                 try:
                     pos = self.board[y + (offset[0] * i)][x + (offset[1] * i)]
-                    if isinstance(pos, Piece) and pos.get_color() != self.get_color():
+                    if isinstance(pos, Piece) and pos.get_color() != self.get_color() and y + (offset[0] * i) >= 0 and x + (offset[1] * i) >= 0:
                         pos_2 = self.board[y + (offset[0] * i) * 2][x + (offset[1] * i) * 2]
-                        if pos_2 is None:
+                        if pos_2 is None and x + (offset[1] * i) * 2 >= 0 and y + (offset[0] * i) * 2 >= 0:
                             possible_spots.append([x + (offset[1] * i) * 2, y + (offset[0] * i) * 2])
                 except IndexError:
                     continue
@@ -248,14 +249,12 @@ class Board:
             spots = piece.get_turning_spots()
             if spots:
                 places += spots
-        # Ct.remove_duplicates(places)
-        return places
+        Ct.remove_duplicates(places)
+        return places if places != [] else False
 
     def get_highest_color(self) -> str:
         colors_dict = {'white': 0, 'black': 0}
-        for element in Ct.get_flattened(self.board):
-            if element is None:
-                continue
+        for element in [piece for piece in Ct.get_flattened(self.board) if piece is not None]:
             colors_dict[element.get_color()] += 1
         colors_dict = {key: value for key, value in sorted(colors_dict.items(), key=lambda item: item[1], reverse=True)}
         return [key for key in colors_dict.keys()][0]
