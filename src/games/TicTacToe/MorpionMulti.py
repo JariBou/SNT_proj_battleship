@@ -13,7 +13,7 @@ from src.resources.utils.Constants import Constants as Ct
 def turnHelp():
     """ Used to display a HelpMessageBox """
     messagebox.showinfo(title="Help", message="A different player starts at \n"
-                                              "every new turn")
+                                              "every new turn\n-You can use the numpad to play")
 
 
 def about():

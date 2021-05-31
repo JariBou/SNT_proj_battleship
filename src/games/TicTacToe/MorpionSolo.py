@@ -16,7 +16,8 @@ def difficultyHelp():
     messagebox.showinfo(title="Help", message="Difficulty: \n"
                                               "Noob - The CPU will place randomly \n"
                                               "Easy - The CPU will prevent you from winning \n"
-                                              "Normal - The CPU will prevent you from winning and will try to")
+                                              "Normal - The CPU will prevent you from winning and will try to"
+                                              "\n-You can use the numpad to play")
 
 
 def about():
