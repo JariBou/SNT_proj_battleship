@@ -14,9 +14,6 @@ from src import run_main
 from src.resources.utils.Constants import Constants as Ct
 
 
-## TODO: code cleanup
-
-
 #####          STATIC METHODS          ####
 def get_img(path) -> ImageTk.PhotoImage:
     """ resources\\images\\XXX """

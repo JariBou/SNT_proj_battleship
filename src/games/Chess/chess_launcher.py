@@ -13,7 +13,7 @@ from src import run_main
 #####          STATIC METHODS          ####
 def g_help():
     messagebox.showinfo(title="Help & Rules",
-                        message="Choose the color of board, its size and, if available, the variant that you wish to play")   ##TODO: help function ya know it
+                        message="Choose the color of board, its size and, if available, the variant that you wish to play")
 
 
 def about():

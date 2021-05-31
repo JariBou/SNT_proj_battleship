@@ -13,7 +13,6 @@ from src import run_main
 from src.resources.utils.Constants import Constants, Constants as Ct
 
 
-##TODO: add settings panel to switch game
 #####          STATIC METHODS          ####
 
 
