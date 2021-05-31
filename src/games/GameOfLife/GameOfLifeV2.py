@@ -47,6 +47,7 @@ class Game:
 
     def __init__(self):
         ## Window creation
+        self.path = Ct.get_path()
         self.nb_columns, self.nb_lines = 10, 10
         self.change_grid_size()
 
@@ -55,10 +56,9 @@ class Game:
         self.root.protocol("WM_DELETE_WINDOW", self.exit_game)
         self.root.resizable(width=False, height=False)
 
-        self.path = Ct.get_path()
-        myappid = 'mjcorp.gameoflife.alphav2.0'  # arbitrary string
+        myappid = 'mjcorp.gollauncher.alphav2.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        self.root.iconbitmap(self.path.joinpath('resources\\images\\Demineur\\demineur_taskbar.ico'))
+        self.root.iconbitmap(self.path.joinpath('resources\\images\\GoL\\GoL_icon.ico'))
 
         menubar = tk.Menu(self.root)
         self.root.config(menu=menubar, bg='white')
@@ -328,6 +328,7 @@ class Game:
             additionnal_message = '       /!\\' + additionnal_message + '/!\\'
         size_choice = tk.Tk()
         size_choice.title("GameOfLife - Alpha V2.0")
+        size_choice.iconbitmap(self.path.joinpath('resources\\images\\GoL\\GoL_icon.ico'))
         tk.Label(size_choice, text="Plese enter a grid size like this -> column_number x row_number").grid(row=0,
                                                                                                            column=0)
         tk.Label(size_choice, text="Example: 25x25" + additionnal_message).grid(row=1, column=0)

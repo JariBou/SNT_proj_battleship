@@ -34,9 +34,11 @@ def about():
 class GameOfLife:
 
     def __init__(self):
+        self.path = Ct.get_path()
         self.sw = tk.Tk()
         self.sw.title("Game Of Life - Alpha V3.0")
         self.sw.protocol("WM_DELETE_WINDOW", self.exit)
+        self.sw.iconbitmap(self.path.joinpath('resources\\images\\GoL\\GoL_icon.ico'))
         self.label = tk.Label(self.sw, text='Enter the width of the grid (in number of squares)')
         self.label2 = tk.Label(self.sw, text='')
         self.entry_field = tk.Entry(self.sw)
@@ -56,6 +58,7 @@ class GameOfLife:
         self.root.title("Game Of Life - Alpha V3.0")
         self.root.protocol("WM_DELETE_WINDOW", lambda: system.exit('User Cancelation'))
         self.root.attributes("-fullscreen", True)
+        self.root.iconbitmap(self.path.joinpath('resources\\images\\GoL\\GoL_icon.ico'))
         w = 700
         h = 500
         ## get screen width and height
@@ -67,7 +70,6 @@ class GameOfLife:
         ## Add Icon
         myappid = 'mjcorp.gameoflife.alphav3.0'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-        self.path = Ct.get_path()
 
         ## Create a Menubar
         menubar = tk.Menu(self.root)

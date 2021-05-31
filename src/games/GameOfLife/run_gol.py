@@ -1,11 +1,11 @@
 ## Code Cleaned Up ##
-
+import ctypes
 from tkinter import *
 import tkinter.font as ft
 
 from src import run_main
 from src.games.GameOfLife import GameOfLife, GameOfLifeV2, GameOfLifeV3
-from src.resources.utils.Constants import Constants as Ct
+from src.resources.utils.Constants import Constants as Ct, Constants
 
 
 class run:
@@ -18,6 +18,10 @@ class run:
         ## Create a Menubar
         menubar = Menu(self.w)
         self.w.config(menu=menubar)
+        myappid = 'mjcorp.gollauncher.alphav1.0'  # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        self.path = Constants.get_path()
+        self.w.iconbitmap(self.path.joinpath('resources\\images\\GoL\\GoL_icon.ico'))
         menubar.add_command(label="Game Select Menu", command=lambda: [self.w.destroy(), run_main.run_main()])
 
         customFont = ft.Font(size=20)
