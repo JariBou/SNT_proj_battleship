@@ -353,7 +353,6 @@ class Launcher:
                   command=self.GoL, font=customFont, relief=tk.RAISED, border=10).grid(row=5, column=0,
                                                                                            columnspan=2)
         ### pas du tout Ctrl + C  Ctrl + V
-        from src.resources.utils.Constants import Constants as Ct
         Ct.center(self.w)
 
         self.w.mainloop()

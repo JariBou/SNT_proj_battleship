@@ -72,8 +72,8 @@ class Piece:
     def __repr__(self):
         return f'Piece at {self.position.get_position()}, color={self.color}{f", name={self.name}" if self.name != "" else ""}, has_board={bool(self.board)}'
 
-    def pass_board(self, board):
-        self.board = board
+    def pass_board(self, b):
+        self.board = b
 
     def print_name(self):
         print(self.name)

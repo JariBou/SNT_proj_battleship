@@ -68,9 +68,7 @@ class Chess_Gui:
         for column in range(0, 9):
             for row in range(0, 9):
                 bg = 'black' if (column + row) % 2 == 0 else 'white'
-                a = tk.Button(self.root, bg=bg, activebackground='lightblue', image=self.image.get('Test_Pawn'))
-                #a["command"] =
-                a.grid(row=row, column=column, sticky='nsew')
+                tk.Button(self.root, bg=bg, activebackground='lightblue', image=self.image.get('Test_Pawn')).grid(row=row, column=column, sticky='nsew')
 
         self.root.mainloop()
 
