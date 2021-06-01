@@ -160,7 +160,8 @@ class Board:
         self.board: list[list[Optional[ChessPiece]]] = get_board(board_size, variant_name)
         ### Do a dynamic board where instead of using a binary system to know if a piece is there just move the pieces in that list?
         ### Might be too hard tho....dk
-        ##  Actually super easy, Barely an inconveniance, shoulda used cell class for each cell tho....
+        ##  Actually super easy, Barely an inconvenience, shoulda used cell class for each cell tho....
+        ## Jk it's trash using a class for each cell
 
     def get(self, x: int, y: int) -> Optional['ChessPiece']:
         print(f'getting at: {x, y}    -  element: {self.board[y][x]}')
