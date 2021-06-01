@@ -4,7 +4,7 @@ import time
 import tkinter as tk
 import sys as system
 import random
-import pygame as pygame
+import pygame
 
 from PIL.ImageTk import PhotoImage
 from tkinter import messagebox
