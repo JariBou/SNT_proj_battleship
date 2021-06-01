@@ -109,17 +109,12 @@ class ChessGui:
         self.change_color(kwargs.get('color', 'black')[0], kwargs.get('color', 'white')[1])
         self.checkers = []
 
-        self.s_round = 0
-        self.p1_time = {'minutes': 0, 'seconds': 0}
-        self.p2_time = {'minutes': 0, 'seconds': 0}
-        self.time_dict = {'0': self.p1_time, '1': self.p2_time}
+        self.time_dict = {'0': {'minutes': 0, 'seconds': 0}, '1': {'minutes': 0, 'seconds': 0}}
         self.curr_player = tk.Label(self.root, text=f'Current Player: {self.player + 1}  ({self.colors[self.player]})')
         self.curr_player.grid(row=0, column=self.board_size_x)
         self.timer = tk.Label(self.root, text='-timer-')
         self.timer.grid(row=1, column=self.board_size_x)
 
-        # self.switch_player = tk.Button(self.root, text='switch', command=self.switch_players)    ## For debug only
-        # self.switch_player.grid(row=3, column=self.board_size_x)
         self.start_button = tk.Button(self.root, text='Start', command=self.start_game, relief=tk.RIDGE, border=10)
         self.start_button.grid(row=2, column=self.board_size_x, sticky='nsew')
 
@@ -146,14 +141,11 @@ class ChessGui:
 
     def update_timer(self):
         while self.playing:
-            sleep(0.25)
+            sleep(1)
             if not self.playing:
                 return
-            self.s_round += 1
             curr = self.time_dict.get(str(self.player))
-            if self.s_round == 2:
-                curr['seconds'] += 0.5
-                self.s_round = 0
+            curr['seconds'] += 1
             if curr['seconds'] >= 60:
                 curr['minutes'] += 1
                 curr['seconds'] = 0

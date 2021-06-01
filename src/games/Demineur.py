@@ -48,6 +48,7 @@ class Game:
 
     def __init__(self):
         ## Window creation
+        self.timer_on = False
         self.nb_mines = 0
         self.root = tk.Tk()
         self.root.title("Démineur - Alpha V1.0")
@@ -182,6 +183,7 @@ class Game:
         self.land_canvas.delete(tk.ALL)
         level = self.difficulty.get()
         self.time_dict = {'minutes': 0, 'seconds': 0}
+        self.timer.config(text="--min --s")
         if level == 1:
             self.nb_columns, self.nb_lines, self.nb_mines = 10, 10, 12
         elif level == 2:
@@ -201,6 +203,7 @@ class Game:
         self.nb_seen_squares, self.hidden_mines = 0, self.nb_mines
 
     def start(self):
+        self.timer_on = False
         self.playing = True
         self.init_lvl()
         for y in range(1, self.nb_lines + 1):
@@ -221,8 +224,6 @@ class Game:
                 nb_mines += 1
         self.affiche_compteur()
         Ct.center(self.root)
-        self.t1 = Thread(target=self.update_timer)
-        self.t1.start()
 
     def affiche_compteur(self):
         self.mine_count.config(text=f'Mines restantes: {self.hidden_mines}')
@@ -259,6 +260,10 @@ class Game:
     def pointeurG(self, event):
         if not self.playing:
             return
+        if not self.timer_on:
+            self.t1 = Thread(target=self.update_timer)
+            self.t1.start()
+            self.timer_on = True
         nCol = (event.x - self.gap) // self.square_dim + 1
         nLine = (event.y - self.gap) // self.square_dim + 1
         if not (1 <= nCol <= self.nb_columns and 1 <= nLine <= self.nb_lines):
@@ -414,14 +419,11 @@ class Game:
 
     def update_timer(self):
         while self.playing:
-            time.sleep(0.25)
+            time.sleep(1)
             if not self.playing:
                 return
-            self.s_round += 1
             curr = self.time_dict
-            if self.s_round == 2:
-                curr['seconds'] += 0.5
-                self.s_round = 0
+            curr['seconds'] += 1
             if curr['seconds'] >= 60:
                 curr['minutes'] += 1
                 curr['seconds'] = 0
