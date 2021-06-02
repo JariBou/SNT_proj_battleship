@@ -2,6 +2,8 @@ import pygame
 import random
 
 
+#Pretty neat code, might come in handy later on, gotta adapt it though
+
 class Stack:
     def __init__(self):
         self.stack = []
