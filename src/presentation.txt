@@ -1,0 +1,11 @@
+- Quelles sont les difficultés que vous avez rencontrées dans la conception de votre projet ?
+Threading
+python being python
+import bugs
+
+- Comment y avez-vous remédié ?
+weird stuff like try except and None checks
+well...actually...
+impossible to resolve??
+
+- Quelles sont les améliorations que vous pourriez apporter à votre projet ?
