@@ -6,8 +6,7 @@ from pathlib import Path
 from tkinter import messagebox
 from PIL import ImageTk, Image
 from typing import Union
-
-import pygame as pygame
+import pygame
 import sys as system
 
 from src import run_main
@@ -53,9 +52,6 @@ def g_help():
                                                       "\n Vous pouvez également utiliser le pavé numérique pour choisir la taille des bateaux ainsi que la touche r pour les tourner")
 
 
-####                                  ####
-
-
 # noinspection SpellCheckingInspection
 def create_menu(menubar: tk.Menu, root: tk.Tk):
     menubar.add_command(label="Help", command=g_help)
@@ -67,6 +63,7 @@ def create_menu(menubar: tk.Menu, root: tk.Tk):
 def over(player: int):
     messagebox.showinfo('You won!', f'Congrats Player {player+1}, you won!\n You are a master at this game! Or just lucky? Who knows?\n (You may continue playing for whatever reason you have)')
     pass
+####                                  ####
 
 
 class Boat:
