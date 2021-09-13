@@ -6,7 +6,7 @@ import sys as system
 from src.games import Battleship, Demineur, Last_letter_game, Pendu_gui, Rock_paper_scissors, Othello
 from src.games.Chess import chess_launcher
 from src.games.GameOfLife import run_gol
-from src.games.Snake import run_snake
+from src.games.Snake import run_snake, start_snake
 from src.games.TicTacToe import run_TTT as Runmorpion
 from src.resources.utils.Constants import Constants as Ct
 
@@ -57,7 +57,7 @@ class run_main:
                    font=customFont, compound='top'),
             Button(text="Démineur", image=self.images['demineur'], command=lambda: (self.w.destroy(), Demineur.Game()),
                    font=customFont, compound='top'),
-            Button(text="Snake", image=self.images['snake'], command=lambda: (self.w.destroy(), run_snake.Launcher()),
+            Button(text="Snake", image=self.images['snake'], command=lambda: (self.w.destroy(), start_snake.run()),
                    font=customFont, compound='top'),
             Button(text="Othello", image=self.images['othello'], command=lambda: (self.w.destroy(), Othello.Game()),
                    font=customFont, compound='top')]

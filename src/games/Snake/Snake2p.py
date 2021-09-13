@@ -229,6 +229,7 @@ class Game:
                                     "After closing this window press 'r' to restart,\n'm' to return to snake menu,\n or 'e' to return to game menu")
                 master.destroy()  ## THis bloody fixes problems going back to main menu
                 master.quit()
+                print(f'{running=}')
 
     def pause_screen(self):
         self.playing = False
@@ -249,6 +250,7 @@ class Game:
             snake.draw()
 
     def init_lvl(self):
+        print("Starting level")
         self.apple: list[int, int] = [0, 0]
         self.bapple: list[list[int, int]] = []
         self.apple_cpt = 0
@@ -265,6 +267,7 @@ class Game:
         self.place_apple()
         self.draw_all()
         self.clear_board()
+        self.dead = False
         self.draw_text('Press <space> to start!', 'center')
 
     def restart(self):
@@ -322,6 +325,7 @@ class Game:
                 snake.has_apple = False
                 if not snake.alive:
                     self.dead = True
+                    self.playing = False
 
             time.sleep(self.time)
 
