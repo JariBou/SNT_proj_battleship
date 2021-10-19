@@ -413,7 +413,7 @@ class Snake:
             x = (self.nb_columns-1 if x == -1 else 0)
         if y == -1 or y == self.nb_lines:
             y = (self.nb_lines-1 if y == -1 else 0)
-        if [x, y] in self.otherSnake.get():
+        if [x, y] in self.otherSnake.get() or [x, y] in self.get():
             self.alive = False
             print(f"DEAD: {self.name}")
             return
