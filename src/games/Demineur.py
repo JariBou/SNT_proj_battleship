@@ -337,7 +337,7 @@ class Game:
             return
         nCol = (event.x - self.gap) // self.square_dim + 1
         nLine = (event.y - self.gap) // self.square_dim + 1
-        if not (1 <= nCol <= self.nb_columns and 1 <= nLine <= self.nb_lines):
+        if not (1 <= nCol <= self.nb_columns and 1 <= nLine <= self.nb_lines) or self.player_board[nCol, nLine] in ["vn", "v"] :
             return
         self.land_canvas.create_rectangle((nCol - 1) * self.square_dim + self.gap,
                                           (nLine - 1) * self.square_dim + self.gap,

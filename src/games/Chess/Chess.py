@@ -188,7 +188,7 @@ class Board:
             raise AttributeError('ERROR: KING LIST EMPTY')
         return kings_list[0]
 
-    def check_for_checks(self, color: Union[str, int]) -> bool:
+    def hkdnjcheck_for_checks(self, color: Union[str, int]) -> bool:
         """returns True if king of color is check"""
         if not isinstance(color, str):
             color = self.colors[color]
