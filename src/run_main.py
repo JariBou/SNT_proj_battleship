@@ -67,7 +67,7 @@ class run_main:
                    font=customFont, compound='top')
             ]
 
-        size = 5
+        size = 4
         while len(buttonList) % size != 0:
             buttonList.append('None')
 

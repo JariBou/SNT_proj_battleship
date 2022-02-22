@@ -3,6 +3,7 @@ import random
 import sys as system
 import tkinter as tk
 
+from src import run_main
 from src.games.BlackJack.Cartes import Carte, PaquetDeCartes, Pile
 from src.games.BlackJack.Joueur import Joueur
 from random import shuffle
@@ -352,8 +353,9 @@ class Game:
 
     def create_menu(self, menubar: tk.Menu):
         menubar.add_command(label="Help", command=g_help)
-        menubar.add_command(label="Restart Game", command=lambda: [self.w.destroy(), Launcher()])
         menubar.add_command(label="About", command=about)
+        menubar.add_command(label="Restart Game", command=lambda: [self.w.destroy(), Launcher()])
+        menubar.add_command(label="Game Select Menu", command=lambda: [self.w.destroy(), run_main.run_main()])
 
 
 class Launcher:
