@@ -2,8 +2,39 @@ import copy
 import tkinter
 from pathlib import Path
 from PIL import Image, ImageTk
+import platform
 from typing import Union
 
+
+def clean_path(uncleaned_path: str):
+    platformSeparator = getPlatformSeparators()
+    uncleaned_path = copy.deepcopy(uncleaned_path).replace('/', '\\')
+    struct_path = uncleaned_path.split('\\')
+    i = 0
+    while i < len(struct_path):
+        if struct_path[i] == '..':
+            struct_path.pop(i)
+            struct_path.pop(i)
+        else:
+            i += 1
+    path = struct_path[0] if struct_path else platformSeparator
+
+    for element in struct_path[1:]:
+        if element != '':
+            path += platformSeparator + element
+    return path
+
+
+def getPlatformSeparators():
+    system = platform.system()
+    if system == 'Linux':
+        return '/'
+    elif system == 'Windows':
+        return '\\'
+    elif system == 'Darwin':
+        raise SystemError(f'Platform {system} (Mac OS) not supported!')
+    else:
+        raise SystemError(f'Platform {system} not supported!')
 
 # -------- Helper classes by Jari_Bou -------- #
 
@@ -203,3 +234,21 @@ class Constants:
             else:
                 flattened_list.append(sub)
         return flattened_list
+
+
+class Debug:
+
+    @classmethod
+    def out(cls, s: str):
+        print(f"[GAME] " + s)
+
+    @classmethod
+    def debug(cls, s: str, annotation: str = ""):
+        if annotation != "":
+            annotation = f" - {annotation}"
+        print(f"[DEBUG{annotation}] "+s)
+
+    @classmethod
+    def error(cls, s: str):
+        print(f"[ERROR] "+s)
+

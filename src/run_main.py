@@ -4,6 +4,7 @@ import ctypes
 import sys as system
 
 from src.games import Battleship, Demineur, Last_letter_game, Pendu_gui, Rock_paper_scissors, Othello
+from src.games.BlackJack import BlackJack
 from src.games.Chess import chess_launcher
 from src.games.GameOfLife import run_gol
 from src.games.Snake import run_snake, start_snake
@@ -28,7 +29,8 @@ class run_main:
                        'demineur': PhotoImage(file='resources\\images\\Demineur\\mine.png'),
                        'snake': PhotoImage(file='resources\\images\\snake\\snake.png'),
                        'othello': Ct.get_img('resources\\images\\Othello\\taskbar_ico_img.png', size=128),
-                       'lastletter': Ct.get_img('resources\\images\\LastLetter\\LettersIco_img.png', size=128)}
+                       'lastletter': Ct.get_img('resources\\images\\LastLetter\\LettersIco_img.png', size=128),
+                       'blackjack': Ct.get_img('resources\\images\\BlackJack\\roi_trefle.gif')}
 
         myappid = 'mjcorp.launcher.alphav1.1'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -60,7 +62,10 @@ class run_main:
             Button(text="Snake", image=self.images['snake'], command=lambda: (self.w.destroy(), start_snake.run()),
                    font=customFont, compound='top'),
             Button(text="Othello", image=self.images['othello'], command=lambda: (self.w.destroy(), Othello.Game()),
-                   font=customFont, compound='top')]
+                   font=customFont, compound='top'),
+            Button(text="BlackJack", image=self.images['blackjack'], command=lambda: (self.w.destroy(), BlackJack.Launcher()),
+                   font=customFont, compound='top')
+            ]
 
         size = 5
         while len(buttonList) % size != 0:
