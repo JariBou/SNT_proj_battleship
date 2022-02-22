@@ -56,8 +56,8 @@ class Game:
         self.player = 0
         self.colors = ['white', 'black']
 
-        self.images = {'white': Ct.get_img(self.path.joinpath('resources\\images\\Othello\\othello_white.png'), size=35),
-                       'black': Ct.get_img(self.path.joinpath('resources\\images\\Othello\\othello_black.png'), size=35)}
+        self.images = {'white': Ct.get_square_img(self.path.joinpath('resources\\images\\Othello\\othello_white.png'), size=35),
+                       'black': Ct.get_square_img(self.path.joinpath('resources\\images\\Othello\\othello_black.png'), size=35)}
 
         for row in range(0, self.board_size['y']):
             self.root.rowconfigure(row, minsize=50)

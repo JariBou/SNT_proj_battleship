@@ -9,7 +9,7 @@ from src.games.Chess import chess_launcher
 from src.games.GameOfLife import run_gol
 from src.games.Snake import run_snake, start_snake
 from src.games.TicTacToe import run_TTT as Runmorpion
-from src.resources.utils.Constants import Constants as Ct
+from src.resources.utils.Constants import clean_path, Constants as Ct
 
 
 class run_main:
@@ -20,17 +20,17 @@ class run_main:
         self.w.config(bg="lightgray")
         self.w.protocol("WM_DELETE_WINDOW", lambda: system.exit("User cancelation"))
         self.path = Ct.get_path()
-        self.images = {'morpion': PhotoImage(file='resources\\images\\TicTacToe\\tictactoe.png'),
-                       'battleship': PhotoImage(file='resources\\images\\Battleship\\battleship_icon.png'),
-                       'chess': PhotoImage(file='resources\\images\\Chess\\taskbar_img_2.png'),
-                       'GoL': PhotoImage(file='resources\\images\\GoL\\GoL_icon.png'),
-                       'shifumi': PhotoImage(file='resources\\images\\rock_paper_scissors\\shifumi_icon.gif'),
-                       'hangman': PhotoImage(file='resources\\images\\Hangman\\pendu_icon.gif'),
-                       'demineur': PhotoImage(file='resources\\images\\Demineur\\mine.png'),
-                       'snake': PhotoImage(file='resources\\images\\snake\\snake.png'),
-                       'othello': Ct.get_img('resources\\images\\Othello\\taskbar_ico_img.png', size=128),
-                       'lastletter': Ct.get_img('resources\\images\\LastLetter\\LettersIco_img.png', size=128),
-                       'blackjack': Ct.get_img('resources\\images\\BlackJack\\roi_trefle.gif')}
+        self.images = {'morpion': Ct.get_square_img(clean_path('resources\\images\\TicTacToe\\tictactoe.png')),
+                       'battleship': Ct.get_square_img(clean_path('resources\\images\\Battleship\\battleship_icon.png')),
+                       'chess': Ct.get_square_img(clean_path('resources\\images\\Chess\\taskbar_img_2.png')),
+                       'GoL': Ct.get_square_img(clean_path('resources\\images\\GoL\\GoL_icon.png')),
+                       'shifumi': Ct.get_square_img(clean_path('resources\\images\\rock_paper_scissors\\shifumi_icon.gif')),
+                       'hangman': Ct.get_square_img(clean_path('resources\\images\\Hangman\\pendu_icon.gif')),
+                       'demineur': Ct.get_square_img(clean_path('resources\\images\\Demineur\\mine.png')),
+                       'snake': Ct.get_square_img(clean_path('resources\\images\\snake\\snake.png')),
+                       'othello': Ct.get_square_img(clean_path('resources\\images\\Othello\\taskbar_ico_img.png'), size=128),
+                       'lastletter': Ct.get_square_img(clean_path('resources\\images\\LastLetter\\LettersIco_img.png'), size=128),
+                       'blackjack': Ct.get_rectangle_img(clean_path('resources\\images\\BlackJack\\roi_trefle.gif'), height=128, width=96)}
 
         myappid = 'mjcorp.launcher.alphav1.1'  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)

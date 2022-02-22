@@ -162,11 +162,20 @@ class Constants:
         return value
 
     @classmethod
-    def get_img(cls, path: Union[Path, str], size: int = 0) -> ImageTk.PhotoImage:
+    def get_square_img(cls, path: Union[Path, str], size: int = 0) -> ImageTk.PhotoImage:
         """ resources\\images\\XXX """
         img = Image.open(path)
         if size != 0:
             img = img.resize((size, size))
+        photo = ImageTk.PhotoImage(img)
+        return photo
+
+    @classmethod
+    def get_rectangle_img(cls, path: Union[Path, str], width: int = 0, height: int = 0) -> ImageTk.PhotoImage:
+        """ resources\\images\\XXX """
+        img = Image.open(path)
+        if width != 0 and height != 0:
+            img = img.resize((width, height))
         photo = ImageTk.PhotoImage(img)
         return photo
 
